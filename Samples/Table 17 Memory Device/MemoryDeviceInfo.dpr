@@ -28,7 +28,25 @@ procedure GetMemoryDeviceInfo;
           WriteLn(Format('Device Locator %s', [LMemoryDevice.GetDeviceLocatorStr]));
           WriteLn(Format('Bank Locator   %s', [LMemoryDevice.GetBankLocatorStr]));
           WriteLn(Format('Memory Type    %s', [LMemoryDevice.GetMemoryTypeStr]));
-          WriteLn(Format('Speed          %d MHz', [LMemoryDevice.RAWMemoryDeviceInfo.Speed]));
+          WriteLn(Format('Speed          %d MT/s', [LMemoryDevice.GetSpeed]));
+          if SMBiosAtLeast(SMBios, 2, 7) then
+            WriteLn(Format('Configured Speed %d MT/s', [LMemoryDevice.GetConfiguredMemorySpeed]));
+          if SMBiosAtLeast(SMBios, 3, 2) then
+          begin
+            WriteLn(Format('Technology     %s', [LMemoryDevice.GetMemoryTechnologyStr]));
+            WriteLn(Format('Firmware       %s', [LMemoryDevice.FirmwareVersionStr]));
+            WriteLn(Format('Non-Volatile   %d bytes', [LMemoryDevice.RAWMemoryDeviceInfo.NonVolatileSize]));
+            WriteLn(Format('Volatile       %d bytes', [LMemoryDevice.RAWMemoryDeviceInfo.VolatileSize]));
+            WriteLn(Format('Cache          %d bytes', [LMemoryDevice.RAWMemoryDeviceInfo.CacheSize]));
+            WriteLn(Format('Logical        %d bytes', [LMemoryDevice.RAWMemoryDeviceInfo.LogicalSize]));
+          end;
+          if SMBiosAtLeast(SMBios, 3, 7) then
+          begin
+            WriteLn(Format('PMIC0 Manufacturer ID %.4x', [LMemoryDevice.RAWMemoryDeviceInfo.PMIC0ManufacturerID]));
+            WriteLn(Format('PMIC0 Revision Number %.4x', [LMemoryDevice.RAWMemoryDeviceInfo.PMIC0RevisionNumber]));
+            WriteLn(Format('RCD Manufacturer ID   %.4x', [LMemoryDevice.RAWMemoryDeviceInfo.RCDManufacturerID]));
+            WriteLn(Format('RCD Revision Number   %.4x', [LMemoryDevice.RAWMemoryDeviceInfo.RCDRevisionNumber]));
+          end;
           WriteLn(Format('Manufacturer   %s', [LMemoryDevice.ManufacturerStr]));
           WriteLn(Format('Serial Number  %s', [LMemoryDevice.SerialNumberStr]));
           WriteLn(Format('Asset Tag      %s', [LMemoryDevice.AssetTagStr]));
@@ -36,7 +54,7 @@ procedure GetMemoryDeviceInfo;
 
           WriteLn;
 
-          if LMemoryDevice.RAWMemoryDeviceInfo.PhysicalMemoryArrayHandle > 0
+          if Assigned(LMemoryDevice.PhysicalMemoryArray)
           then
           begin
             WriteLn('  Physical Memory Array');

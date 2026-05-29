@@ -23,7 +23,10 @@ procedure GetBIOSInfo;
       WriteLn('Version       ' + LBIOS.VersionStr);
       WriteLn('Start Segment ' + IntToHex(LBIOS.RAWBiosInformation.StartingSegment, 4));
       WriteLn('ReleaseDate   ' + LBIOS.ReleaseDateStr);
-      WriteLn(Format('Bios Rom Size %d k', [64 * (LBIOS.RAWBiosInformation.BiosRomSize + 1)]));
+      if SMBiosAtLeast(SMBios, 3, 1) and (LBIOS.RAWBiosInformation.BiosRomSize = $FF) then
+        WriteLn(Format('Bios Rom Size %d', [LBIOS.RAWBiosInformation.ExtendedBiosRomSize]))
+      else
+        WriteLn(Format('Bios Rom Size %d k', [64 * (LBIOS.RAWBiosInformation.BiosRomSize + 1)]));
 
       if LBIOS.RAWBiosInformation.SystemBIOSMajorRelease <> $FF
       then

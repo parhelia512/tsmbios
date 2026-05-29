@@ -70,21 +70,23 @@ procedure GetProcessorInfo;
           WriteLn('Processor Upgrade   ' + LProcessorInfo.ProcessorUpgradeStr);
           WriteLn(Format('External Clock     %d  Mhz', [LProcessorInfo.RAWProcessorInformation^.ExternalClock]));
 
-          if SMBios.SmbiosVersion >= '2.3'
+          if SMBiosAtLeast(SMBios, 2, 3)
           then
           begin
             WriteLn('Serial Number      ' + LProcessorInfo.SerialNumberStr);
             WriteLn('Asset Tag          ' + LProcessorInfo.AssetTagStr);
             WriteLn('Part Number        ' + LProcessorInfo.PartNumberStr);
-            if SMBios.SmbiosVersion >= '2.5'
+            if SMBiosAtLeast(SMBios, 2, 5)
             then
             begin
-              WriteLn(Format('Core Count         %d', [LProcessorInfo.RAWProcessorInformation^.CoreCount]));
-              WriteLn(Format('Cores Enabled      %d', [LProcessorInfo.RAWProcessorInformation^.CoreEnabled]));
-              WriteLn(Format('Threads Count      %d', [LProcessorInfo.RAWProcessorInformation^.ThreadCount]));
+              WriteLn(Format('Core Count         %d', [LProcessorInfo.GetCoreCount]));
+              WriteLn(Format('Cores Enabled      %d', [LProcessorInfo.GetCoreEnabled]));
+              WriteLn(Format('Threads Count      %d', [LProcessorInfo.GetThreadCount]));
               WriteLn(Format('Processor Characteristics %.4x',
                 [LProcessorInfo.RAWProcessorInformation^.ProcessorCharacteristics]));
             end;
+            if SMBiosAtLeast(SMBios, 3, 6)
+              then WriteLn(Format('Threads Enabled    %d', [LProcessorInfo.RAWProcessorInformation^.ThreadEnabled]));
           end;
           WriteLn;
 

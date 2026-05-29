@@ -14,7 +14,7 @@
 // The Original Code is uSMBIOS.pas.
 //
 // The Initial Developer of the Original Code is Rodrigo Ruz V.
-// Portions created by Rodrigo Ruz V. are Copyright (C) 2012-2025 Rodrigo Ruz V.
+// Portions created by Rodrigo Ruz V. are Copyright (C) 2012-2026 Rodrigo Ruz V.
 // All Rights Reserved.
 //
 // **************************************************************************************************
@@ -322,6 +322,16 @@ type
     /// </remarks>
     { $ENDREGION }
     EmbeddedControllerFirmwareMinorRelease: Byte;
+    { $REGION 'Documentation' }
+    /// <summary>
+    /// Extended BIOS ROM size. Used when BiosRomSize is FFh.
+    /// Bits 13:0 contain the size, and bits 15:14 select MB or GB units.
+    /// </summary>
+    /// <remarks>
+    /// 3.1+
+    /// </remarks>
+    { $ENDREGION }
+    ExtendedBiosRomSize: Word;
   end;
 
   TBiosInformation = class
@@ -1362,6 +1372,26 @@ type
     /// </remarks>
     { $ENDREGION }
     Associativity: Byte;
+    { $REGION 'Documentation' }
+    /// <summary>
+    /// Extended maximum cache size. Used when MaximumCacheSize is FFFFh.
+    /// Bit 31 selects 64 KB granularity; otherwise the value is in KB.
+    /// </summary>
+    /// <remarks>
+    /// 3.1+
+    /// </remarks>
+    { $ENDREGION }
+    MaximumCacheSize2: DWORD;
+    { $REGION 'Documentation' }
+    /// <summary>
+    /// Extended installed cache size. Used when InstalledSize is FFFFh.
+    /// Bit 31 selects 64 KB granularity; otherwise the value is in KB.
+    /// </summary>
+    /// <remarks>
+    /// 3.1+
+    /// </remarks>
+    { $ENDREGION }
+    InstalledSize2: DWORD;
   end;
 
   TCacheInformation = class
@@ -1747,6 +1777,42 @@ type
     /// </remarks>
     { $ENDREGION }
     ProcessorFamily2: Word;
+    { $REGION 'Documentation' }
+    /// <summary>
+    /// Extended core count. Used when CoreCount is FFh.
+    /// </summary>
+    /// <remarks>
+    /// 3.0+
+    /// </remarks>
+    { $ENDREGION }
+    CoreCount2: Word;
+    { $REGION 'Documentation' }
+    /// <summary>
+    /// Extended enabled core count. Used when CoreEnabled is FFh.
+    /// </summary>
+    /// <remarks>
+    /// 3.0+
+    /// </remarks>
+    { $ENDREGION }
+    CoreEnabled2: Word;
+    { $REGION 'Documentation' }
+    /// <summary>
+    /// Extended thread count. Used when ThreadCount is FFh.
+    /// </summary>
+    /// <remarks>
+    /// 3.0+
+    /// </remarks>
+    { $ENDREGION }
+    ThreadCount2: Word;
+    { $REGION 'Documentation' }
+    /// <summary>
+    /// Number of enabled threads per processor socket.
+    /// </summary>
+    /// <remarks>
+    /// 3.6+
+    /// </remarks>
+    { $ENDREGION }
+    ThreadEnabled: Word;
   end;
 
   TProcessorInformation = class
@@ -1779,6 +1845,9 @@ type
       /// </summary>
       { $ENDREGION }
       function ProcessorFamilyStr: AnsiString;
+      function GetCoreCount: Word;
+      function GetCoreEnabled: Word;
+      function GetThreadCount: Word;
       { $REGION 'Documentation' }
       /// <summary>
       /// Get the string representation of the ProcessorVersion field
@@ -2016,6 +2085,24 @@ type
     /// </remarks>
     { $ENDREGION }
     DeviceFunctionNumber: Byte;
+    { $REGION 'Documentation' }
+    /// <summary>
+    /// Electrical width of the slot data bus.
+    /// </summary>
+    /// <remarks>
+    /// 3.2+
+    /// </remarks>
+    { $ENDREGION }
+    DataBusWidth: Byte;
+    { $REGION 'Documentation' }
+    /// <summary>
+    /// Number of peer grouping records that follow this fixed field.
+    /// </summary>
+    /// <remarks>
+    /// 3.2+
+    /// </remarks>
+    { $ENDREGION }
+    PeerGroupingCount: Byte;
   end;
 
   TSystemSlotInformation = class
@@ -2843,7 +2930,7 @@ type
     /// 2.7+
     /// </remarks>
     { $ENDREGION }
-    ConfiguredMemoryClockSpeed: DWORD;
+    ConfiguredMemoryClockSpeed: Word;
     { $REGION 'Documentation' }
     /// <summary>
     /// Minimum operating voltage for this device, in millivolts If the value
@@ -2874,6 +2961,47 @@ type
     /// </remarks>
     { $ENDREGION }
     ConfiguredVoltage: Word;
+    { $REGION 'Documentation' }
+    /// <summary>
+    /// Identifies the technology of the memory device.
+    /// </summary>
+    /// <remarks>
+    /// 3.2+
+    /// </remarks>
+    { $ENDREGION }
+    MemoryTechnology: Byte;
+    { $REGION 'Documentation' }
+    /// <summary>
+    /// Bit field that describes supported volatile and persistent memory modes.
+    /// </summary>
+    /// <remarks>
+    /// 3.2+
+    /// </remarks>
+    { $ENDREGION }
+    MemoryOperatingModeCapability: Word;
+    { $REGION 'Documentation' }
+    /// <summary>
+    /// String number for the firmware version of this memory device.
+    /// </summary>
+    /// <remarks>
+    /// 3.2+
+    /// </remarks>
+    { $ENDREGION }
+    FirmwareVersion: Byte;
+    ModuleManufacturerID: Word;
+    ModuleProductID: Word;
+    MemorySubsystemControllerManufacturerID: Word;
+    MemorySubsystemControllerProductID: Word;
+    NonVolatileSize: Int64;
+    VolatileSize: Int64;
+    CacheSize: Int64;
+    LogicalSize: Int64;
+    ExtendedSpeed: DWORD;
+    ExtendedConfiguredMemorySpeed: DWORD;
+    PMIC0ManufacturerID: Word;
+    PMIC0RevisionNumber: Word;
+    RCDManufacturerID: Word;
+    RCDRevisionNumber: Word;
   end;
 
   TMemoryDeviceInformation = class
@@ -2910,6 +3038,10 @@ type
       /// </summary>
       { $ENDREGION }
       function GetMemoryTypeStr: AnsiString;
+      function GetMemoryTechnologyStr: AnsiString;
+      function FirmwareVersionStr: AnsiString;
+      function GetSpeed: DWORD;
+      function GetConfiguredMemorySpeed: DWORD;
       { $REGION 'Documentation' }
       /// <summary>
       /// Get the string representation of the Manufacturer field
@@ -4004,6 +4136,8 @@ type
 
   end;
 
+function SMBiosAtLeast(const ASMBios: TSMBios; Major, Minor: Integer): Boolean;
+
 implementation
 
 {$IFDEF USEWMI}
@@ -4039,6 +4173,12 @@ const
   SMBIOS_ANCHOR_STRING_VALUE = $5F4D535F;
   // '_DMI_'
   SMBIOS_INTERMEDIATE_ANCHOR_STRING_VALUE = [$5F, $44, $4D, $49, $5F];
+
+function SMBiosAtLeast(const ASMBios: TSMBios; Major, Minor: Integer): Boolean;
+begin
+  Result := (ASMBios.RawSMBIOSData.SMBIOSMajorVersion > Major) or
+            ((ASMBios.RawSMBIOSData.SMBIOSMajorVersion = Major) and (ASMBios.RawSMBIOSData.SMBIOSMinorVersion >= Minor));
+end;
 
 function GetBit(const AValue: DWORD; const Bit: Byte): Boolean;
 begin
@@ -4141,6 +4281,41 @@ begin
     end;
   end;
   Result := - 1;
+end;
+
+function CanReadSMBiosTableHeader(const RawData: TRawSMBIOSData; Index: DWORD): Boolean;
+begin
+  Result := false;
+  if not Assigned(RawData.SMBIOSTableData) then
+    Exit;
+  if RawData.Length < DWORD(SizeOf(TSmBiosTableHeader)) then
+    Exit;
+
+  Result := Index <= RawData.Length - DWORD(SizeOf(TSmBiosTableHeader));
+end;
+
+function FindSMBiosTableEnd(const RawData: TRawSMBIOSData; var Index: DWORD): Boolean;
+begin
+  Result := false;
+  if not Assigned(RawData.SMBIOSTableData) then
+    Exit;
+  if RawData.Length < 2 then
+    Exit;
+
+  // SMBIOS strings are terminated by a double-null marker after the formatted area.
+  while Index < RawData.Length - 1 do
+    if (RawData.SMBIOSTableData^[Index] = 0) and (RawData.SMBIOSTableData^[Index + 1] = 0) then
+    begin
+      Result := true;
+      Exit;
+    end
+    else
+      inc(Index);
+end;
+
+function SMBiosFieldAvailable(const Header: TSmBiosTableHeader; FieldOffset, FieldSize: Byte): Boolean;
+begin
+  Result := Header.Length >= FieldOffset + FieldSize;
 end;
 
 { TSMBios }
@@ -4286,6 +4461,31 @@ begin
 
   for i := 0 to Length(FGroupAssociationsInformation) - 1 do
     FGroupAssociationsInformation[i].Free;
+
+  // Do not keep dynamic arrays pointing at objects that have just been released.
+  FOEMStringsInfo := nil;
+  FEnclosureInfo := nil;
+  FCacheInfo := nil;
+  FProcessorInfo := nil;
+  FPortConnectorInfo := nil;
+  FSystemSlotInfo := nil;
+  FSystemConfInfo := nil;
+  FPhysicalMemoryArrayInfo := nil;
+  FOnBoardSystemInfo := nil;
+  FElectricalCurrentProbeInformation := nil;
+  FTemperatureProbeInformation := nil;
+  FCoolingDeviceInformation := nil;
+  FVoltageProbeInformation := nil;
+  FBuiltInPointingDeviceInformation := nil;
+  FMemoryDeviceInfo := nil;
+  FMemoryArrayMappedAddressInformation := nil;
+  FMemoryDeviceMappedAddressInformation := nil;
+  FBatteryInformation := nil;
+  FBIOSLanguageInfo := nil;
+  FBaseBoardInfo := nil;
+  FMemoryControllerInfo := nil;
+  FMemoryModuleInfo := nil;
+  FGroupAssociationsInformation := nil;
 end;
 
 destructor TSMBios.Destroy;
@@ -4499,9 +4699,17 @@ Var
 begin
   LStream :=  TFileStream.Create(FileName, fmOpenRead);
   try
-    LStream.ReadBuffer(FRawSMBIOSData, SizeOf(FRawSMBIOSData) - SizeOf(FRawSMBIOSData.SMBIOSTableData));
+    ClearSMBiosTables;
+    FSMBiosTablesList := nil;
+
+    // Release the current raw buffer before replacing the metadata read from disk.
     if Assigned(FRawSMBIOSData.SMBIOSTableData) then
+    begin
       FreeMem(FRawSMBIOSData.SMBIOSTableData);
+      FRawSMBIOSData.SMBIOSTableData := nil;
+    end;
+
+    LStream.ReadBuffer(FRawSMBIOSData, SizeOf(FRawSMBIOSData) - SizeOf(FRawSMBIOSData.SMBIOSTableData));
     GetMem(FRawSMBIOSData.SMBIOSTableData, FRawSMBIOSData.Length);
     LStream.ReadBuffer(FRawSMBIOSData.SMBIOSTableData^[0], FRawSMBIOSData.Length);
 
@@ -4522,37 +4730,30 @@ Var
   Header: TSmBiosTableHeader;
 begin
   Index := 0;
-  Result := 0;
-  repeat
+  Result := - 1;
+
+  while CanReadSMBiosTableHeader(FRawSMBIOSData, Index) do
+  begin
    {$IFDEF FPC}{$HINTS OFF}{$ENDIF}
     Move(FRawSMBIOSData.SMBIOSTableData^[Index], Header, SizeOf(Header));
    {$IFDEF FPC}{$HINTS ON}{$ENDIF}
+
+    // A valid SMBIOS structure must at least contain the fixed header.
+    if Header.Length < SizeOf(Header) then
+      Break;
+
     if Header.TableType = Byte(Ord(TableType)) then
-      Break
-    else
     begin
-      inc(Index, Header.Length);
-      if Index + 1 > RawSMBIOSData.Length then
-      begin
-        Result := - 1;
-        Break;
-      end;
-
-      while not ((RawSMBIOSData.SMBIOSTableData^[Index] = Byte(0)) and (RawSMBIOSData.SMBIOSTableData^[Index + 1] = 0)) do
-        if Index + 1 > RawSMBIOSData.Length then
-        begin
-          Result := - 1;
-          Break;
-        end
-        else
-          inc(Index);
-
-      inc(Index, 2);
+      Result := Index;
+      Break;
     end;
-  until (Index > RawSMBIOSData.Length);
 
-  if Result <> - 1 then
-    Result := Index;
+    inc(Index, Header.Length);
+    if not FindSMBiosTableEnd(FRawSMBIOSData, Index) then
+      Break;
+
+    inc(Index, 2);
+  end;
 end;
 
 function GetSMBiosString(FBuffer: PByteArray;  Entry, index: Integer): AnsiString;
@@ -4662,27 +4863,28 @@ Var
 begin
   Result := 0;
   Index := 0;
-  repeat
+
+  while CanReadSMBiosTableHeader(FRawSMBIOSData, Index) do
+  begin
     {$IFDEF FPC}{$HINTS OFF}{$ENDIF}
     Move(FRawSMBIOSData.SMBIOSTableData^[Index], Header, SizeOf(Header));
     {$IFDEF FPC}{$HINTS ON}{$ENDIF}
+
+    // Stop on malformed entries instead of walking past the raw table buffer.
+    if Header.Length < SizeOf(Header) then
+      Break;
+
     inc(Result);
 
     if Header.TableType = Byte(Ord(EndofTable)) then
       Break;
 
-    inc(Index, Header.Length); // + 1);
-    if Index + 1 > FRawSMBIOSData.Length then
+    inc(Index, Header.Length);
+    if not FindSMBiosTableEnd(FRawSMBIOSData, Index) then
       Break;
 
-    while not ((FRawSMBIOSData.SMBIOSTableData^[Index] = Byte(0)) and (FRawSMBIOSData.SMBIOSTableData^[Index + 1] = Byte(0))) do
-      if Index + 1 > RawSMBIOSData.Length then
-        Break
-      else
-        inc(Index);
-
     inc(Index, 2);
-  until (Index > FRawSMBIOSData.Length);
+  end;
 end;
 
 function TSMBios.GetSMBiosTablesList: {$IFDEF NOGENERICS}ArrSMBiosTableEntry; {$ELSE} TArray<TSMBiosTableEntry>;{$ENDIF}
@@ -4696,10 +4898,17 @@ begin
   SetLength(Result, i);
   i := 0;
   Index := 0;
-  repeat
+
+  while (i < DWORD(Length(Result))) and CanReadSMBiosTableHeader(FRawSMBIOSData, Index) do
+  begin
     {$IFDEF FPC}{$HINTS OFF}{$ENDIF}
     Move(FRawSMBIOSData.SMBIOSTableData^[Index], Header, SizeOf(Header));
     {$IFDEF FPC}{$HINTS ON}{$ENDIF}
+
+    // Keep the list in sync with the validated count pass.
+    if Header.Length < SizeOf(Header) then
+      Break;
+
     Entry.Header := Header;
     Entry.index := Index;
     Move(Entry, Result[i], SizeOf(Entry));
@@ -4708,18 +4917,12 @@ begin
     if Header.TableType = Byte(Ord(EndofTable)) then
       Break;
 
-    inc(Index, Header.Length); // + 1);
-    if Index + 1 > RawSMBIOSData.Length then
+    inc(Index, Header.Length);
+    if not FindSMBiosTableEnd(FRawSMBIOSData, Index) then
       Break;
 
-    while not ((RawSMBIOSData.SMBIOSTableData^[Index] = 0) and (RawSMBIOSData.SMBIOSTableData^[Index + 1] = 0)) do
-      if Index + 1 > RawSMBIOSData.Length then
-        Break
-      else
-        inc(Index);
-
     inc(Index, 2);
-  until (Index > RawSMBIOSData.Length);
+  end;
 end;
 
 function TSMBios.GetSmbiosVersion: string;
@@ -5597,7 +5800,7 @@ end;
 
 function TProcessorInformation.ProcessorFamilyStr: AnsiString;
 begin
-  if RAWProcessorInformation^.ProcessorFamily2 < $FF then
+  if (RAWProcessorInformation^.ProcessorFamily <> $FE) or not SMBiosFieldAvailable(RAWProcessorInformation^.Header, $28, SizeOf(RAWProcessorInformation^.ProcessorFamily2)) then
     case RAWProcessorInformation^.ProcessorFamily of
       1 :
         Result := 'Other';
@@ -6140,10 +6343,107 @@ begin
     $29 :
       Result := 'Socket FM1';
     $2A :
-      Result := 'Socket FM2'
+      Result := 'Socket FM2';
+    $2B :
+      Result := 'Socket LGA2011-3';
+    $2C :
+      Result := 'Socket LGA1356-3';
+    $2D :
+      Result := 'Socket LGA1150';
+    $2E :
+      Result := 'Socket BGA1168';
+    $2F :
+      Result := 'Socket BGA1234';
+    $30 :
+      Result := 'Socket BGA1364';
+    $31 :
+      Result := 'Socket AM4';
+    $32 :
+      Result := 'Socket LGA1151';
+    $33 :
+      Result := 'Socket BGA1356';
+    $34 :
+      Result := 'Socket BGA1440';
+    $35 :
+      Result := 'Socket BGA1515';
+    $36 :
+      Result := 'Socket LGA3647-1';
+    $37 :
+      Result := 'Socket SP3';
+    $38 :
+      Result := 'Socket SP3r2';
+    $39 :
+      Result := 'Socket LGA2066';
+    $3A :
+      Result := 'Socket BGA1392';
+    $3B :
+      Result := 'Socket BGA1510';
+    $3C :
+      Result := 'Socket BGA1528';
+    $3D :
+      Result := 'Socket LGA4189';
+    $3E :
+      Result := 'Socket LGA1200';
+    $3F :
+      Result := 'Socket LGA4677';
+    $40 :
+      Result := 'Socket LGA1700';
+    $41 :
+      Result := 'Socket BGA1744';
+    $42 :
+      Result := 'Socket BGA1781';
+    $43 :
+      Result := 'Socket BGA1211';
+    $44 :
+      Result := 'Socket BGA2422';
+    $45 :
+      Result := 'Socket LGA1211';
+    $46 :
+      Result := 'Socket LGA2422';
+    $47 :
+      Result := 'Socket LGA5773';
+    $48 :
+      Result := 'Socket BGA5773';
+    $49 :
+      Result := 'Socket AM5';
+    $4A :
+      Result := 'Socket SP5';
+    $4B :
+      Result := 'Socket SP6';
+    $4C :
+      Result := 'Socket BGA883';
+    $4D :
+      Result := 'Socket BGA1190';
+    $4E :
+      Result := 'Socket BGA4129';
+    $4F :
+      Result := 'Socket LGA4710';
+    $50 :
+      Result := 'Socket LGA7529'
     else
       Result := 'Unknown';
   end;
+end;
+
+function TProcessorInformation.GetCoreCount: Word;
+begin
+  Result := RAWProcessorInformation^.CoreCount;
+  if (RAWProcessorInformation^.CoreCount = $FF) and SMBiosFieldAvailable(RAWProcessorInformation^.Header, $2A, SizeOf(RAWProcessorInformation^.CoreCount2)) then
+    Result := RAWProcessorInformation^.CoreCount2;
+end;
+
+function TProcessorInformation.GetCoreEnabled: Word;
+begin
+  Result := RAWProcessorInformation^.CoreEnabled;
+  if (RAWProcessorInformation^.CoreEnabled = $FF) and SMBiosFieldAvailable(RAWProcessorInformation^.Header, $2C, SizeOf(RAWProcessorInformation^.CoreEnabled2)) then
+    Result := RAWProcessorInformation^.CoreEnabled2;
+end;
+
+function TProcessorInformation.GetThreadCount: Word;
+begin
+  Result := RAWProcessorInformation^.ThreadCount;
+  if (RAWProcessorInformation^.ThreadCount = $FF) and SMBiosFieldAvailable(RAWProcessorInformation^.Header, $2E, SizeOf(RAWProcessorInformation^.ThreadCount2)) then
+    Result := RAWProcessorInformation^.ThreadCount2;
 end;
 
 function TProcessorInformation.ProcessorVersionStr: AnsiString;
@@ -6220,23 +6520,47 @@ end;
 function TCacheInformation.GetInstalledCacheSize: Integer;
 var
   Granularity: DWORD;
+  SizeValue: DWORD;
 begin
   Granularity := 1;
-  if GetBit(RAWCacheInformation^.InstalledSize, 15) then
+  SizeValue := RAWCacheInformation^.InstalledSize;
+
+  if (RAWCacheInformation^.InstalledSize = $FFFF) and SMBiosFieldAvailable(RAWCacheInformation^.Header, $17, SizeOf(RAWCacheInformation^.InstalledSize2)) then
+  begin
+    SizeValue := RAWCacheInformation^.InstalledSize2;
+    if (SizeValue and $80000000) <> 0 then
+      Granularity := 64;
+    Result := Granularity * (SizeValue and $7FFFFFFF);
+    Exit;
+  end;
+
+  if GetBit(SizeValue, 15) then
     Granularity := 64;
 
-  Result := Granularity * EnableBit(RAWCacheInformation^.InstalledSize, 15, false);
+  Result := Granularity * EnableBit(SizeValue, 15, false);
 end;
 
 function TCacheInformation.GetMaximumCacheSize: Integer;
 var
   Granularity: DWORD;
+  SizeValue: DWORD;
 begin
   Granularity := 1;
-  if GetBit(RAWCacheInformation^.MaximumCacheSize, 15) then
+  SizeValue := RAWCacheInformation^.MaximumCacheSize;
+
+  if (RAWCacheInformation^.MaximumCacheSize = $FFFF) and SMBiosFieldAvailable(RAWCacheInformation^.Header, $13, SizeOf(RAWCacheInformation^.MaximumCacheSize2)) then
+  begin
+    SizeValue := RAWCacheInformation^.MaximumCacheSize2;
+    if (SizeValue and $80000000) <> 0 then
+      Granularity := 64;
+    Result := Granularity * (SizeValue and $7FFFFFFF);
+    Exit;
+  end;
+
+  if GetBit(SizeValue, 15) then
     Granularity := 64;
 
-  Result := Granularity * EnableBit(RAWCacheInformation^.MaximumCacheSize, 15, false);
+  Result := Granularity * EnableBit(SizeValue, 15, false);
 end;
 
 function TCacheInformation.GetSupportedSRAMType: TCacheSRAMTypes;
@@ -6559,6 +6883,50 @@ begin
       Result := 'PCI-X';
     $13 :
       Result := 'AGP 8X';
+    $14 :
+      Result := 'M.2 Socket 1-DP';
+    $15 :
+      Result := 'M.2 Socket 1-SD';
+    $16 :
+      Result := 'M.2 Socket 2';
+    $17 :
+      Result := 'M.2 Socket 3';
+    $18 :
+      Result := 'MXM Type I';
+    $19 :
+      Result := 'MXM Type II';
+    $1A :
+      Result := 'MXM Type III Standard';
+    $1B :
+      Result := 'MXM Type III HE';
+    $1C :
+      Result := 'MXM Type IV';
+    $1D :
+      Result := 'MXM 3.0 Type A';
+    $1E :
+      Result := 'MXM 3.0 Type B';
+    $1F :
+      Result := 'PCI Express Gen 2 SFF-8639';
+    $20 :
+      Result := 'PCI Express Gen 3 SFF-8639';
+    $21 :
+      Result := 'PCI Express Mini 52-pin without bottom-side keep-outs';
+    $22 :
+      Result := 'PCI Express Mini 52-pin with bottom-side keep-outs';
+    $23 :
+      Result := 'PCI Express Mini 76-pin';
+    $24 :
+      Result := 'PCI Express Gen 4 SFF-8639';
+    $25 :
+      Result := 'PCI Express Gen 5 SFF-8639';
+    $26 :
+      Result := 'OCP NIC 3.0 Small Form Factor';
+    $27 :
+      Result := 'OCP NIC 3.0 Large Form Factor';
+    $28 :
+      Result := 'OCP NIC prior to 3.0';
+    $30 :
+      Result := 'CXL Flexbus 1.0';
     $A0 :
       Result := 'PC-98/C20';
     $A1 :
@@ -6604,7 +6972,37 @@ begin
     $B5 :
       Result := 'PCI Express Gen 3 x8';
     $B6 :
-      Result := 'PCI Express Gen 3 x16'
+      Result := 'PCI Express Gen 3 x16';
+    $B8 :
+      Result := 'PCI Express Gen 4';
+    $B9 :
+      Result := 'PCI Express Gen 4 x1';
+    $BA :
+      Result := 'PCI Express Gen 4 x2';
+    $BB :
+      Result := 'PCI Express Gen 4 x4';
+    $BC :
+      Result := 'PCI Express Gen 4 x8';
+    $BD :
+      Result := 'PCI Express Gen 4 x16';
+    $BE :
+      Result := 'PCI Express Gen 5';
+    $BF :
+      Result := 'PCI Express Gen 5 x1';
+    $C0 :
+      Result := 'PCI Express Gen 5 x2';
+    $C1 :
+      Result := 'PCI Express Gen 5 x4';
+    $C2 :
+      Result := 'PCI Express Gen 5 x8';
+    $C3 :
+      Result := 'PCI Express Gen 5 x16';
+    $C4 :
+      Result := 'PCI Express Gen 6';
+    $C5 :
+      Result := 'EDSFF E1';
+    $C6 :
+      Result := 'EDSFF E3'
     else
       Result := 'Unknown';
   end;
@@ -6869,7 +7267,9 @@ begin
     $0E :
       Result := 'SRIMM';
     $0F :
-      Result := 'FB-DIMM'
+      Result := 'FB-DIMM';
+    $10 :
+      Result := 'Die'
     else
       Result := 'Unknown';
   end;
@@ -6923,7 +7323,57 @@ begin
     $18 :
       Result := 'DDR3';
     $19 :
-      Result := 'FBD2'
+      Result := 'FBD2';
+    $1A :
+      Result := 'DDR4';
+    $1B :
+      Result := 'LPDDR';
+    $1C :
+      Result := 'LPDDR2';
+    $1D :
+      Result := 'LPDDR3';
+    $1E :
+      Result := 'LPDDR4';
+    $1F :
+      Result := 'Logical non-volatile device';
+    $20 :
+      Result := 'HBM';
+    $21 :
+      Result := 'HBM2';
+    $22 :
+      Result := 'DDR5';
+    $23 :
+      Result := 'LPDDR5';
+    $24 :
+      Result := 'HBM3'
+    else
+      Result := 'Unknown';
+  end;
+end;
+
+function TMemoryDeviceInformation.GetMemoryTechnologyStr: AnsiString;
+begin
+  if not SMBiosFieldAvailable(RAWMemoryDeviceInfo^.Header, $28, SizeOf(RAWMemoryDeviceInfo^.MemoryTechnology)) then
+  begin
+    Result := 'Unknown';
+    Exit;
+  end;
+
+  case RAWMemoryDeviceInfo^.MemoryTechnology of
+    $01 :
+      Result := 'Other';
+    $02 :
+      Result := 'Unknown';
+    $03 :
+      Result := 'DRAM';
+    $04 :
+      Result := 'NVDIMM-N';
+    $05 :
+      Result := 'NVDIMM-F';
+    $06 :
+      Result := 'NVDIMM-P';
+    $07 :
+      Result := 'Intel Optane persistent memory'
     else
       Result := 'Unknown';
   end;
@@ -6934,14 +7384,44 @@ begin
   if RAWMemoryDeviceInfo^.Size = 0 then
     Result := 0
   else if RAWMemoryDeviceInfo^.Size = $7FFF then
-    Result := RAWMemoryDeviceInfo^.ExtendedSize
+  begin
+    // ExtendedSize belongs to SMBIOS 2.7+ Type 17 records; older structures end earlier.
+    if SMBiosFieldAvailable(RAWMemoryDeviceInfo^.Header, $1C, SizeOf(RAWMemoryDeviceInfo^.ExtendedSize)) then
+      Result := RAWMemoryDeviceInfo^.ExtendedSize and $7FFFFFFF
+    else
+      Result := 0;
+  end
   else
   begin
     if GetBit(RAWMemoryDeviceInfo^.Size, 15) then
-      Result := RAWMemoryDeviceInfo^.Size div 1024
+      Result := (RAWMemoryDeviceInfo^.Size and $7FFF) div 1024
     else
       Result := RAWMemoryDeviceInfo^.Size;
   end;
+end;
+
+function TMemoryDeviceInformation.GetSpeed: DWORD;
+begin
+  if (RAWMemoryDeviceInfo^.Speed = $FFFF) and SMBiosFieldAvailable(RAWMemoryDeviceInfo^.Header, $54, SizeOf(RAWMemoryDeviceInfo^.ExtendedSpeed)) then
+    Result := RAWMemoryDeviceInfo^.ExtendedSpeed
+  else
+    Result := RAWMemoryDeviceInfo^.Speed;
+end;
+
+function TMemoryDeviceInformation.GetConfiguredMemorySpeed: DWORD;
+begin
+  if (RAWMemoryDeviceInfo^.ConfiguredMemoryClockSpeed = $FFFF) and SMBiosFieldAvailable(RAWMemoryDeviceInfo^.Header, $58, SizeOf(RAWMemoryDeviceInfo^.ExtendedConfiguredMemorySpeed)) then
+    Result := RAWMemoryDeviceInfo^.ExtendedConfiguredMemorySpeed
+  else
+    Result := RAWMemoryDeviceInfo^.ConfiguredMemoryClockSpeed;
+end;
+
+function TMemoryDeviceInformation.FirmwareVersionStr: AnsiString;
+begin
+  if SMBiosFieldAvailable(RAWMemoryDeviceInfo^.Header, $2B, SizeOf(RAWMemoryDeviceInfo^.FirmwareVersion)) then
+    Result := GetSMBiosString(@RAWMemoryDeviceInfo^, RAWMemoryDeviceInfo^.Header.Length, RAWMemoryDeviceInfo^.FirmwareVersion)
+  else
+    Result := '';
 end;
 
 function TMemoryDeviceInformation.ManufacturerStr: AnsiString;

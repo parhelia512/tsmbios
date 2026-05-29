@@ -43,11 +43,17 @@ procedure GetSystemSlotInfo;
           WriteLn(Format('Slot ID             %.4x', [LSlot.RAWSystemSlotInformation.SlotID]));
           WriteLn('Characteristics 1   ' + ByteToBinStr(LSlot.RAWSystemSlotInformation.SlotCharacteristics1));
           WriteLn('Characteristics 2   ' + ByteToBinStr(LSlot.RAWSystemSlotInformation.SlotCharacteristics2));
-          if SMBios.SmbiosVersion >= '2.6'
+          if SMBiosAtLeast(SMBios, 2, 6)
           then
           begin
             WriteLn(Format('Segment Group Number %.4x', [LSlot.RAWSystemSlotInformation.SegmentGroupNumber]));
             WriteLn(Format('Bus Number           %d', [LSlot.RAWSystemSlotInformation.BusNumber]));
+          end;
+          if SMBiosAtLeast(SMBios, 3, 2)
+          then
+          begin
+            WriteLn(Format('Data Bus Width       %d', [LSlot.RAWSystemSlotInformation.DataBusWidth]));
+            WriteLn(Format('Peer Grouping Count  %d', [LSlot.RAWSystemSlotInformation.PeerGroupingCount]));
           end;
           WriteLn;
         end

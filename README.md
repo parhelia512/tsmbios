@@ -5,11 +5,13 @@
 ## Features
 
 * Fully documented (XMLDoc), compatible with the Help Insight feature, available since Delphi 2005.
-* Supports SMBIOS Version 2.1 to 2.8.
+* Supports SMBIOS Version 2.1 to 3.9.
 * Compatible with Delphi 5 through Delphi 13 Florence.
 * Works with FPC 2.4.0 or later.
 * Supports Windows and Linux.
 * Can read SMBIOS data from remote machines using WMI.
+* Exposes the SMBIOS 3.x fixed-layout fields added to the supported table types, including BIOS ROM size, processor core/thread counts, cache sizes, system slot bus data, and memory device technology, firmware, persistent memory, speed, PMIC, and RCD data.
+* Provides `SMBiosAtLeast` to guard version-specific fields before reading newer SMBIOS data.
  
 ## SMBIOS Tables supported
 
@@ -51,6 +53,8 @@
 * Onboard Devices Extended Information (Type 41) - Not Implemented
 * Management Controller Host Interface (Type 42) - Not Implemented
 
+The existing supported tables have been updated with SMBIOS 3.x fields where the library already implements the table. This update does not add support for new SMBIOS table types.
+
 ## Sample source code
 This code demonstrates how to retrieve information related to the memory devices installed on the system.
 
@@ -74,8 +78,8 @@ begin
       WriteLn('Memory Device Information');
       WriteLn('-------------------------');
 
-      if SMBios.HasPhysicalMemoryArrayInfo then
-      for LMemoryDevice in SMBios.MemoryDeviceInformation do
+      if SMBios.HasMemoryDeviceInfo then
+      for LMemoryDevice in SMBios.MemoryDeviceInfo do
       begin
         WriteLn(Format('Total Width    %d bits',[LMemoryDevice.RAWMemoryDeviceInfo.TotalWidth]));
         WriteLn(Format('Data Width     %d bits',[LMemoryDevice.RAWMemoryDeviceInfo.DataWidth]));
@@ -84,7 +88,25 @@ begin
         WriteLn(Format('Device Locator %s',[LMemoryDevice.GetDeviceLocatorStr]));
         WriteLn(Format('Bank Locator   %s',[LMemoryDevice.GetBankLocatorStr]));
         WriteLn(Format('Memory Type    %s',[LMemoryDevice.GetMemoryTypeStr]));
-        WriteLn(Format('Speed          %d MHz',[LMemoryDevice.RAWMemoryDeviceInfo.Speed]));
+        WriteLn(Format('Speed          %d MT/s',[LMemoryDevice.GetSpeed]));
+        if SMBiosAtLeast(SMBios, 2, 7) then
+          WriteLn(Format('Configured Speed %d MT/s',[LMemoryDevice.GetConfiguredMemorySpeed]));
+        if SMBiosAtLeast(SMBios, 3, 2) then
+        begin
+          WriteLn(Format('Technology     %s',[LMemoryDevice.GetMemoryTechnologyStr]));
+          WriteLn(Format('Firmware       %s',[LMemoryDevice.FirmwareVersionStr]));
+          WriteLn(Format('Non-Volatile   %d bytes',[LMemoryDevice.RAWMemoryDeviceInfo.NonVolatileSize]));
+          WriteLn(Format('Volatile       %d bytes',[LMemoryDevice.RAWMemoryDeviceInfo.VolatileSize]));
+          WriteLn(Format('Cache          %d bytes',[LMemoryDevice.RAWMemoryDeviceInfo.CacheSize]));
+          WriteLn(Format('Logical        %d bytes',[LMemoryDevice.RAWMemoryDeviceInfo.LogicalSize]));
+        end;
+        if SMBiosAtLeast(SMBios, 3, 7) then
+        begin
+          WriteLn(Format('PMIC0 Manufacturer ID %.4x',[LMemoryDevice.RAWMemoryDeviceInfo.PMIC0ManufacturerID]));
+          WriteLn(Format('PMIC0 Revision Number %.4x',[LMemoryDevice.RAWMemoryDeviceInfo.PMIC0RevisionNumber]));
+          WriteLn(Format('RCD Manufacturer ID   %.4x',[LMemoryDevice.RAWMemoryDeviceInfo.RCDManufacturerID]));
+          WriteLn(Format('RCD Revision Number   %.4x',[LMemoryDevice.RAWMemoryDeviceInfo.RCDRevisionNumber]));
+        end;
         WriteLn(Format('Manufacturer   %s',[LMemoryDevice.ManufacturerStr]));
         WriteLn(Format('Serial Number  %s',[LMemoryDevice.SerialNumberStr]));
         WriteLn(Format('Asset Tag      %s',[LMemoryDevice.AssetTagStr]));
@@ -92,7 +114,7 @@ begin
 
         WriteLn;
 
-        if LMemoryDevice.RAWMemoryDeviceInfo.PhysicalMemoryArrayHandle>0 then
+        if Assigned(LMemoryDevice.PhysicalMemoryArray) then
         begin
           WriteLn('  Physical Memory Array');
           WriteLn('  ---------------------');
