@@ -28,13 +28,13 @@ procedure GetMemArrayMappedInfo;
             [LMemArrMappedAddress.RAWMemoryArrayMappedAddressInfo.MemoryArrayHandle]));
           WriteLn(Format('Partition Width     %d ',
             [LMemArrMappedAddress.RAWMemoryArrayMappedAddressInfo.PartitionWidth]));
-          if SMBios.SmbiosVersion >= '2.7'
+          if SMBiosAtLeast(SMBios, 2, 7) and LMemArrMappedAddress.HasExtendedAddresses
           then
           begin
             WriteLn(Format('Extended Starting Address  %x',
-              [LMemArrMappedAddress.RAWMemoryArrayMappedAddressInfo.ExtendedStartingAddress]));
+              [LMemArrMappedAddress.GetExtendedStartingAddress]));
             WriteLn(Format('Extended Ending   Address  %x',
-              [LMemArrMappedAddress.RAWMemoryArrayMappedAddressInfo.ExtendedEndingAddress]));
+              [LMemArrMappedAddress.GetExtendedEndingAddress]));
           end;
 
           WriteLn;

@@ -49,11 +49,11 @@ procedure GetSystemSlotInfo;
             WriteLn(Format('Segment Group Number %.4x', [LSlot.RAWSystemSlotInformation.SegmentGroupNumber]));
             WriteLn(Format('Bus Number           %d', [LSlot.RAWSystemSlotInformation.BusNumber]));
           end;
-          if SMBiosAtLeast(SMBios, 3, 2)
+          if SMBiosAtLeast(SMBios, 3, 2) and LSlot.HasDataBusWidth and LSlot.HasPeerGroupingCount
           then
           begin
-            WriteLn(Format('Data Bus Width       %d', [LSlot.RAWSystemSlotInformation.DataBusWidth]));
-            WriteLn(Format('Peer Grouping Count  %d', [LSlot.RAWSystemSlotInformation.PeerGroupingCount]));
+            WriteLn(Format('Data Bus Width       %d', [LSlot.GetDataBusWidth]));
+            WriteLn(Format('Peer Grouping Count  %d', [LSlot.GetPeerGroupingCount]));
           end;
           WriteLn;
         end

@@ -69,14 +69,14 @@ procedure GetElectricalCurrProbeInfo;
               [LElectCurrProbeInfo.RAWElectricalCurrentProbeInfo.Tolerance]));
           WriteLn(Format('OEM Specific   %.8x', [LElectCurrProbeInfo.RAWElectricalCurrentProbeInfo.OEMdefined]));
 
-          if LElectCurrProbeInfo.RAWElectricalCurrentProbeInfo.Header.Length > $14
+          if LElectCurrProbeInfo.HasNominalValue
           then
-            if LElectCurrProbeInfo.RAWElectricalCurrentProbeInfo.NominalValue = $8000
+            if LElectCurrProbeInfo.GetNominalValue = $8000
             then
               WriteLn(Format('Nominal Value  %s', ['Unknown']))
             else
               WriteLn(Format('Nominal Value  %d milliamps.',
-                [LElectCurrProbeInfo.RAWElectricalCurrentProbeInfo.NominalValue]));
+                [LElectCurrProbeInfo.GetNominalValue]));
           WriteLn;
         end
       else

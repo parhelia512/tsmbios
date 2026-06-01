@@ -52,7 +52,7 @@ procedure GetCoolingDeviceInfo;
             WriteLn(Format('Nominal Speed            %s', ['Unknown']))
           else
             WriteLn(Format('Nominal Speed            %d rpm', [LCoolingDevice.RAWCoolingDeviceInfo.NominalSpeed]));
-          if SMBios.SmbiosVersion >= '2.7'
+          if SMBiosAtLeast(SMBios, 2, 7) and LCoolingDevice.HasDescription
           then
             WriteLn(Format('Description    %s', [LCoolingDevice.GetDescriptionStr]));
 

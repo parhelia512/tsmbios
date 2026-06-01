@@ -27,9 +27,12 @@ procedure GetPhysicalMemArrayInfo;
           then
             WriteLn(Format('Maximum Capacity %d Kb',
               [LPhysicalMemArr.RAWPhysicalMemoryArrayInformation.MaximumCapacity]))
-          else
+          else if LPhysicalMemArr.HasExtendedMaximumCapacity
+          then
             WriteLn(Format('Maximum Capacity %d bytes',
-              [LPhysicalMemArr.RAWPhysicalMemoryArrayInformation.ExtendedMaximumCapacity]));
+              [LPhysicalMemArr.GetExtendedMaximumCapacity]))
+          else
+            WriteLn('Maximum Capacity Unknown');
 
           WriteLn(Format('Memory devices   %d',
             [LPhysicalMemArr.RAWPhysicalMemoryArrayInformation.NumberofMemoryDevices]));

@@ -28,11 +28,13 @@ procedure GetSystemInfo;
       BinToHex(@LSystem.RAWSystemInformation.UUID, UUID, SizeOf(LSystem.RAWSystemInformation.UUID));
       WriteLn('UUID          ' + UUID);
       {$ENDIF}
-      if SMBios.SmbiosVersion >= '2.4'
+      if SMBiosAtLeast(SMBios, 2, 4)
       then
       begin
-        WriteLn('SKU Number    ' + LSystem.SKUNumberStr);
-        WriteLn('Family        ' + LSystem.FamilyStr);
+        if LSystem.HasSKUNumber then
+          WriteLn('SKU Number    ' + LSystem.SKUNumberStr);
+        if LSystem.HasFamily then
+          WriteLn('Family        ' + LSystem.FamilyStr);
       end;
       WriteLn;
     finally

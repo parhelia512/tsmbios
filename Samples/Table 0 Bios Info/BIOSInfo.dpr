@@ -23,8 +23,8 @@ procedure GetBIOSInfo;
       WriteLn('Version       ' + LBIOS.VersionStr);
       WriteLn('Start Segment ' + IntToHex(LBIOS.RAWBiosInformation.StartingSegment, 4));
       WriteLn('ReleaseDate   ' + LBIOS.ReleaseDateStr);
-      if SMBiosAtLeast(SMBios, 3, 1) and (LBIOS.RAWBiosInformation.BiosRomSize = $FF) then
-        WriteLn(Format('Bios Rom Size %d', [LBIOS.RAWBiosInformation.ExtendedBiosRomSize]))
+      if SMBiosAtLeast(SMBios, 3, 1) and (LBIOS.RAWBiosInformation.BiosRomSize = $FF) and LBIOS.HasExtendedBiosRomSize then
+        WriteLn(Format('Bios Rom Size %d', [LBIOS.GetExtendedBiosRomSize]))
       else
         WriteLn(Format('Bios Rom Size %d k', [64 * (LBIOS.RAWBiosInformation.BiosRomSize + 1)]));
 

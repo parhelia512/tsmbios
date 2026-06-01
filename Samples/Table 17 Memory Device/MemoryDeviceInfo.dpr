@@ -29,23 +29,32 @@ procedure GetMemoryDeviceInfo;
           WriteLn(Format('Bank Locator   %s', [LMemoryDevice.GetBankLocatorStr]));
           WriteLn(Format('Memory Type    %s', [LMemoryDevice.GetMemoryTypeStr]));
           WriteLn(Format('Speed          %d MT/s', [LMemoryDevice.GetSpeed]));
-          if SMBiosAtLeast(SMBios, 2, 7) then
+          if SMBiosAtLeast(SMBios, 2, 7) and LMemoryDevice.HasConfiguredMemorySpeed then
             WriteLn(Format('Configured Speed %d MT/s', [LMemoryDevice.GetConfiguredMemorySpeed]));
           if SMBiosAtLeast(SMBios, 3, 2) then
           begin
-            WriteLn(Format('Technology     %s', [LMemoryDevice.GetMemoryTechnologyStr]));
-            WriteLn(Format('Firmware       %s', [LMemoryDevice.FirmwareVersionStr]));
-            WriteLn(Format('Non-Volatile   %d bytes', [LMemoryDevice.RAWMemoryDeviceInfo.NonVolatileSize]));
-            WriteLn(Format('Volatile       %d bytes', [LMemoryDevice.RAWMemoryDeviceInfo.VolatileSize]));
-            WriteLn(Format('Cache          %d bytes', [LMemoryDevice.RAWMemoryDeviceInfo.CacheSize]));
-            WriteLn(Format('Logical        %d bytes', [LMemoryDevice.RAWMemoryDeviceInfo.LogicalSize]));
+            if LMemoryDevice.HasMemoryTechnology then
+              WriteLn(Format('Technology     %s', [LMemoryDevice.GetMemoryTechnologyStr]));
+            if LMemoryDevice.HasFirmwareVersion then
+              WriteLn(Format('Firmware       %s', [LMemoryDevice.FirmwareVersionStr]));
+            if LMemoryDevice.HasNonVolatileSize then
+              WriteLn(Format('Non-Volatile   %d bytes', [LMemoryDevice.GetNonVolatileSize]));
+            if LMemoryDevice.HasVolatileSize then
+              WriteLn(Format('Volatile       %d bytes', [LMemoryDevice.GetVolatileSize]));
+            if LMemoryDevice.HasCacheSize then
+              WriteLn(Format('Cache          %d bytes', [LMemoryDevice.GetCacheSize]));
+            if LMemoryDevice.HasLogicalSize then
+              WriteLn(Format('Logical        %d bytes', [LMemoryDevice.GetLogicalSize]));
           end;
-          if SMBiosAtLeast(SMBios, 3, 7) then
+          if SMBiosAtLeast(SMBios, 3, 7) and LMemoryDevice.HasPMIC0 then
           begin
-            WriteLn(Format('PMIC0 Manufacturer ID %.4x', [LMemoryDevice.RAWMemoryDeviceInfo.PMIC0ManufacturerID]));
-            WriteLn(Format('PMIC0 Revision Number %.4x', [LMemoryDevice.RAWMemoryDeviceInfo.PMIC0RevisionNumber]));
-            WriteLn(Format('RCD Manufacturer ID   %.4x', [LMemoryDevice.RAWMemoryDeviceInfo.RCDManufacturerID]));
-            WriteLn(Format('RCD Revision Number   %.4x', [LMemoryDevice.RAWMemoryDeviceInfo.RCDRevisionNumber]));
+            WriteLn(Format('PMIC0 Manufacturer ID %.4x', [LMemoryDevice.GetPMIC0ManufacturerID]));
+            WriteLn(Format('PMIC0 Revision Number %.4x', [LMemoryDevice.GetPMIC0RevisionNumber]));
+          end;
+          if SMBiosAtLeast(SMBios, 3, 7) and LMemoryDevice.HasRCD then
+          begin
+            WriteLn(Format('RCD Manufacturer ID   %.4x', [LMemoryDevice.GetRCDManufacturerID]));
+            WriteLn(Format('RCD Revision Number   %.4x', [LMemoryDevice.GetRCDRevisionNumber]));
           end;
           WriteLn(Format('Manufacturer   %s', [LMemoryDevice.ManufacturerStr]));
           WriteLn(Format('Serial Number  %s', [LMemoryDevice.SerialNumberStr]));
@@ -66,9 +75,12 @@ procedure GetMemoryDeviceInfo;
             then
               WriteLn(Format('  Maximum Capacity %d Kb',
                 [LMemoryDevice.PhysicalMemoryArray.RAWPhysicalMemoryArrayInformation.MaximumCapacity]))
-            else
+            else if LMemoryDevice.PhysicalMemoryArray.HasExtendedMaximumCapacity
+            then
               WriteLn(Format('  Maximum Capacity %d bytes',
-                [LMemoryDevice.PhysicalMemoryArray.RAWPhysicalMemoryArrayInformation.ExtendedMaximumCapacity]));
+                [LMemoryDevice.PhysicalMemoryArray.GetExtendedMaximumCapacity]))
+            else
+              WriteLn('  Maximum Capacity Unknown');
 
             WriteLn(Format('  Memory devices   %d',
               [LMemoryDevice.PhysicalMemoryArray.RAWPhysicalMemoryArrayInformation.NumberofMemoryDevices]));

@@ -65,13 +65,13 @@ procedure GetTempProbeInfo;
             WriteLn(Format('Tolerance      %n C°', [LTempProbeInfo.RAWTemperatureProbeInfo.Tolerance / 10]));
           WriteLn(Format('OEM Specific   %.8x', [LTempProbeInfo.RAWTemperatureProbeInfo.OEMdefined]));
 
-          if LTempProbeInfo.RAWTemperatureProbeInfo.Header.Length > $14
+          if LTempProbeInfo.HasNominalValue
           then
-            if LTempProbeInfo.RAWTemperatureProbeInfo.NominalValue = $8000
+            if LTempProbeInfo.GetNominalValue = $8000
             then
               WriteLn(Format('Nominal Value  %s', ['Unknown']))
             else
-              WriteLn(Format('Nominal Value  %d C°', [LTempProbeInfo.RAWTemperatureProbeInfo.NominalValue div 10]));
+              WriteLn(Format('Nominal Value  %d C°', [LTempProbeInfo.GetNominalValue div 10]));
           WriteLn;
         end
       else

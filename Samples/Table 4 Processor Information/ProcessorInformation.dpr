@@ -85,12 +85,12 @@ procedure GetProcessorInfo;
               WriteLn(Format('Processor Characteristics %.4x',
                 [LProcessorInfo.RAWProcessorInformation^.ProcessorCharacteristics]));
             end;
-            if SMBiosAtLeast(SMBios, 3, 6)
-              then WriteLn(Format('Threads Enabled    %d', [LProcessorInfo.RAWProcessorInformation^.ThreadEnabled]));
+            if SMBiosAtLeast(SMBios, 3, 6) and LProcessorInfo.HasThreadEnabled
+              then WriteLn(Format('Threads Enabled    %d', [LProcessorInfo.GetThreadEnabled]));
           end;
           WriteLn;
 
-          if (LProcessorInfo.RAWProcessorInformation^.L1CacheHandle > 0) and (LProcessorInfo.L2Chache <> nil)
+          if (LProcessorInfo.RAWProcessorInformation^.L1CacheHandle > 0) and (LProcessorInfo.L1Chache <> nil)
           then
           begin
             WriteLn('L1 Cache Handle Info');

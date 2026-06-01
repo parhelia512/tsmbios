@@ -65,13 +65,13 @@ procedure GetVoltageProbeInfo;
             WriteLn(Format('Tolerance      %d', [LVoltageProbeInfo.RAWVoltageProbeInfo.Tolerance]));
           WriteLn(Format('OEM Specific   %.8x', [LVoltageProbeInfo.RAWVoltageProbeInfo.OEMdefined]));
 
-          if LVoltageProbeInfo.RAWVoltageProbeInfo.Header.Length > $14
+          if LVoltageProbeInfo.HasNominalValue
           then
-            if LVoltageProbeInfo.RAWVoltageProbeInfo.NominalValue = $8000
+            if LVoltageProbeInfo.GetNominalValue = $8000
             then
               WriteLn(Format('Nominal Value  %s', ['Unknown']))
             else
-              WriteLn(Format('Nominal Value  %d', [LVoltageProbeInfo.RAWVoltageProbeInfo.NominalValue]));
+              WriteLn(Format('Nominal Value  %d', [LVoltageProbeInfo.GetNominalValue]));
           WriteLn;
         end
       else

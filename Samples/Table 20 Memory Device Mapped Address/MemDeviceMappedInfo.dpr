@@ -35,13 +35,13 @@ procedure GetMemDeviceMappedInfo;
           WriteLn(Format('Interleaved Data Depth  %d',
             [LMemDevMappedAddress.RAWMemoryDeviceMappedAddressInfo.InterleavedDataDepth]));
 
-          if SMBios.SmbiosVersion >= '2.7'
+          if SMBiosAtLeast(SMBios, 2, 7) and LMemDevMappedAddress.HasExtendedAddresses
           then
           begin
             WriteLn(Format('Extended Starting Address  %x',
-              [LMemDevMappedAddress.RAWMemoryDeviceMappedAddressInfo.ExtendedStartingAddress]));
+              [LMemDevMappedAddress.GetExtendedStartingAddress]));
             WriteLn(Format('Extended Ending   Address  %x',
-              [LMemDevMappedAddress.RAWMemoryDeviceMappedAddressInfo.ExtendedEndingAddress]));
+              [LMemDevMappedAddress.GetExtendedEndingAddress]));
           end;
 
           WriteLn;
