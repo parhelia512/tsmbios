@@ -1,7 +1,7 @@
 TSMBIOS
 =========================
 
-![logo](https://github.com/RRUZ/tsmbios/blob/master/images/tsmbios.png) 
+![logo](https://github.com/RRUZ/tsmbios/blob/master/images/TSMBIOS.png) 
 
 Access the System Management BIOS (SMBIOS) using the Object Pascal language (Delphi/Free Pascal). 
 
