@@ -1,8 +1,6 @@
-TSMBIOS
-=========================
-
-![logo](https://github.com/RRUZ/tsmbios/blob/master/images/TSMBIOS.png) 
-
+<p align="center">
+  <img src="https://github.com/RRUZ/tsmbios/blob/master/images/TSMBIOS.png?raw=true" alt="tsmbios"/>
+</p>
 Access the System Management BIOS (SMBIOS) using the Object Pascal language (Delphi/Free Pascal). 
 
 The [SMBIOS](http://www.dmtf.org/standards/smbios) (System Management BIOS) is a standard developed by the  [DMTF](http://www.dmtf.org/). The information stored in the SMBIOS includes devices manufacturer, model name, serial number, BIOS version, asset tag, processors, ports and device memory installed.
