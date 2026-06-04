@@ -5887,7 +5887,11 @@ begin
 
         if Found then
         begin
+{$IFDEF FPC}
+          Result  := Integer(PtrUInt(i) - PtrUInt(@ABuffer[0]));
+{$ELSE}
           Result  := (i - {$IFDEF CPUX64}NativeUInt(@ABuffer[0]){$ELSE}Integer(@ABuffer[0]){$ENDIF});
+{$ENDIF}
           Exit;
         end;
       end;
@@ -6747,6 +6751,9 @@ Var
   Header: TSmBiosTableHeader;
   Entry: TSMBiosTableEntry;
 begin
+{$IFDEF FPC}
+  Result := nil;
+{$ENDIF}
   i := GetSMBiosTablesCount();
   SetLength(Result, i);
   i := 0;
@@ -7066,6 +7073,7 @@ begin;
     if Assigned(FRawSMBIOSData.SMBIOSTableData) then
       FreeMem(FRawSMBIOSData.SMBIOSTableData);
 
+{$IFDEF FPC}{$NOTES OFF}{$ENDIF}
     FRawSMBIOSData.Length := FWbemObject.Size;
     GetMem(FRawSMBIOSData.SMBIOSTableData, FRawSMBIOSData.Length);
     FRawSMBIOSData.DmiRevision := FWbemObject.DmiRevision;
@@ -7085,6 +7093,7 @@ begin;
           FDataString := FDataString + '.';
       end;
     FWbemObject := Unassigned;
+{$IFDEF FPC}{$NOTES ON}{$ENDIF}
   end;
 end;
 {$ENDIF}
@@ -8277,6 +8286,9 @@ end;
 
 function TTPMDeviceInformation.VendorIDStr: AnsiString;
 begin
+{$IFDEF FPC}
+  Result := '';
+{$ENDIF}
   SetLength(Result, 4);
   Move(RAWTPMDeviceInfo^.VendorID[0], Result[1], 4);
 end;
@@ -10194,7 +10206,7 @@ end;
 
 function SMBiosBCDToByte(const Value: Byte): Byte;
 begin
-  Result := ((Value shr 4) * 10) + (Value and $0F);
+  Result := Byte((Word(Value shr 4) * 10) + Word(Value and $0F));
 end;
 
 function SMBiosIsValidBCD(const Value: Byte): Boolean;
