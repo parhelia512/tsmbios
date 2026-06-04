@@ -2,15 +2,11 @@
   <img src="https://github.com/RRUZ/tsmbios/blob/master/images/banner.png?raw=true" alt="tsmbios"/>
 </p>
 
-<p align="center">Access the System Management BIOS (SMBIOS) using the Object Pascal language (Delphi/Free Pascal).</p>
-
-The [SMBIOS](http://www.dmtf.org/standards/smbios) (System Management BIOS) is a standard developed by the  [DMTF](http://www.dmtf.org/). The information stored in the SMBIOS includes devices manufacturer, model name, serial number, BIOS version, asset tag, processors, ports and device memory installed.
-
 ## Features
 
-* Fully documented (XMLDoc), compatible with the Help Insight feature, available since Delphi 2005.
 * Supports SMBIOS Version 2.1 to 3.9.
 * Compatible with Delphi 5 through Delphi 13 Florence.
+* Fully documented (XMLDoc), compatible with the Help Insight feature, available since Delphi 2005.
 * Works with FPC 2.4.0 or later.
 * Supports Windows and Linux.
 * Can read SMBIOS data from remote machines using WMI.
