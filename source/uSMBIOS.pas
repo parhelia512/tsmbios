@@ -6884,14 +6884,16 @@ end;
     var
       Mem: THandle;
       Map: Pointer;
+      FileDescriptor: Integer;
     begin
       Result := false;
       Mem := FileOpen('/dev/mem', fmOpenRead);
-      if Mem <= 0 then
+      if Mem = THandle(-1) then
         RaiseLastOsError
-      else if Mem > 0 then
+      else
         try
-          Map := Mmap(nil, DumpSize, PROT_READ, MAP_SHARED, Mem, $000C0000);
+          FileDescriptor := Integer(Mem);
+          Map := Mmap(nil, DumpSize, PROT_READ, MAP_SHARED, FileDescriptor, $000C0000);
           if Map <> MAP_FAILED then
             try
               AStream.Write(Map^, DumpSize);
@@ -6938,7 +6940,7 @@ var
   MagicNumber: DWORD;
   BytesRead: Integer;
   SMBIOSEntryPoint: TSmBiosEntryPoint;
-  CheckSum: Byte;
+  CheckSum: Integer;
   i: Integer;
   Offset: Integer;
 begin
@@ -6957,7 +6959,7 @@ begin
           CheckSum := 0;
           for i := 0 to SMBIOSEntryPoint.EntryPointLength - 1 do
             CheckSum := CheckSum + PByteArray(@SMBIOSEntryPoint)^[i];
-          if CheckSum <> 0 then
+          if (CheckSum and $FF) <> 0 then
             Continue;
           Offset := SMBIOSEntryPoint.StructureTableAddress - $000C0000;
           if (Offset >= 0) and (Offset < MStream.Size) then
