@@ -1,5 +1,5 @@
-﻿﻿<p align="center">
-  <img src="https://github.com/RRUZ/tsmbios/blob/master/images/TSMBIOS.png?raw=true" alt="tsmbios"/>
+﻿<p align="center">
+  <img src="https://github.com/RRUZ/tsmbios/blob/master/images/banner.png?raw=true" alt="tsmbios"/>
 </p>
 
 <p align="center">Access the System Management BIOS (SMBIOS) using the Object Pascal language (Delphi/Free Pascal).</p>
