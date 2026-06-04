@@ -40,7 +40,7 @@ The [SMBIOS](http://www.dmtf.org/standards/smbios) (System Management BIOS) is a
 * [Memory Device Mapped Address](https://github.com/RRUZ/tsmbios/blob/wiki/MemoryDeviceMappedAddress.md) (Type 20)
 * [Built-in Pointing Device](https://github.com/RRUZ/tsmbios/blob/wiki/BuiltInPointingDevice.md) (Type 21)
 * [Portable Battery](https://github.com/RRUZ/tsmbios/blob/wiki/PortableBattery.md) (Type 22)
-* System Reset (Type 23) - Not Implemented
+* System Reset (Type 23)
 * [Voltage Probe](https://github.com/RRUZ/tsmbios/blob/wiki/VoltageProbe.md) (Type 26)
 * [Cooling Device](https://github.com/RRUZ/tsmbios/blob/wiki/CoolingDevice.md) (Type 27)
 * [Temperature Probe](https://github.com/RRUZ/tsmbios/blob/wiki/TemperatureProbe.md) (Type 28)

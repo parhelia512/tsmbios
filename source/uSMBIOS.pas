@@ -3814,6 +3814,102 @@ type
       { $ENDREGION }
       function GetSBDSDeviceChemistryStr: AnsiString;
   end;
+  { $REGION 'Documentation' }
+  /// <summary>
+  /// This structure describes watchdog reset capabilities and reset-count
+  /// policy for the system.
+  /// </summary>
+  /// <remarks>
+  /// SMBIOS Type 23, System Reset.
+  /// </remarks>
+  { $ENDREGION }
+  TSystemResetInfo = packed record
+    Header: TSmBiosTableHeader;
+    { $REGION 'Documentation' }
+    /// <summary>
+    /// Bit field containing reset status, boot option, boot option on limit,
+    /// and watchdog-timer presence.
+    /// </summary>
+    { $ENDREGION }
+    Capabilities: Byte;
+    { $REGION 'Documentation' }
+    /// <summary>
+    /// Number of resets since the last count reset. FFFFh means unknown.
+    /// </summary>
+    { $ENDREGION }
+    ResetCount: Word;
+    { $REGION 'Documentation' }
+    /// <summary>
+    /// Number of resets that trigger the Boot Option On Limit policy. FFFFh means unknown.
+    /// </summary>
+    { $ENDREGION }
+    ResetLimit: Word;
+    { $REGION 'Documentation' }
+    /// <summary>
+    /// Number of minutes before the watchdog timer expires. FFFFh means unknown.
+    /// </summary>
+    { $ENDREGION }
+    TimerInterval: Word;
+    { $REGION 'Documentation' }
+    /// <summary>
+    /// Number of minutes before a reset timeout condition. FFFFh means unknown.
+    /// </summary>
+    { $ENDREGION }
+    Timeout: Word;
+  end;
+
+  TSystemResetInformation = class
+    public
+      RAWSystemResetInfo: ^TSystemResetInfo;
+      { $REGION 'Documentation' }
+      /// <summary>
+      /// Returns True when the reset mechanism is enabled by the user.
+      /// </summary>
+      { $ENDREGION }
+      function ResetEnabledByUser: Boolean;
+      { $REGION 'Documentation' }
+      /// <summary>
+      /// Returns the boot option encoded in Capabilities bits 2:1.
+      /// </summary>
+      { $ENDREGION }
+      function GetBootOptionStr: AnsiString;
+      { $REGION 'Documentation' }
+      /// <summary>
+      /// Returns the boot option on reset-limit condition encoded in Capabilities bits 4:3.
+      /// </summary>
+      { $ENDREGION }
+      function GetBootOptionOnLimitStr: AnsiString;
+      { $REGION 'Documentation' }
+      /// <summary>
+      /// Returns True when the system contains a watchdog timer.
+      /// </summary>
+      { $ENDREGION }
+      function ContainsWatchdogTimer: Boolean;
+      { $REGION 'Documentation' }
+      /// <summary>
+      /// Returns ResetCount as text, using Unknown when the raw value is FFFFh.
+      /// </summary>
+      { $ENDREGION }
+      function GetResetCountStr: AnsiString;
+      { $REGION 'Documentation' }
+      /// <summary>
+      /// Returns ResetLimit as text, using Unknown when the raw value is FFFFh.
+      /// </summary>
+      { $ENDREGION }
+      function GetResetLimitStr: AnsiString;
+      { $REGION 'Documentation' }
+      /// <summary>
+      /// Returns TimerInterval as text, using Unknown when the raw value is FFFFh.
+      /// </summary>
+      { $ENDREGION }
+      function GetTimerIntervalStr: AnsiString;
+      { $REGION 'Documentation' }
+      /// <summary>
+      /// Returns Timeout as text, using Unknown when the raw value is FFFFh.
+      /// </summary>
+      { $ENDREGION }
+      function GetTimeoutStr: AnsiString;
+  end;
 
   { $REGION 'Documentation' }
   /// <summary>
@@ -4354,6 +4450,7 @@ type
   ArrPhysicalMemoryArrayInfo = Array of TPhysicalMemoryArrayInformation;
   ArrMemoryDeviceInfo = Array of TMemoryDeviceInformation;
   ArrBatteryInfo = Array of TBatteryInformation;
+  ArrSystemResetInfo = Array of TSystemResetInformation;
   ArrMemoryArrayMappedAddressInfo = Array of TMemoryArrayMappedAddressInformation;
   ArrMemoryDeviceMappedAddressInfo = Array of TMemoryDeviceMappedAddressInformation;
   ArrBuiltInPointingDeviceInfo = Array of TBuiltInPointingDeviceInformation;
@@ -4391,6 +4488,7 @@ type
       FPhysicalMemoryArrayInfo: {$IFDEF NOGENERICS}ArrPhysicalMemoryArrayInfo; {$ELSE}TArray<TPhysicalMemoryArrayInformation>;{$ENDIF}
       FMemoryDeviceInfo: {$IFDEF NOGENERICS}ArrMemoryDeviceInfo; {$ELSE}TArray<TMemoryDeviceInformation>;{$ENDIF}
       FBatteryInformation: {$IFDEF NOGENERICS}ArrBatteryInfo; {$ELSE}TArray<TBatteryInformation>;{$ENDIF}
+      FSystemResetInformation: {$IFDEF NOGENERICS}ArrSystemResetInfo; {$ELSE}TArray<TSystemResetInformation>;{$ENDIF}
       FMemoryArrayMappedAddressInformation: {$IFDEF NOGENERICS}ArrMemoryArrayMappedAddressInfo; {$ELSE}TArray<TMemoryArrayMappedAddressInformation>;{$ENDIF}
       FMemoryDeviceMappedAddressInformation: {$IFDEF NOGENERICS}ArrMemoryDeviceMappedAddressInfo; {$ELSE}TArray<TMemoryDeviceMappedAddressInformation>;{$ENDIF}
       FBuiltInPointingDeviceInformation: {$IFDEF NOGENERICS}ArrBuiltInPointingDeviceInfo; {$ELSE}TArray<TBuiltInPointingDeviceInformation>;{$ENDIF}
@@ -4438,6 +4536,7 @@ type
       function GetHasPhysicalMemoryArrayInfo: Boolean;
       function GetHasMemoryDeviceInfo: Boolean;
       function GetHasBatteryInfo: Boolean;
+      function GetHasSystemResetInfo: Boolean;
       function GetHasMemoryArrayMappedAddressInfo: Boolean;
       function GetHasMemoryDeviceMappedAddressInfo: Boolean;
       function GetHasBuiltInPointingDeviceInfo: Boolean;
@@ -4572,6 +4671,9 @@ type
 
       property BatteryInformation: {$IFDEF NOGENERICS} ArrBatteryInfo {$ELSE} TArray<TBatteryInformation> {$ENDIF} read FBatteryInformation;
       property HasBatteryInfo: Boolean read GetHasBatteryInfo;
+
+      property SystemResetInformation: {$IFDEF NOGENERICS} ArrSystemResetInfo {$ELSE} TArray<TSystemResetInformation> {$ENDIF} read FSystemResetInformation;
+      property HasSystemResetInfo: Boolean read GetHasSystemResetInfo;
 
       property MemoryArrayMappedAddressInformation: {$IFDEF NOGENERICS} ArrMemoryArrayMappedAddressInfo {$ELSE} TArray<TMemoryArrayMappedAddressInformation> {$ENDIF} read FMemoryArrayMappedAddressInformation;
       property HasMemoryArrayMappedAddressInfo: Boolean read GetHasMemoryArrayMappedAddressInfo;
@@ -4936,6 +5038,9 @@ begin
   for i := 0 to Length(FMemoryDeviceMappedAddressInformation) - 1 do
     FMemoryDeviceMappedAddressInformation[i].Free;
 
+  for i := 0 to Length(FSystemResetInformation) - 1 do
+    FSystemResetInformation[i].Free;
+
   for i := 0 to Length(FBatteryInformation) - 1 do
     FBatteryInformation[i].Free;
 
@@ -4987,6 +5092,7 @@ begin
   FMemoryArrayMappedAddressInformation := nil;
   FMemoryDeviceMappedAddressInformation := nil;
   FBatteryInformation := nil;
+  FSystemResetInformation := nil;
   FBIOSLanguageInfo := nil;
   FBaseBoardInfo := nil;
   FMemoryControllerInfo := nil;
@@ -5123,6 +5229,11 @@ end;
 function TSMBios.GetHasBatteryInfo: Boolean;
 begin
   Result := Length(FBatteryInformation) > 0;
+end;
+
+function TSMBios.GetHasSystemResetInfo: Boolean;
+begin
+  Result := Length(FSystemResetInformation) > 0;
 end;
 
 function TSMBios.GetHasBIOSLanguageInfo: Boolean;
@@ -6076,6 +6187,20 @@ begin
       end;
     until (LIndex = - 1);
 
+
+  SetLength(FSystemResetInformation, GetSMBiosTableEntries(SystemReset));
+  i := 0;
+  LIndex := - 1;
+  if Length(FSystemResetInformation) > 0 then
+    repeat
+      LIndex := GetSMBiosTableNextIndex(SystemReset, LIndex);
+      if LIndex >= 0 then
+      begin
+        FSystemResetInformation[i] := TSystemResetInformation.Create;
+        FSystemResetInformation[i].RAWSystemResetInfo := @RawSMBIOSData.SMBIOSTableData^[LIndex];
+        inc(i);
+      end;
+    until (LIndex = - 1);
   SetLength(FMemoryArrayMappedAddressInformation, GetSMBiosTableEntries(MemoryArrayMappedAddress));
   i := 0;
   LIndex := - 1;
@@ -8435,6 +8560,71 @@ begin
   Result := GetSMBiosString(@RAWBatteryInfo^, RAWBatteryInfo^.Header.Length, RAWBatteryInfo^.SerialNumber);
 end;
 
+{ TSystemResetInformation }
+
+function SystemResetBootOptionToStr(const Value: Byte): AnsiString;
+begin
+  case Value of
+    $00 :
+      Result := 'Reserved';
+    $01 :
+      Result := 'Operating system';
+    $02 :
+      Result := 'System utilities';
+    $03 :
+      Result := 'Do not reboot';
+    else
+      Result := 'Unknown';
+  end;
+end;
+
+function SystemResetWordToStr(const Value: Word): AnsiString;
+begin
+  if Value = $FFFF then
+    Result := 'Unknown'
+  else
+    Result := AnsiString(IntToStr(Value));
+end;
+
+function TSystemResetInformation.ContainsWatchdogTimer: Boolean;
+begin
+  Result := (RAWSystemResetInfo^.Capabilities and $20) <> 0;
+end;
+
+function TSystemResetInformation.GetBootOptionOnLimitStr: AnsiString;
+begin
+  Result := SystemResetBootOptionToStr((RAWSystemResetInfo^.Capabilities shr 3) and $03);
+end;
+
+function TSystemResetInformation.GetBootOptionStr: AnsiString;
+begin
+  Result := SystemResetBootOptionToStr((RAWSystemResetInfo^.Capabilities shr 1) and $03);
+end;
+
+function TSystemResetInformation.GetResetCountStr: AnsiString;
+begin
+  Result := SystemResetWordToStr(RAWSystemResetInfo^.ResetCount);
+end;
+
+function TSystemResetInformation.GetResetLimitStr: AnsiString;
+begin
+  Result := SystemResetWordToStr(RAWSystemResetInfo^.ResetLimit);
+end;
+
+function TSystemResetInformation.GetTimeoutStr: AnsiString;
+begin
+  Result := SystemResetWordToStr(RAWSystemResetInfo^.Timeout);
+end;
+
+function TSystemResetInformation.GetTimerIntervalStr: AnsiString;
+begin
+  Result := SystemResetWordToStr(RAWSystemResetInfo^.TimerInterval);
+end;
+
+function TSystemResetInformation.ResetEnabledByUser: Boolean;
+begin
+  Result := (RAWSystemResetInfo^.Capabilities and $01) <> 0;
+end;
 { TBuiltInPointingDeviceInformation }
 
 function TBuiltInPointingDeviceInformation.GetInterface: string;
