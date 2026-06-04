@@ -3913,6 +3913,137 @@ type
 
   { $REGION 'Documentation' }
   /// <summary>
+  /// This structure reports security settings for hardware features and system passwords.
+  /// </summary>
+  /// <remarks>
+  /// SMBIOS Type 24, Hardware Security. This structure was added in SMBIOS 2.2.
+  /// </remarks>
+  { $ENDREGION }
+  THardwareSecurityInfo = packed record
+    Header: TSmBiosTableHeader;
+    { $REGION 'Documentation' }
+    /// <summary>
+    /// Bit field containing front-panel reset, administrator password, keyboard password,
+    /// and power-on password status values.
+    /// </summary>
+    { $ENDREGION }
+    HardwareSecuritySettings: Byte;
+  end;
+
+  THardwareSecurityInformation = class
+    public
+      RAWHardwareSecurityInfo: ^THardwareSecurityInfo;
+      { $REGION 'Documentation' }
+      /// <summary>
+      /// Returns the status encoded in HardwareSecuritySettings bits 1:0.
+      /// </summary>
+      { $ENDREGION }
+      function GetFrontPanelResetStatusStr: AnsiString;
+      { $REGION 'Documentation' }
+      /// <summary>
+      /// Returns the status encoded in HardwareSecuritySettings bits 3:2.
+      /// </summary>
+      { $ENDREGION }
+      function GetAdministratorPasswordStatusStr: AnsiString;
+      { $REGION 'Documentation' }
+      /// <summary>
+      /// Returns the status encoded in HardwareSecuritySettings bits 5:4.
+      /// </summary>
+      { $ENDREGION }
+      function GetKeyboardPasswordStatusStr: AnsiString;
+      { $REGION 'Documentation' }
+      /// <summary>
+      /// Returns the status encoded in HardwareSecuritySettings bits 7:6.
+      /// </summary>
+      { $ENDREGION }
+      function GetPowerOnPasswordStatusStr: AnsiString;
+  end;
+
+  { $REGION 'Documentation' }
+  /// <summary>
+  /// This structure reports the next scheduled power-on date and time.
+  /// </summary>
+  /// <remarks>
+  /// SMBIOS Type 25, System Power Controls. This structure was added in SMBIOS 2.2.
+  /// </remarks>
+  { $ENDREGION }
+  TSystemPowerControlsInfo = packed record
+    Header: TSmBiosTableHeader;
+    { $REGION 'Documentation' }
+    /// <summary>
+    /// BCD month for the next scheduled power-on time.
+    /// </summary>
+    { $ENDREGION }
+    NextScheduledPowerOnMonth: Byte;
+    { $REGION 'Documentation' }
+    /// <summary>
+    /// BCD day of month for the next scheduled power-on time.
+    /// </summary>
+    { $ENDREGION }
+    NextScheduledPowerOnDayOfMonth: Byte;
+    { $REGION 'Documentation' }
+    /// <summary>
+    /// BCD hour for the next scheduled power-on time.
+    /// </summary>
+    { $ENDREGION }
+    NextScheduledPowerOnHour: Byte;
+    { $REGION 'Documentation' }
+    /// <summary>
+    /// BCD minute for the next scheduled power-on time.
+    /// </summary>
+    { $ENDREGION }
+    NextScheduledPowerOnMinute: Byte;
+    { $REGION 'Documentation' }
+    /// <summary>
+    /// BCD second for the next scheduled power-on time.
+    /// </summary>
+    { $ENDREGION }
+    NextScheduledPowerOnSecond: Byte;
+  end;
+
+  TSystemPowerControlsInformation = class
+    public
+      RAWSystemPowerControlsInfo: ^TSystemPowerControlsInfo;
+      { $REGION 'Documentation' }
+      /// <summary>
+      /// Returns True when all scheduled power-on fields contain valid BCD digits.
+      /// </summary>
+      { $ENDREGION }
+      function HasValidScheduledPowerOnTime: Boolean;
+      { $REGION 'Documentation' }
+      /// <summary>
+      /// Returns the BCD month converted to an integer value.
+      /// </summary>
+      { $ENDREGION }
+      function GetNextScheduledPowerOnMonth: Byte;
+      { $REGION 'Documentation' }
+      /// <summary>
+      /// Returns the BCD day of month converted to an integer value.
+      /// </summary>
+      { $ENDREGION }
+      function GetNextScheduledPowerOnDayOfMonth: Byte;
+      { $REGION 'Documentation' }
+      /// <summary>
+      /// Returns the BCD hour converted to an integer value.
+      /// </summary>
+      { $ENDREGION }
+      function GetNextScheduledPowerOnHour: Byte;
+      { $REGION 'Documentation' }
+      /// <summary>
+      /// Returns the BCD minute converted to an integer value.
+      /// </summary>
+      { $ENDREGION }
+      function GetNextScheduledPowerOnMinute: Byte;
+      { $REGION 'Documentation' }
+      /// <summary>
+      /// Returns the BCD second converted to an integer value.
+      /// </summary>
+      { $ENDREGION }
+      function GetNextScheduledPowerOnSecond: Byte;
+  end;
+
+  { $REGION 'Documentation' }
+  /// <summary>
   /// This describes the attributes for a voltage probe in the system. Each
   /// structure describes a single voltage probe.
   /// </summary>
@@ -4655,6 +4786,8 @@ type
   ArrMemoryDeviceInfo = Array of TMemoryDeviceInformation;
   ArrBatteryInfo = Array of TBatteryInformation;
   ArrSystemResetInfo = Array of TSystemResetInformation;
+  ArrHardwareSecurityInfo = Array of THardwareSecurityInformation;
+  ArrSystemPowerControlsInfo = Array of TSystemPowerControlsInformation;
   ArrMemoryArrayMappedAddressInfo = Array of TMemoryArrayMappedAddressInformation;
   ArrMemoryDeviceMappedAddressInfo = Array of TMemoryDeviceMappedAddressInformation;
   ArrBuiltInPointingDeviceInfo = Array of TBuiltInPointingDeviceInformation;
@@ -4696,6 +4829,8 @@ type
       FMemoryDeviceInfo: {$IFDEF NOGENERICS}ArrMemoryDeviceInfo; {$ELSE}TArray<TMemoryDeviceInformation>;{$ENDIF}
       FBatteryInformation: {$IFDEF NOGENERICS}ArrBatteryInfo; {$ELSE}TArray<TBatteryInformation>;{$ENDIF}
       FSystemResetInformation: {$IFDEF NOGENERICS}ArrSystemResetInfo; {$ELSE}TArray<TSystemResetInformation>;{$ENDIF}
+      FHardwareSecurityInformation: {$IFDEF NOGENERICS}ArrHardwareSecurityInfo; {$ELSE}TArray<THardwareSecurityInformation>;{$ENDIF}
+      FSystemPowerControlsInformation: {$IFDEF NOGENERICS}ArrSystemPowerControlsInfo; {$ELSE}TArray<TSystemPowerControlsInformation>;{$ENDIF}
       FMemoryArrayMappedAddressInformation: {$IFDEF NOGENERICS}ArrMemoryArrayMappedAddressInfo; {$ELSE}TArray<TMemoryArrayMappedAddressInformation>;{$ENDIF}
       FMemoryDeviceMappedAddressInformation: {$IFDEF NOGENERICS}ArrMemoryDeviceMappedAddressInfo; {$ELSE}TArray<TMemoryDeviceMappedAddressInformation>;{$ENDIF}
       FBuiltInPointingDeviceInformation: {$IFDEF NOGENERICS}ArrBuiltInPointingDeviceInfo; {$ELSE}TArray<TBuiltInPointingDeviceInformation>;{$ENDIF}
@@ -4747,6 +4882,8 @@ type
       function GetHasMemoryDeviceInfo: Boolean;
       function GetHasBatteryInfo: Boolean;
       function GetHasSystemResetInfo: Boolean;
+      function GetHasHardwareSecurityInfo: Boolean;
+      function GetHasSystemPowerControlsInfo: Boolean;
       function GetHasMemoryArrayMappedAddressInfo: Boolean;
       function GetHasMemoryDeviceMappedAddressInfo: Boolean;
       function GetHasBuiltInPointingDeviceInfo: Boolean;
@@ -4887,6 +5024,12 @@ type
 
       property SystemResetInformation: {$IFDEF NOGENERICS} ArrSystemResetInfo {$ELSE} TArray<TSystemResetInformation> {$ENDIF} read FSystemResetInformation;
       property HasSystemResetInfo: Boolean read GetHasSystemResetInfo;
+
+      property HardwareSecurityInformation: {$IFDEF NOGENERICS} ArrHardwareSecurityInfo {$ELSE} TArray<THardwareSecurityInformation> {$ENDIF} read FHardwareSecurityInformation;
+      property HasHardwareSecurityInfo: Boolean read GetHasHardwareSecurityInfo;
+
+      property SystemPowerControlsInformation: {$IFDEF NOGENERICS} ArrSystemPowerControlsInfo {$ELSE} TArray<TSystemPowerControlsInformation> {$ENDIF} read FSystemPowerControlsInformation;
+      property HasSystemPowerControlsInfo: Boolean read GetHasSystemPowerControlsInfo;
 
       property MemoryArrayMappedAddressInformation: {$IFDEF NOGENERICS} ArrMemoryArrayMappedAddressInfo {$ELSE} TArray<TMemoryArrayMappedAddressInformation> {$ENDIF} read FMemoryArrayMappedAddressInformation;
       property HasMemoryArrayMappedAddressInfo: Boolean read GetHasMemoryArrayMappedAddressInfo;
@@ -5272,6 +5415,12 @@ begin
   for i := 0 to Length(FSystemResetInformation) - 1 do
     FSystemResetInformation[i].Free;
 
+  for i := 0 to Length(FHardwareSecurityInformation) - 1 do
+    FHardwareSecurityInformation[i].Free;
+
+  for i := 0 to Length(FSystemPowerControlsInformation) - 1 do
+    FSystemPowerControlsInformation[i].Free;
+
   for i := 0 to Length(FBatteryInformation) - 1 do
     FBatteryInformation[i].Free;
 
@@ -5327,6 +5476,8 @@ begin
   FMemoryDeviceMappedAddressInformation := nil;
   FBatteryInformation := nil;
   FSystemResetInformation := nil;
+  FHardwareSecurityInformation := nil;
+  FSystemPowerControlsInformation := nil;
   FBIOSLanguageInfo := nil;
   FBaseBoardInfo := nil;
   FMemoryControllerInfo := nil;
@@ -5468,6 +5619,16 @@ end;
 function TSMBios.GetHasSystemResetInfo: Boolean;
 begin
   Result := Length(FSystemResetInformation) > 0;
+end;
+
+function TSMBios.GetHasHardwareSecurityInfo: Boolean;
+begin
+  Result := Length(FHardwareSecurityInformation) > 0;
+end;
+
+function TSMBios.GetHasSystemPowerControlsInfo: Boolean;
+begin
+  Result := Length(FSystemPowerControlsInformation) > 0;
 end;
 
 function TSMBios.GetHasBIOSLanguageInfo: Boolean;
@@ -6450,6 +6611,35 @@ begin
         inc(i);
       end;
     until (LIndex = - 1);
+
+  SetLength(FHardwareSecurityInformation, GetSMBiosTableEntries(HardwareSecurity));
+  i := 0;
+  LIndex := - 1;
+  if Length(FHardwareSecurityInformation) > 0 then
+    repeat
+      LIndex := GetSMBiosTableNextIndex(HardwareSecurity, LIndex);
+      if LIndex >= 0 then
+      begin
+        FHardwareSecurityInformation[i] := THardwareSecurityInformation.Create;
+        FHardwareSecurityInformation[i].RAWHardwareSecurityInfo := @RawSMBIOSData.SMBIOSTableData^[LIndex];
+        inc(i);
+      end;
+    until (LIndex = - 1);
+
+  SetLength(FSystemPowerControlsInformation, GetSMBiosTableEntries(SystemPowerControls));
+  i := 0;
+  LIndex := - 1;
+  if Length(FSystemPowerControlsInformation) > 0 then
+    repeat
+      LIndex := GetSMBiosTableNextIndex(SystemPowerControls, LIndex);
+      if LIndex >= 0 then
+      begin
+        FSystemPowerControlsInformation[i] := TSystemPowerControlsInformation.Create;
+        FSystemPowerControlsInformation[i].RAWSystemPowerControlsInfo := @RawSMBIOSData.SMBIOSTableData^[LIndex];
+        inc(i);
+      end;
+    until (LIndex = - 1);
+
   SetLength(FMemoryArrayMappedAddressInformation, GetSMBiosTableEntries(MemoryArrayMappedAddress));
   i := 0;
   LIndex := - 1;
@@ -8283,6 +8473,85 @@ function TSystemResetInformation.ResetEnabledByUser: Boolean;
 begin
   Result := (RAWSystemResetInfo^.Capabilities and $01) <> 0;
 end;
+{ THardwareSecurityInformation }
+
+function HardwareSecurityStatusToStr(const Value: Byte): AnsiString;
+begin
+  case Value of
+    $00 : Result := 'Disabled';
+    $01 : Result := 'Enabled';
+    $02 : Result := 'Not implemented';
+    $03 : Result := 'Unknown';
+    else Result := 'Reserved';
+  end;
+end;
+
+function THardwareSecurityInformation.GetAdministratorPasswordStatusStr: AnsiString;
+begin
+  Result := HardwareSecurityStatusToStr((RAWHardwareSecurityInfo^.HardwareSecuritySettings shr 2) and $03);
+end;
+
+function THardwareSecurityInformation.GetFrontPanelResetStatusStr: AnsiString;
+begin
+  Result := HardwareSecurityStatusToStr(RAWHardwareSecurityInfo^.HardwareSecuritySettings and $03);
+end;
+
+function THardwareSecurityInformation.GetKeyboardPasswordStatusStr: AnsiString;
+begin
+  Result := HardwareSecurityStatusToStr((RAWHardwareSecurityInfo^.HardwareSecuritySettings shr 4) and $03);
+end;
+
+function THardwareSecurityInformation.GetPowerOnPasswordStatusStr: AnsiString;
+begin
+  Result := HardwareSecurityStatusToStr((RAWHardwareSecurityInfo^.HardwareSecuritySettings shr 6) and $03);
+end;
+
+{ TSystemPowerControlsInformation }
+
+function SMBiosBCDToByte(const Value: Byte): Byte;
+begin
+  Result := ((Value shr 4) * 10) + (Value and $0F);
+end;
+
+function SMBiosIsValidBCD(const Value: Byte): Boolean;
+begin
+  Result := ((Value shr 4) <= 9) and ((Value and $0F) <= 9);
+end;
+
+function TSystemPowerControlsInformation.GetNextScheduledPowerOnDayOfMonth: Byte;
+begin
+  Result := SMBiosBCDToByte(RAWSystemPowerControlsInfo^.NextScheduledPowerOnDayOfMonth);
+end;
+
+function TSystemPowerControlsInformation.GetNextScheduledPowerOnHour: Byte;
+begin
+  Result := SMBiosBCDToByte(RAWSystemPowerControlsInfo^.NextScheduledPowerOnHour);
+end;
+
+function TSystemPowerControlsInformation.GetNextScheduledPowerOnMinute: Byte;
+begin
+  Result := SMBiosBCDToByte(RAWSystemPowerControlsInfo^.NextScheduledPowerOnMinute);
+end;
+
+function TSystemPowerControlsInformation.GetNextScheduledPowerOnMonth: Byte;
+begin
+  Result := SMBiosBCDToByte(RAWSystemPowerControlsInfo^.NextScheduledPowerOnMonth);
+end;
+
+function TSystemPowerControlsInformation.GetNextScheduledPowerOnSecond: Byte;
+begin
+  Result := SMBiosBCDToByte(RAWSystemPowerControlsInfo^.NextScheduledPowerOnSecond);
+end;
+
+function TSystemPowerControlsInformation.HasValidScheduledPowerOnTime: Boolean;
+begin
+  Result := SMBiosIsValidBCD(RAWSystemPowerControlsInfo^.NextScheduledPowerOnMonth) and
+            SMBiosIsValidBCD(RAWSystemPowerControlsInfo^.NextScheduledPowerOnDayOfMonth) and
+            SMBiosIsValidBCD(RAWSystemPowerControlsInfo^.NextScheduledPowerOnHour) and
+            SMBiosIsValidBCD(RAWSystemPowerControlsInfo^.NextScheduledPowerOnMinute) and
+            SMBiosIsValidBCD(RAWSystemPowerControlsInfo^.NextScheduledPowerOnSecond);
+end;
+
 { TBuiltInPointingDeviceInformation }
 
 function TBuiltInPointingDeviceInformation.GetInterface: string;
