@@ -4481,6 +4481,61 @@ type
   end;
   { $REGION 'Documentation' }
   /// <summary>
+  /// This structure describes system boot status information.
+  /// </summary>
+  /// <remarks>
+  /// SMBIOS Type 32, System Boot Information. This structure was added in SMBIOS 2.3.
+  /// </remarks>
+  { $ENDREGION }
+  TSystemBootInfo = packed record
+    Header: TSmBiosTableHeader;
+    { $REGION 'Documentation' }
+    /// <summary>
+    /// Reserved bytes. This field must be set to zero.
+    /// </summary>
+    /// <remarks>
+    /// 2.3+
+    /// </remarks>
+    { $ENDREGION }
+    Reserved: array [0 .. 5] of Byte;
+    { $REGION 'Documentation' }
+    /// <summary>
+    /// Boot status bit field. Bits 3:0 encode the boot status value.
+    /// </summary>
+    /// <remarks>
+    /// 2.3+
+    /// </remarks>
+    { $ENDREGION }
+    BootStatus: Byte;
+    { $REGION 'Documentation' }
+    /// <summary>
+    /// Additional boot status data bytes. The interpretation depends on the BootStatus value.
+    /// </summary>
+    /// <remarks>
+    /// 2.3+
+    /// </remarks>
+    { $ENDREGION }
+    BootStatusAdditionalData: array [0 .. 8] of Byte;
+  end;
+
+  TSystemBootInformation = class
+    public
+      RAWSystemBootInfo: ^TSystemBootInfo;
+      { $REGION 'Documentation' }
+      /// <summary>
+      /// Get the string representation of the BootStatus field bits 3:0.
+      /// </summary>
+      { $ENDREGION }
+      function GetBootStatusStr: AnsiString;
+      { $REGION 'Documentation' }
+      /// <summary>
+      /// Get a byte from the BootStatusAdditionalData field. Returns 0 when Index is out of range.
+      /// </summary>
+      { $ENDREGION }
+      function GetBootStatusAdditionalDataByte(const Index: Integer): Byte;
+  end;
+  { $REGION 'Documentation' }
+  /// <summary>
   /// This structure describes a 64-bit memory error condition.
   /// </summary>
   /// <remarks>
@@ -4608,6 +4663,7 @@ type
   ArrTemperatureProbeInfo = Array of TTemperatureProbeInformation;
   ArrElectricalCurrentProbeInfo = Array of TElectricalCurrentProbeInformation;
   ArrOutOfBandRemoteAccessInfo = Array of TOutOfBandRemoteAccessInformation;
+  ArrSystemBootInfo = Array of TSystemBootInformation;
   Arrx64BitMemoryErrorInfo = Array of Tx64BitMemoryErrorInformation;
   ArrOnBoardSystemInfo = Array of TOnBoardSystemInformation;
   ArrMemoryControllerInfo = Array of TMemoryControllerInformation;
@@ -4648,6 +4704,7 @@ type
       FTemperatureProbeInformation: {$IFDEF NOGENERICS}ArrTemperatureProbeInfo; {$ELSE}TArray<TTemperatureProbeInformation>;{$ENDIF}
       FElectricalCurrentProbeInformation: {$IFDEF NOGENERICS}ArrElectricalCurrentProbeInfo; {$ELSE}TArray<TElectricalCurrentProbeInformation>;{$ENDIF}
       FOutOfBandRemoteAccessInformation: {$IFDEF NOGENERICS}ArrOutOfBandRemoteAccessInfo; {$ELSE}TArray<TOutOfBandRemoteAccessInformation>;{$ENDIF}
+      FSystemBootInformation: {$IFDEF NOGENERICS}ArrSystemBootInfo; {$ELSE}TArray<TSystemBootInformation>;{$ENDIF}
       Fx64BitMemoryErrorInformation: {$IFDEF NOGENERICS}Arrx64BitMemoryErrorInfo; {$ELSE}TArray<Tx64BitMemoryErrorInformation>;{$ENDIF}
       FOnBoardSystemInfo: {$IFDEF NOGENERICS}ArrOnBoardSystemInfo; {$ELSE} TArray<TOnBoardSystemInformation>; {$ENDIF}
       FMemoryControllerInfo: {$IFDEF NOGENERICS}ArrMemoryControllerInfo;{$ELSE} TArray<TMemoryControllerInformation>; {$ENDIF}
@@ -4698,6 +4755,7 @@ type
       function GetHasTemperatureProbeInfo: Boolean;
       function GetHasElectricalCurrentProbeInfo: Boolean;
       function GetHasOutOfBandRemoteAccessInfo: Boolean;
+      function GetHasSystemBootInfo: Boolean;
       function GetHasx64BitMemoryErrorInfo: Boolean;
       function GetHasOnBoardSystemInfo: Boolean;
       function GetHasMemoryControllerInfo: Boolean;
@@ -4853,6 +4911,9 @@ type
 
       property OutOfBandRemoteAccessInformation: {$IFDEF NOGENERICS} ArrOutOfBandRemoteAccessInfo {$ELSE} TArray<TOutOfBandRemoteAccessInformation> {$ENDIF} read FOutOfBandRemoteAccessInformation;
       property HasOutOfBandRemoteAccessInfo: Boolean read GetHasOutOfBandRemoteAccessInfo;
+
+      property SystemBootInfo: {$IFDEF NOGENERICS} ArrSystemBootInfo {$ELSE} TArray<TSystemBootInformation> {$ENDIF} read FSystemBootInformation;
+      property HasSystemBootInfo: Boolean read GetHasSystemBootInfo;
 
       property x64BitMemoryErrorInfo: {$IFDEF NOGENERICS} Arrx64BitMemoryErrorInfo {$ELSE} TArray<Tx64BitMemoryErrorInformation> {$ENDIF} read Fx64BitMemoryErrorInformation;
       property Hasx64BitMemoryErrorInfo: Boolean read GetHasx64BitMemoryErrorInfo;
@@ -5181,6 +5242,9 @@ begin
   for i := 0 to Length(FOutOfBandRemoteAccessInformation) - 1 do
     FOutOfBandRemoteAccessInformation[i].Free;
 
+  for i := 0 to Length(FSystemBootInformation) - 1 do
+    FSystemBootInformation[i].Free;
+
   for i := 0 to Length(Fx64BitMemoryErrorInformation) - 1 do
     Fx64BitMemoryErrorInformation[i].Free;
 
@@ -5252,6 +5316,7 @@ begin
   FOnBoardSystemInfo := nil;
   FElectricalCurrentProbeInformation := nil;
   FOutOfBandRemoteAccessInformation := nil;
+  FSystemBootInformation := nil;
   Fx64BitMemoryErrorInformation := nil;
   FTemperatureProbeInformation := nil;
   FCoolingDeviceInformation := nil;
@@ -5433,6 +5498,11 @@ end;
 function TSMBios.GetHasOutOfBandRemoteAccessInfo: Boolean;
 begin
   Result := Length(FOutOfBandRemoteAccessInformation) > 0;
+end;
+
+function TSMBios.GetHasSystemBootInfo: Boolean;
+begin
+  Result := Length(FSystemBootInformation) > 0;
 end;
 
 function TSMBios.GetHasx64BitMemoryErrorInfo: Boolean;
@@ -6492,6 +6562,19 @@ begin
       end;
     until (LIndex = - 1);
 
+  SetLength(FSystemBootInformation, GetSMBiosTableEntries(SystemBootInformation));
+  i := 0;
+  LIndex := - 1;
+  if Length(FSystemBootInformation) > 0 then
+    repeat
+      LIndex := GetSMBiosTableNextIndex(SystemBootInformation, LIndex);
+      if LIndex >= 0 then
+      begin
+        FSystemBootInformation[i] := TSystemBootInformation.Create;
+        FSystemBootInformation[i].RAWSystemBootInfo := @RawSMBIOSData.SMBIOSTableData^[LIndex];
+        inc(i);
+      end;
+    until (LIndex = - 1);
   SetLength(Fx64BitMemoryErrorInformation, GetSMBiosTableEntries(x64BitMemoryErrorInformation));
   i := 0;
   LIndex := - 1;
@@ -8541,6 +8624,37 @@ begin
   Result := (RAWOutOfBandRemoteAccessInfo^.Connections and $02) <> 0;
 end;
 
+{ TSystemBootInformation }
+
+function SMBiosSystemBootStatusToStr(const Value: Byte): AnsiString;
+begin
+  case Value of
+    $00 : Result := 'No errors detected';
+    $01 : Result := 'No bootable media';
+    $02 : Result := 'The normal operating system failed to load';
+    $03 : Result := 'Firmware-detected hardware failure including unknown failure types';
+    $04 : Result := 'Operating system-detected hardware failure';
+    $05 : Result := 'User-requested boot usually via keystroke';
+    $06 : Result := 'System security violation';
+    $07 : Result := 'Previously requested image';
+    $08 : Result := 'A system watchdog timer expired causing the system to reboot';
+    else
+      Result := 'Unknown';
+  end;
+end;
+
+function TSystemBootInformation.GetBootStatusAdditionalDataByte(const Index: Integer): Byte;
+begin
+  if (Index >= Low(RAWSystemBootInfo^.BootStatusAdditionalData)) and (Index <= High(RAWSystemBootInfo^.BootStatusAdditionalData)) then
+    Result := RAWSystemBootInfo^.BootStatusAdditionalData[Index]
+  else
+    Result := 0;
+end;
+
+function TSystemBootInformation.GetBootStatusStr: AnsiString;
+begin
+  Result := SMBiosSystemBootStatusToStr(RAWSystemBootInfo^.BootStatus and $0F);
+end;
 { Tx64BitMemoryErrorInformation }
 
 function SMBiosMemoryErrorGranularityToStr(const Value: Byte): AnsiString;
