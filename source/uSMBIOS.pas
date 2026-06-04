@@ -4427,6 +4427,58 @@ type
       { $ENDREGION }
       function GetNominalValue: Word;
   end;
+  { $REGION 'Documentation' }
+  /// <summary>
+  /// This structure describes out-of-band remote-access connection capabilities.
+  /// </summary>
+  /// <remarks>
+  /// SMBIOS Type 30, Out-of-Band Remote Access. This structure was added in SMBIOS 2.2.
+  /// </remarks>
+  { $ENDREGION }
+  TOutOfBandRemoteAccessInfo = packed record
+    Header: TSmBiosTableHeader;
+    { $REGION 'Documentation' }
+    /// <summary>
+    /// String number for the manufacturer name.
+    /// </summary>
+    /// <remarks>
+    /// 2.2+
+    /// </remarks>
+    { $ENDREGION }
+    ManufacturerName: Byte;
+    { $REGION 'Documentation' }
+    /// <summary>
+    /// Bit field that identifies enabled inbound and outbound out-of-band connections.
+    /// </summary>
+    /// <remarks>
+    /// 2.2+. Bit 0 indicates inbound connection enabled; bit 1 indicates outbound connection enabled.
+    /// </remarks>
+    { $ENDREGION }
+    Connections: Byte;
+  end;
+
+  TOutOfBandRemoteAccessInformation = class
+    public
+      RAWOutOfBandRemoteAccessInfo: ^TOutOfBandRemoteAccessInfo;
+      { $REGION 'Documentation' }
+      /// <summary>
+      /// Get the string representation of the ManufacturerName field.
+      /// </summary>
+      { $ENDREGION }
+      function GetManufacturerNameStr: AnsiString;
+      { $REGION 'Documentation' }
+      /// <summary>
+      /// Returns True when Connections bit 0 indicates inbound connection enabled.
+      /// </summary>
+      { $ENDREGION }
+      function InboundConnectionEnabled: Boolean;
+      { $REGION 'Documentation' }
+      /// <summary>
+      /// Returns True when Connections bit 1 indicates outbound connection enabled.
+      /// </summary>
+      { $ENDREGION }
+      function OutboundConnectionEnabled: Boolean;
+  end;
 
 {$I uSMBIOSPriority1Types.inc}
 
@@ -4458,6 +4510,7 @@ type
   ArrCoolingDeviceInfo = Array of TCoolingDeviceInformation;
   ArrTemperatureProbeInfo = Array of TTemperatureProbeInformation;
   ArrElectricalCurrentProbeInfo = Array of TElectricalCurrentProbeInformation;
+  ArrOutOfBandRemoteAccessInfo = Array of TOutOfBandRemoteAccessInformation;
   ArrOnBoardSystemInfo = Array of TOnBoardSystemInformation;
   ArrMemoryControllerInfo = Array of TMemoryControllerInformation;
   ArrMemoryModuleInfo = Array of TMemoryModuleInformation;
@@ -4496,6 +4549,7 @@ type
       FCoolingDeviceInformation: {$IFDEF NOGENERICS}ArrCoolingDeviceInfo; {$ELSE}TArray<TCoolingDeviceInformation>;{$ENDIF}
       FTemperatureProbeInformation: {$IFDEF NOGENERICS}ArrTemperatureProbeInfo; {$ELSE}TArray<TTemperatureProbeInformation>;{$ENDIF}
       FElectricalCurrentProbeInformation: {$IFDEF NOGENERICS}ArrElectricalCurrentProbeInfo; {$ELSE}TArray<TElectricalCurrentProbeInformation>;{$ENDIF}
+      FOutOfBandRemoteAccessInformation: {$IFDEF NOGENERICS}ArrOutOfBandRemoteAccessInfo; {$ELSE}TArray<TOutOfBandRemoteAccessInformation>;{$ENDIF}
       FOnBoardSystemInfo: {$IFDEF NOGENERICS}ArrOnBoardSystemInfo; {$ELSE} TArray<TOnBoardSystemInformation>; {$ENDIF}
       FMemoryControllerInfo: {$IFDEF NOGENERICS}ArrMemoryControllerInfo;{$ELSE} TArray<TMemoryControllerInformation>; {$ENDIF}
       FMemoryModuleInfo: {$IFDEF NOGENERICS}ArrMemoryModuleInfo;{$ELSE} TArray<TMemoryModuleInformation>; {$ENDIF}
@@ -4544,6 +4598,7 @@ type
       function GetHasCoolingDeviceInfo: Boolean;
       function GetHasTemperatureProbeInfo: Boolean;
       function GetHasElectricalCurrentProbeInfo: Boolean;
+      function GetHasOutOfBandRemoteAccessInfo: Boolean;
       function GetHasOnBoardSystemInfo: Boolean;
       function GetHasMemoryControllerInfo: Boolean;
       function GetHasMemoryModuleInfo: Boolean;
@@ -4695,6 +4750,9 @@ type
 
       property ElectricalCurrentProbeInformation: {$IFDEF NOGENERICS} ArrElectricalCurrentProbeInfo {$ELSE} TArray<TElectricalCurrentProbeInformation> {$ENDIF} read FElectricalCurrentProbeInformation;
       property HasElectricalCurrentProbeInfo: Boolean read GetHasElectricalCurrentProbeInfo;
+
+      property OutOfBandRemoteAccessInformation: {$IFDEF NOGENERICS} ArrOutOfBandRemoteAccessInfo {$ELSE} TArray<TOutOfBandRemoteAccessInformation> {$ENDIF} read FOutOfBandRemoteAccessInformation;
+      property HasOutOfBandRemoteAccessInfo: Boolean read GetHasOutOfBandRemoteAccessInfo;
 
       property IPMIDeviceInfo: {$IFDEF NOGENERICS} ArrIPMIDeviceInfo {$ELSE} TArray<TIPMIDeviceInformation> {$ENDIF} read FIPMIDeviceInfo;
       property HasIPMIDeviceInfo: Boolean read GetHasIPMIDeviceInfo;
@@ -5017,6 +5075,9 @@ begin
   for i := 0 to Length(FElectricalCurrentProbeInformation) - 1 do
     FElectricalCurrentProbeInformation[i].Free;
 
+  for i := 0 to Length(FOutOfBandRemoteAccessInformation) - 1 do
+    FOutOfBandRemoteAccessInformation[i].Free;
+
   for i := 0 to Length(FTemperatureProbeInformation) - 1 do
     FTemperatureProbeInformation[i].Free;
 
@@ -5084,6 +5145,7 @@ begin
   FPhysicalMemoryArrayInfo := nil;
   FOnBoardSystemInfo := nil;
   FElectricalCurrentProbeInformation := nil;
+  FOutOfBandRemoteAccessInformation := nil;
   FTemperatureProbeInformation := nil;
   FCoolingDeviceInformation := nil;
   FVoltageProbeInformation := nil;
@@ -5259,6 +5321,11 @@ end;
 function TSMBios.GetHasElectricalCurrentProbeInfo: Boolean;
 begin
   Result := Length(FElectricalCurrentProbeInformation) > 0;
+end;
+
+function TSMBios.GetHasOutOfBandRemoteAccessInfo: Boolean;
+begin
+  Result := Length(FOutOfBandRemoteAccessInformation) > 0;
 end;
 
 function TSMBios.GetHasEnclosureInfo: Boolean;
@@ -6295,6 +6362,20 @@ begin
       begin
         FElectricalCurrentProbeInformation[i] := TElectricalCurrentProbeInformation.Create;
         FElectricalCurrentProbeInformation[i].RAWElectricalCurrentProbeInfo := @RawSMBIOSData.SMBIOSTableData^[LIndex];
+        inc(i);
+      end;
+    until (LIndex = - 1);
+
+  SetLength(FOutOfBandRemoteAccessInformation, GetSMBiosTableEntries(OutofBandRemoteAccess));
+  i := 0;
+  LIndex := - 1;
+  if Length(FOutOfBandRemoteAccessInformation) > 0 then
+    repeat
+      LIndex := GetSMBiosTableNextIndex(OutofBandRemoteAccess, LIndex);
+      if LIndex >= 0 then
+      begin
+        FOutOfBandRemoteAccessInformation[i] := TOutOfBandRemoteAccessInformation.Create;
+        FOutOfBandRemoteAccessInformation[i].RAWOutOfBandRemoteAccessInfo := @RawSMBIOSData.SMBIOSTableData^[LIndex];
         inc(i);
       end;
     until (LIndex = - 1);
@@ -8317,6 +8398,22 @@ begin
     Result := 'Critical'
   else if BitStr = '110' then
     Result := 'Non-recoverable';
+end;
+{ TOutOfBandRemoteAccessInformation }
+
+function TOutOfBandRemoteAccessInformation.GetManufacturerNameStr: AnsiString;
+begin
+  Result := GetSMBiosString(@RAWOutOfBandRemoteAccessInfo^, RAWOutOfBandRemoteAccessInfo^.Header.Length, RAWOutOfBandRemoteAccessInfo^.ManufacturerName);
+end;
+
+function TOutOfBandRemoteAccessInformation.InboundConnectionEnabled: Boolean;
+begin
+  Result := (RAWOutOfBandRemoteAccessInfo^.Connections and $01) <> 0;
+end;
+
+function TOutOfBandRemoteAccessInformation.OutboundConnectionEnabled: Boolean;
+begin
+  Result := (RAWOutOfBandRemoteAccessInfo^.Connections and $02) <> 0;
 end;
 
 { TOnBoardSystemInformation }

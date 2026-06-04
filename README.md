@@ -45,7 +45,7 @@ The [SMBIOS](http://www.dmtf.org/standards/smbios) (System Management BIOS) is a
 * [Cooling Device](https://github.com/RRUZ/tsmbios/blob/wiki/CoolingDevice.md) (Type 27)
 * [Temperature Probe](https://github.com/RRUZ/tsmbios/blob/wiki/TemperatureProbe.md) (Type 28)
 * [Electrical Current Probe](https://github.com/RRUZ/tsmbios/blob/wiki/ElectricalCurrentProbe.md) (Type 29)
-* Out-of-Band Remote Access (Type 30) - Not Implemented
+* Out-of-Band Remote Access (Type 30)
 * 64-Bit Memory Error Information (Type 33) - Not Implemented
 * Management Device (Type 34) - Not Implemented
 * Management Device Component (Type 35) - Not Implemented
