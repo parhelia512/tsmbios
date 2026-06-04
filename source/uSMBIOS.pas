@@ -4479,6 +4479,103 @@ type
       { $ENDREGION }
       function OutboundConnectionEnabled: Boolean;
   end;
+  { $REGION 'Documentation' }
+  /// <summary>
+  /// This structure describes a 64-bit memory error condition.
+  /// </summary>
+  /// <remarks>
+  /// SMBIOS Type 33, 64-Bit Memory Error Information. This structure was added in SMBIOS 2.3.
+  /// </remarks>
+  { $ENDREGION }
+  Tx64BitMemoryErrorInfo = packed record
+    Header: TSmBiosTableHeader;
+    { $REGION 'Documentation' }
+    /// <summary>
+    /// Type of error associated with the current memory error status.
+    /// </summary>
+    /// <remarks>
+    /// 2.3+
+    /// </remarks>
+    { $ENDREGION }
+    ErrorType: Byte;
+    { $REGION 'Documentation' }
+    /// <summary>
+    /// Granularity to which the memory error can be resolved.
+    /// </summary>
+    /// <remarks>
+    /// 2.3+
+    /// </remarks>
+    { $ENDREGION }
+    ErrorGranularity: Byte;
+    { $REGION 'Documentation' }
+    /// <summary>
+    /// Memory access operation that caused the error.
+    /// </summary>
+    /// <remarks>
+    /// 2.3+
+    /// </remarks>
+    { $ENDREGION }
+    ErrorOperation: Byte;
+    { $REGION 'Documentation' }
+    /// <summary>
+    /// Vendor-specific syndrome value associated with the error.
+    /// </summary>
+    /// <remarks>
+    /// 2.3+
+    /// </remarks>
+    { $ENDREGION }
+    VendorSyndrome: DWORD;
+    { $REGION 'Documentation' }
+    /// <summary>
+    /// 64-bit physical address of the error, relative to the memory array.
+    /// </summary>
+    /// <remarks>
+    /// 2.3+
+    /// </remarks>
+    { $ENDREGION }
+    MemoryArrayErrorAddress: Int64;
+    { $REGION 'Documentation' }
+    /// <summary>
+    /// 64-bit physical address of the error, relative to the device.
+    /// </summary>
+    /// <remarks>
+    /// 2.3+
+    /// </remarks>
+    { $ENDREGION }
+    DeviceErrorAddress: Int64;
+    { $REGION 'Documentation' }
+    /// <summary>
+    /// Range, in bytes, within which the error can be determined.
+    /// </summary>
+    /// <remarks>
+    /// 2.3+
+    /// </remarks>
+    { $ENDREGION }
+    ErrorResolution: DWORD;
+  end;
+
+  Tx64BitMemoryErrorInformation = class
+    public
+      RAWx64BitMemoryErrorInfo: ^Tx64BitMemoryErrorInfo;
+      { $REGION 'Documentation' }
+      /// <summary>
+      /// Get the string representation of the ErrorType field.
+      /// </summary>
+      { $ENDREGION }
+      function GetErrorTypeStr: AnsiString;
+      { $REGION 'Documentation' }
+      /// <summary>
+      /// Get the string representation of the ErrorGranularity field.
+      /// </summary>
+      { $ENDREGION }
+      function GetErrorGranularityStr: AnsiString;
+      { $REGION 'Documentation' }
+      /// <summary>
+      /// Get the string representation of the ErrorOperation field.
+      /// </summary>
+      { $ENDREGION }
+      function GetErrorOperationStr: AnsiString;
+  end;
 
 {$I uSMBIOSPriority1Types.inc}
 
@@ -4511,6 +4608,7 @@ type
   ArrTemperatureProbeInfo = Array of TTemperatureProbeInformation;
   ArrElectricalCurrentProbeInfo = Array of TElectricalCurrentProbeInformation;
   ArrOutOfBandRemoteAccessInfo = Array of TOutOfBandRemoteAccessInformation;
+  Arrx64BitMemoryErrorInfo = Array of Tx64BitMemoryErrorInformation;
   ArrOnBoardSystemInfo = Array of TOnBoardSystemInformation;
   ArrMemoryControllerInfo = Array of TMemoryControllerInformation;
   ArrMemoryModuleInfo = Array of TMemoryModuleInformation;
@@ -4550,6 +4648,7 @@ type
       FTemperatureProbeInformation: {$IFDEF NOGENERICS}ArrTemperatureProbeInfo; {$ELSE}TArray<TTemperatureProbeInformation>;{$ENDIF}
       FElectricalCurrentProbeInformation: {$IFDEF NOGENERICS}ArrElectricalCurrentProbeInfo; {$ELSE}TArray<TElectricalCurrentProbeInformation>;{$ENDIF}
       FOutOfBandRemoteAccessInformation: {$IFDEF NOGENERICS}ArrOutOfBandRemoteAccessInfo; {$ELSE}TArray<TOutOfBandRemoteAccessInformation>;{$ENDIF}
+      Fx64BitMemoryErrorInformation: {$IFDEF NOGENERICS}Arrx64BitMemoryErrorInfo; {$ELSE}TArray<Tx64BitMemoryErrorInformation>;{$ENDIF}
       FOnBoardSystemInfo: {$IFDEF NOGENERICS}ArrOnBoardSystemInfo; {$ELSE} TArray<TOnBoardSystemInformation>; {$ENDIF}
       FMemoryControllerInfo: {$IFDEF NOGENERICS}ArrMemoryControllerInfo;{$ELSE} TArray<TMemoryControllerInformation>; {$ENDIF}
       FMemoryModuleInfo: {$IFDEF NOGENERICS}ArrMemoryModuleInfo;{$ELSE} TArray<TMemoryModuleInformation>; {$ENDIF}
@@ -4599,6 +4698,7 @@ type
       function GetHasTemperatureProbeInfo: Boolean;
       function GetHasElectricalCurrentProbeInfo: Boolean;
       function GetHasOutOfBandRemoteAccessInfo: Boolean;
+      function GetHasx64BitMemoryErrorInfo: Boolean;
       function GetHasOnBoardSystemInfo: Boolean;
       function GetHasMemoryControllerInfo: Boolean;
       function GetHasMemoryModuleInfo: Boolean;
@@ -4753,6 +4853,9 @@ type
 
       property OutOfBandRemoteAccessInformation: {$IFDEF NOGENERICS} ArrOutOfBandRemoteAccessInfo {$ELSE} TArray<TOutOfBandRemoteAccessInformation> {$ENDIF} read FOutOfBandRemoteAccessInformation;
       property HasOutOfBandRemoteAccessInfo: Boolean read GetHasOutOfBandRemoteAccessInfo;
+
+      property x64BitMemoryErrorInfo: {$IFDEF NOGENERICS} Arrx64BitMemoryErrorInfo {$ELSE} TArray<Tx64BitMemoryErrorInformation> {$ENDIF} read Fx64BitMemoryErrorInformation;
+      property Hasx64BitMemoryErrorInfo: Boolean read GetHasx64BitMemoryErrorInfo;
 
       property IPMIDeviceInfo: {$IFDEF NOGENERICS} ArrIPMIDeviceInfo {$ELSE} TArray<TIPMIDeviceInformation> {$ENDIF} read FIPMIDeviceInfo;
       property HasIPMIDeviceInfo: Boolean read GetHasIPMIDeviceInfo;
@@ -5078,6 +5181,9 @@ begin
   for i := 0 to Length(FOutOfBandRemoteAccessInformation) - 1 do
     FOutOfBandRemoteAccessInformation[i].Free;
 
+  for i := 0 to Length(Fx64BitMemoryErrorInformation) - 1 do
+    Fx64BitMemoryErrorInformation[i].Free;
+
   for i := 0 to Length(FTemperatureProbeInformation) - 1 do
     FTemperatureProbeInformation[i].Free;
 
@@ -5146,6 +5252,7 @@ begin
   FOnBoardSystemInfo := nil;
   FElectricalCurrentProbeInformation := nil;
   FOutOfBandRemoteAccessInformation := nil;
+  Fx64BitMemoryErrorInformation := nil;
   FTemperatureProbeInformation := nil;
   FCoolingDeviceInformation := nil;
   FVoltageProbeInformation := nil;
@@ -5326,6 +5433,11 @@ end;
 function TSMBios.GetHasOutOfBandRemoteAccessInfo: Boolean;
 begin
   Result := Length(FOutOfBandRemoteAccessInformation) > 0;
+end;
+
+function TSMBios.GetHasx64BitMemoryErrorInfo: Boolean;
+begin
+  Result := Length(Fx64BitMemoryErrorInformation) > 0;
 end;
 
 function TSMBios.GetHasEnclosureInfo: Boolean;
@@ -6380,6 +6492,19 @@ begin
       end;
     until (LIndex = - 1);
 
+  SetLength(Fx64BitMemoryErrorInformation, GetSMBiosTableEntries(x64BitMemoryErrorInformation));
+  i := 0;
+  LIndex := - 1;
+  if Length(Fx64BitMemoryErrorInformation) > 0 then
+    repeat
+      LIndex := GetSMBiosTableNextIndex(x64BitMemoryErrorInformation, LIndex);
+      if LIndex >= 0 then
+      begin
+        Fx64BitMemoryErrorInformation[i] := Tx64BitMemoryErrorInformation.Create;
+        Fx64BitMemoryErrorInformation[i].RAWx64BitMemoryErrorInfo := @RawSMBIOSData.SMBIOSTableData^[LIndex];
+        inc(i);
+      end;
+    until (LIndex = - 1);
   SetLength(FOnBoardSystemInfo, GetSMBiosTableEntries(OnBoardDevicesInformation));
   i := 0;
   LIndex := - 1;
@@ -8416,6 +8541,69 @@ begin
   Result := (RAWOutOfBandRemoteAccessInfo^.Connections and $02) <> 0;
 end;
 
+{ Tx64BitMemoryErrorInformation }
+
+function SMBiosMemoryErrorGranularityToStr(const Value: Byte): AnsiString;
+begin
+  case Value of
+    $01 : Result := 'Other';
+    $02 : Result := 'Unknown';
+    $03 : Result := 'Device level';
+    $04 : Result := 'Memory partition level';
+    else
+      Result := 'Unknown';
+  end;
+end;
+
+function SMBiosMemoryErrorOperationToStr(const Value: Byte): AnsiString;
+begin
+  case Value of
+    $01 : Result := 'Other';
+    $02 : Result := 'Unknown';
+    $03 : Result := 'Read';
+    $04 : Result := 'Write';
+    $05 : Result := 'Partial write';
+    else
+      Result := 'Unknown';
+  end;
+end;
+
+function SMBiosMemoryErrorTypeToStr(const Value: Byte): AnsiString;
+begin
+  case Value of
+    $01 : Result := 'Other';
+    $02 : Result := 'Unknown';
+    $03 : Result := 'OK';
+    $04 : Result := 'Bad read';
+    $05 : Result := 'Parity error';
+    $06 : Result := 'Single-bit error';
+    $07 : Result := 'Double-bit error';
+    $08 : Result := 'Multi-bit error';
+    $09 : Result := 'Nibble error';
+    $0A : Result := 'Checksum error';
+    $0B : Result := 'CRC error';
+    $0C : Result := 'Corrected single-bit error';
+    $0D : Result := 'Corrected error';
+    $0E : Result := 'Uncorrectable error';
+    else
+      Result := 'Unknown';
+  end;
+end;
+
+function Tx64BitMemoryErrorInformation.GetErrorGranularityStr: AnsiString;
+begin
+  Result := SMBiosMemoryErrorGranularityToStr(RAWx64BitMemoryErrorInfo^.ErrorGranularity);
+end;
+
+function Tx64BitMemoryErrorInformation.GetErrorOperationStr: AnsiString;
+begin
+  Result := SMBiosMemoryErrorOperationToStr(RAWx64BitMemoryErrorInfo^.ErrorOperation);
+end;
+
+function Tx64BitMemoryErrorInformation.GetErrorTypeStr: AnsiString;
+begin
+  Result := SMBiosMemoryErrorTypeToStr(RAWx64BitMemoryErrorInfo^.ErrorType);
+end;
 { TOnBoardSystemInformation }
 function TOnBoardSystemInformation.Enabled: Boolean;
 begin
