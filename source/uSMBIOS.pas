@@ -4869,275 +4869,6 @@ type
       function GetErrorOperationStr: AnsiString;
   end;
 
-  { $REGION 'Documentation' }
-  /// <summary>
-  /// This structure describes a system management device.
-  /// </summary>
-  /// <remarks>
-  /// SMBIOS Type 34, Management Device. This structure was added in SMBIOS 2.3.
-  /// </remarks>
-  { $ENDREGION }
-  TManagementDeviceInfo = packed record
-    Header: TSmBiosTableHeader;
-    { $REGION 'Documentation' }
-    /// <summary>
-    /// String number for the management device description.
-    /// </summary>
-    /// <remarks>
-    /// 2.3+
-    /// </remarks>
-    { $ENDREGION }
-    Description: Byte;
-    { $REGION 'Documentation' }
-    /// <summary>
-    /// Identifies the management device type.
-    /// </summary>
-    /// <remarks>
-    /// 2.3+
-    /// </remarks>
-    { $ENDREGION }
-    DeviceType: Byte;
-    { $REGION 'Documentation' }
-    /// <summary>
-    /// Address of the management device.
-    /// </summary>
-    /// <remarks>
-    /// 2.3+
-    /// </remarks>
-    { $ENDREGION }
-    Address: LongWord;
-    { $REGION 'Documentation' }
-    /// <summary>
-    /// Identifies the address type used by the Address field.
-    /// </summary>
-    /// <remarks>
-    /// 2.3+
-    /// </remarks>
-    { $ENDREGION }
-    AddressType: Byte;
-  end;
-
-  TManagementDeviceInformation = class
-    public
-      RAWManagementDeviceInfo: ^TManagementDeviceInfo;
-      { $REGION 'Documentation' }
-      /// <summary>
-      /// Get the string representation of the Description field.
-      /// </summary>
-      { $ENDREGION }
-      function GetDescriptionStr: AnsiString;
-      { $REGION 'Documentation' }
-      /// <summary>
-      /// Get the string representation of the DeviceType field.
-      /// </summary>
-      { $ENDREGION }
-      function GetDeviceTypeStr: AnsiString;
-      { $REGION 'Documentation' }
-      /// <summary>
-      /// Get the string representation of the AddressType field.
-      /// </summary>
-      { $ENDREGION }
-      function GetAddressTypeStr: AnsiString;
-  end;
-
-  { $REGION 'Documentation' }
-  /// <summary>
-  /// This structure maps a management device to the component it monitors and threshold data.
-  /// </summary>
-  /// <remarks>
-  /// SMBIOS Type 35, Management Device Component. This structure was added in SMBIOS 2.3.
-  /// </remarks>
-  { $ENDREGION }
-  TManagementDeviceComponentInfo = packed record
-    Header: TSmBiosTableHeader;
-    { $REGION 'Documentation' }
-    /// <summary>
-    /// String number for the management device component description.
-    /// </summary>
-    /// <remarks>
-    /// 2.3+
-    /// </remarks>
-    { $ENDREGION }
-    Description: Byte;
-    { $REGION 'Documentation' }
-    /// <summary>
-    /// Handle of the associated Management Device structure.
-    /// </summary>
-    /// <remarks>
-    /// 2.3+
-    /// </remarks>
-    { $ENDREGION }
-    ManagementDeviceHandle: Word;
-    { $REGION 'Documentation' }
-    /// <summary>
-    /// Handle of the monitored component structure.
-    /// </summary>
-    /// <remarks>
-    /// 2.3+
-    /// </remarks>
-    { $ENDREGION }
-    ComponentHandle: Word;
-    { $REGION 'Documentation' }
-    /// <summary>
-    /// Handle of the associated Management Device Threshold Data structure.
-    /// </summary>
-    /// <remarks>
-    /// 2.3+
-    /// </remarks>
-    { $ENDREGION }
-    ThresholdHandle: Word;
-  end;
-
-  TManagementDeviceComponentInformation = class
-    public
-      RAWManagementDeviceComponentInfo: ^TManagementDeviceComponentInfo;
-      { $REGION 'Documentation' }
-      /// <summary>
-      /// Get the string representation of the Description field.
-      /// </summary>
-      { $ENDREGION }
-      function GetDescriptionStr: AnsiString;
-  end;
-
-  { $REGION 'Documentation' }
-  /// <summary>
-  /// This structure describes threshold values for a management device.
-  /// </summary>
-  /// <remarks>
-  /// SMBIOS Type 36, Management Device Threshold Data. This structure was added in SMBIOS 2.3.
-  /// </remarks>
-  { $ENDREGION }
-  TManagementDeviceThresholdDataInfo = packed record
-    Header: TSmBiosTableHeader;
-    { $REGION 'Documentation' }
-    /// <summary>
-    /// Lower non-critical threshold value.
-    /// </summary>
-    /// <remarks>
-    /// 2.3+
-    /// </remarks>
-    { $ENDREGION }
-    LowerThresholdNonCritical: Word;
-    { $REGION 'Documentation' }
-    /// <summary>
-    /// Upper non-critical threshold value.
-    /// </summary>
-    /// <remarks>
-    /// 2.3+
-    /// </remarks>
-    { $ENDREGION }
-    UpperThresholdNonCritical: Word;
-    { $REGION 'Documentation' }
-    /// <summary>
-    /// Lower critical threshold value.
-    /// </summary>
-    /// <remarks>
-    /// 2.3+
-    /// </remarks>
-    { $ENDREGION }
-    LowerThresholdCritical: Word;
-    { $REGION 'Documentation' }
-    /// <summary>
-    /// Upper critical threshold value.
-    /// </summary>
-    /// <remarks>
-    /// 2.3+
-    /// </remarks>
-    { $ENDREGION }
-    UpperThresholdCritical: Word;
-    { $REGION 'Documentation' }
-    /// <summary>
-    /// Lower non-recoverable threshold value.
-    /// </summary>
-    /// <remarks>
-    /// 2.3+
-    /// </remarks>
-    { $ENDREGION }
-    LowerThresholdNonRecoverable: Word;
-    { $REGION 'Documentation' }
-    /// <summary>
-    /// Upper non-recoverable threshold value.
-    /// </summary>
-    /// <remarks>
-    /// 2.3+
-    /// </remarks>
-    { $ENDREGION }
-    UpperThresholdNonRecoverable: Word;
-  end;
-
-  TManagementDeviceThresholdDataInformation = class
-    public
-      RAWManagementDeviceThresholdDataInfo: ^TManagementDeviceThresholdDataInfo;
-  end;
-
-  { $REGION 'Documentation' }
-  /// <summary>
-  /// This structure describes a memory channel and its attached memory devices.
-  /// </summary>
-  /// <remarks>
-  /// SMBIOS Type 37, Memory Channel. This structure was added in SMBIOS 2.3.
-  /// </remarks>
-  { $ENDREGION }
-  TMemoryChannelInfo = packed record
-    Header: TSmBiosTableHeader;
-    { $REGION 'Documentation' }
-    /// <summary>
-    /// Identifies the memory channel type.
-    /// </summary>
-    /// <remarks>
-    /// 2.3+
-    /// </remarks>
-    { $ENDREGION }
-    ChannelType: Byte;
-    { $REGION 'Documentation' }
-    /// <summary>
-    /// Maximum load supported by the channel.
-    /// </summary>
-    /// <remarks>
-    /// 2.3+
-    /// </remarks>
-    { $ENDREGION }
-    MaximumChannelLoad: Byte;
-    { $REGION 'Documentation' }
-    /// <summary>
-    /// Number of memory device load/handle entries that follow the fixed fields.
-    /// </summary>
-    /// <remarks>
-    /// 2.3+
-    /// </remarks>
-    { $ENDREGION }
-    MemoryDeviceCount: Byte;
-  end;
-
-  TMemoryChannelInformation = class
-    public
-      RAWMemoryChannelInfo: ^TMemoryChannelInfo;
-      { $REGION 'Documentation' }
-      /// <summary>
-      /// Get the string representation of the ChannelType field.
-      /// </summary>
-      { $ENDREGION }
-      function GetChannelTypeStr: AnsiString;
-      { $REGION 'Documentation' }
-      /// <summary>
-      /// Returns True when Index identifies a memory-device entry present in the formatted structure.
-      /// </summary>
-      { $ENDREGION }
-      function HasMemoryDeviceEntry(const Index: Integer): Boolean;
-      { $REGION 'Documentation' }
-      /// <summary>
-      /// Returns the memory device load for the indexed channel entry. Returns 0 when Index is invalid.
-      /// </summary>
-      { $ENDREGION }
-      function GetMemoryDeviceLoad(const Index: Integer): Byte;
-      { $REGION 'Documentation' }
-      /// <summary>
-      /// Returns the memory device handle for the indexed channel entry. Returns FFFFh when Index is invalid.
-      /// </summary>
-      { $ENDREGION }
-      function GetMemoryDeviceHandle(const Index: Integer): Word;
-  end;
-
 {$I uSMBIOSPriority1Types.inc}
 
   TSMBiosTableEntry = record
@@ -5174,10 +4905,6 @@ type
   ArrBootIntegrityServicesEntryPointInfo = Array of TBootIntegrityServicesEntryPointInformation;
   ArrSystemBootInfo = Array of TSystemBootInformation;
   Arrx64BitMemoryErrorInfo = Array of Tx64BitMemoryErrorInformation;
-  ArrManagementDeviceInfo = Array of TManagementDeviceInformation;
-  ArrManagementDeviceComponentInfo = Array of TManagementDeviceComponentInformation;
-  ArrManagementDeviceThresholdDataInfo = Array of TManagementDeviceThresholdDataInformation;
-  ArrMemoryChannelInfo = Array of TMemoryChannelInformation;
   ArrOnBoardSystemInfo = Array of TOnBoardSystemInformation;
   ArrMemoryControllerInfo = Array of TMemoryControllerInformation;
   ArrMemoryModuleInfo = Array of TMemoryModuleInformation;
@@ -5222,10 +4949,6 @@ type
       FBootIntegrityServicesEntryPointInformation: {$IFDEF NOGENERICS}ArrBootIntegrityServicesEntryPointInfo; {$ELSE}TArray<TBootIntegrityServicesEntryPointInformation>;{$ENDIF}
       FSystemBootInformation: {$IFDEF NOGENERICS}ArrSystemBootInfo; {$ELSE}TArray<TSystemBootInformation>;{$ENDIF}
       Fx64BitMemoryErrorInformation: {$IFDEF NOGENERICS}Arrx64BitMemoryErrorInfo; {$ELSE}TArray<Tx64BitMemoryErrorInformation>;{$ENDIF}
-      FManagementDeviceInfo: {$IFDEF NOGENERICS}ArrManagementDeviceInfo; {$ELSE}TArray<TManagementDeviceInformation>;{$ENDIF}
-      FManagementDeviceComponentInfo: {$IFDEF NOGENERICS}ArrManagementDeviceComponentInfo; {$ELSE}TArray<TManagementDeviceComponentInformation>;{$ENDIF}
-      FManagementDeviceThresholdDataInfo: {$IFDEF NOGENERICS}ArrManagementDeviceThresholdDataInfo; {$ELSE}TArray<TManagementDeviceThresholdDataInformation>;{$ENDIF}
-      FMemoryChannelInfo: {$IFDEF NOGENERICS}ArrMemoryChannelInfo; {$ELSE}TArray<TMemoryChannelInformation>;{$ENDIF}
       FOnBoardSystemInfo: {$IFDEF NOGENERICS}ArrOnBoardSystemInfo; {$ELSE} TArray<TOnBoardSystemInformation>; {$ENDIF}
       FMemoryControllerInfo: {$IFDEF NOGENERICS}ArrMemoryControllerInfo;{$ELSE} TArray<TMemoryControllerInformation>; {$ENDIF}
       FMemoryModuleInfo: {$IFDEF NOGENERICS}ArrMemoryModuleInfo;{$ELSE} TArray<TMemoryModuleInformation>; {$ENDIF}
@@ -5280,10 +5003,6 @@ type
       function GetHasBootIntegrityServicesEntryPointInfo: Boolean;
       function GetHasSystemBootInfo: Boolean;
       function GetHasx64BitMemoryErrorInfo: Boolean;
-      function GetHasManagementDeviceInfo: Boolean;
-      function GetHasManagementDeviceComponentInfo: Boolean;
-      function GetHasManagementDeviceThresholdDataInfo: Boolean;
-      function GetHasMemoryChannelInfo: Boolean;
       function GetHasOnBoardSystemInfo: Boolean;
       function GetHasMemoryControllerInfo: Boolean;
       function GetHasMemoryModuleInfo: Boolean;
@@ -5453,18 +5172,6 @@ type
 
       property x64BitMemoryErrorInfo: {$IFDEF NOGENERICS} Arrx64BitMemoryErrorInfo {$ELSE} TArray<Tx64BitMemoryErrorInformation> {$ENDIF} read Fx64BitMemoryErrorInformation;
       property Hasx64BitMemoryErrorInfo: Boolean read GetHasx64BitMemoryErrorInfo;
-
-      property ManagementDeviceInfo: {$IFDEF NOGENERICS} ArrManagementDeviceInfo {$ELSE} TArray<TManagementDeviceInformation> {$ENDIF} read FManagementDeviceInfo;
-      property HasManagementDeviceInfo: Boolean read GetHasManagementDeviceInfo;
-
-      property ManagementDeviceComponentInfo: {$IFDEF NOGENERICS} ArrManagementDeviceComponentInfo {$ELSE} TArray<TManagementDeviceComponentInformation> {$ENDIF} read FManagementDeviceComponentInfo;
-      property HasManagementDeviceComponentInfo: Boolean read GetHasManagementDeviceComponentInfo;
-
-      property ManagementDeviceThresholdDataInfo: {$IFDEF NOGENERICS} ArrManagementDeviceThresholdDataInfo {$ELSE} TArray<TManagementDeviceThresholdDataInformation> {$ENDIF} read FManagementDeviceThresholdDataInfo;
-      property HasManagementDeviceThresholdDataInfo: Boolean read GetHasManagementDeviceThresholdDataInfo;
-
-      property MemoryChannelInfo: {$IFDEF NOGENERICS} ArrMemoryChannelInfo {$ELSE} TArray<TMemoryChannelInformation> {$ENDIF} read FMemoryChannelInfo;
-      property HasMemoryChannelInfo: Boolean read GetHasMemoryChannelInfo;
 
       property IPMIDeviceInfo: {$IFDEF NOGENERICS} ArrIPMIDeviceInfo {$ELSE} TArray<TIPMIDeviceInformation> {$ENDIF} read FIPMIDeviceInfo;
       property HasIPMIDeviceInfo: Boolean read GetHasIPMIDeviceInfo;
@@ -5799,18 +5506,6 @@ begin
   for i := 0 to Length(Fx64BitMemoryErrorInformation) - 1 do
     Fx64BitMemoryErrorInformation[i].Free;
 
-  for i := 0 to Length(FManagementDeviceInfo) - 1 do
-    FManagementDeviceInfo[i].Free;
-
-  for i := 0 to Length(FManagementDeviceComponentInfo) - 1 do
-    FManagementDeviceComponentInfo[i].Free;
-
-  for i := 0 to Length(FManagementDeviceThresholdDataInfo) - 1 do
-    FManagementDeviceThresholdDataInfo[i].Free;
-
-  for i := 0 to Length(FMemoryChannelInfo) - 1 do
-    FMemoryChannelInfo[i].Free;
-
   for i := 0 to Length(FTemperatureProbeInformation) - 1 do
     FTemperatureProbeInformation[i].Free;
 
@@ -5888,10 +5583,6 @@ begin
   FBootIntegrityServicesEntryPointInformation := nil;
   FSystemBootInformation := nil;
   Fx64BitMemoryErrorInformation := nil;
-  FManagementDeviceInfo := nil;
-  FManagementDeviceComponentInfo := nil;
-  FManagementDeviceThresholdDataInfo := nil;
-  FMemoryChannelInfo := nil;
   FTemperatureProbeInformation := nil;
   FCoolingDeviceInformation := nil;
   FVoltageProbeInformation := nil;
@@ -6099,26 +5790,6 @@ end;
 function TSMBios.GetHasx64BitMemoryErrorInfo: Boolean;
 begin
   Result := Length(Fx64BitMemoryErrorInformation) > 0;
-end;
-
-function TSMBios.GetHasManagementDeviceInfo: Boolean;
-begin
-  Result := Length(FManagementDeviceInfo) > 0;
-end;
-
-function TSMBios.GetHasManagementDeviceComponentInfo: Boolean;
-begin
-  Result := Length(FManagementDeviceComponentInfo) > 0;
-end;
-
-function TSMBios.GetHasManagementDeviceThresholdDataInfo: Boolean;
-begin
-  Result := Length(FManagementDeviceThresholdDataInfo) > 0;
-end;
-
-function TSMBios.GetHasMemoryChannelInfo: Boolean;
-begin
-  Result := Length(FMemoryChannelInfo) > 0;
 end;
 
 function TSMBios.GetHasEnclosureInfo: Boolean;
@@ -7242,63 +6913,6 @@ begin
         inc(i);
       end;
     until (LIndex = - 1);
-
-  SetLength(FManagementDeviceInfo, GetSMBiosTableEntries(ManagementDevice));
-  i := 0;
-  LIndex := - 1;
-  if Length(FManagementDeviceInfo) > 0 then
-    repeat
-      LIndex := GetSMBiosTableNextIndex(ManagementDevice, LIndex);
-      if LIndex >= 0 then
-      begin
-        FManagementDeviceInfo[i] := TManagementDeviceInformation.Create;
-        FManagementDeviceInfo[i].RAWManagementDeviceInfo := @RawSMBIOSData.SMBIOSTableData^[LIndex];
-        inc(i);
-      end;
-    until (LIndex = - 1);
-
-  SetLength(FManagementDeviceComponentInfo, GetSMBiosTableEntries(ManagementDeviceComponent));
-  i := 0;
-  LIndex := - 1;
-  if Length(FManagementDeviceComponentInfo) > 0 then
-    repeat
-      LIndex := GetSMBiosTableNextIndex(ManagementDeviceComponent, LIndex);
-      if LIndex >= 0 then
-      begin
-        FManagementDeviceComponentInfo[i] := TManagementDeviceComponentInformation.Create;
-        FManagementDeviceComponentInfo[i].RAWManagementDeviceComponentInfo := @RawSMBIOSData.SMBIOSTableData^[LIndex];
-        inc(i);
-      end;
-    until (LIndex = - 1);
-
-  SetLength(FManagementDeviceThresholdDataInfo, GetSMBiosTableEntries(ManagementDeviceThresholdData));
-  i := 0;
-  LIndex := - 1;
-  if Length(FManagementDeviceThresholdDataInfo) > 0 then
-    repeat
-      LIndex := GetSMBiosTableNextIndex(ManagementDeviceThresholdData, LIndex);
-      if LIndex >= 0 then
-      begin
-        FManagementDeviceThresholdDataInfo[i] := TManagementDeviceThresholdDataInformation.Create;
-        FManagementDeviceThresholdDataInfo[i].RAWManagementDeviceThresholdDataInfo := @RawSMBIOSData.SMBIOSTableData^[LIndex];
-        inc(i);
-      end;
-    until (LIndex = - 1);
-
-  SetLength(FMemoryChannelInfo, GetSMBiosTableEntries(MemoryChannel));
-  i := 0;
-  LIndex := - 1;
-  if Length(FMemoryChannelInfo) > 0 then
-    repeat
-      LIndex := GetSMBiosTableNextIndex(MemoryChannel, LIndex);
-      if LIndex >= 0 then
-      begin
-        FMemoryChannelInfo[i] := TMemoryChannelInformation.Create;
-        FMemoryChannelInfo[i].RAWMemoryChannelInfo := @RawSMBIOSData.SMBIOSTableData^[LIndex];
-        inc(i);
-      end;
-    until (LIndex = - 1);
-
   SetLength(FOnBoardSystemInfo, GetSMBiosTableEntries(OnBoardDevicesInformation));
   i := 0;
   LIndex := - 1;
@@ -9550,116 +9164,6 @@ function Tx64BitMemoryErrorInformation.GetErrorTypeStr: AnsiString;
 begin
   Result := SMBiosMemoryErrorTypeToStr(RAWx64BitMemoryErrorInfo^.ErrorType);
 end;
-
-{ TManagementDeviceInformation }
-
-function SMBiosManagementDeviceAddressTypeToStr(const Value: Byte): AnsiString;
-begin
-  case Value of
-    $01 : Result := 'Other';
-    $02 : Result := 'Unknown';
-    $03 : Result := 'I/O Port';
-    $04 : Result := 'Memory';
-    $05 : Result := 'SM Bus';
-    else
-      Result := 'Unknown';
-  end;
-end;
-
-function SMBiosManagementDeviceTypeToStr(const Value: Byte): AnsiString;
-begin
-  case Value of
-    $01 : Result := 'Other';
-    $02 : Result := 'Unknown';
-    $03 : Result := 'National Semiconductor LM75';
-    $04 : Result := 'National Semiconductor LM78';
-    $05 : Result := 'National Semiconductor LM79';
-    $06 : Result := 'National Semiconductor LM80';
-    $07 : Result := 'National Semiconductor LM81';
-    $08 : Result := 'Analog Devices ADM9240';
-    $09 : Result := 'Dallas Semiconductor DS1780';
-    $0A : Result := 'Maxim 1617';
-    $0B : Result := 'Genesys GL518SM';
-    $0C : Result := 'Winbond W83781D';
-    $0D : Result := 'Holtek HT72H791';
-    else
-      Result := 'Unknown';
-  end;
-end;
-
-function TManagementDeviceInformation.GetAddressTypeStr: AnsiString;
-begin
-  Result := SMBiosManagementDeviceAddressTypeToStr(RAWManagementDeviceInfo^.AddressType);
-end;
-
-function TManagementDeviceInformation.GetDescriptionStr: AnsiString;
-begin
-  Result := GetSMBiosString(@RAWManagementDeviceInfo^, RAWManagementDeviceInfo^.Header.Length, RAWManagementDeviceInfo^.Description);
-end;
-
-function TManagementDeviceInformation.GetDeviceTypeStr: AnsiString;
-begin
-  Result := SMBiosManagementDeviceTypeToStr(RAWManagementDeviceInfo^.DeviceType);
-end;
-
-{ TManagementDeviceComponentInformation }
-
-function TManagementDeviceComponentInformation.GetDescriptionStr: AnsiString;
-begin
-  Result := GetSMBiosString(@RAWManagementDeviceComponentInfo^, RAWManagementDeviceComponentInfo^.Header.Length, RAWManagementDeviceComponentInfo^.Description);
-end;
-
-{ TMemoryChannelInformation }
-
-function SMBiosMemoryChannelTypeToStr(const Value: Byte): AnsiString;
-begin
-  case Value of
-    $01 : Result := 'Other';
-    $02 : Result := 'Unknown';
-    $03 : Result := 'RamBus';
-    $04 : Result := 'SyncLink';
-    else
-      Result := 'Unknown';
-  end;
-end;
-
-function TMemoryChannelInformation.GetChannelTypeStr: AnsiString;
-begin
-  Result := SMBiosMemoryChannelTypeToStr(RAWMemoryChannelInfo^.ChannelType);
-end;
-
-function TMemoryChannelInformation.GetMemoryDeviceHandle(const Index: Integer): Word;
-var
-  LOffset: Integer;
-begin
-  if HasMemoryDeviceEntry(Index) then
-  begin
-    LOffset := SizeOf(TMemoryChannelInfo) + (Index * 3) + 1;
-    Move(PByteArray(RAWMemoryChannelInfo)^[LOffset], Result, SizeOf(Result));
-  end
-  else
-    Result := $FFFF;
-end;
-
-function TMemoryChannelInformation.GetMemoryDeviceLoad(const Index: Integer): Byte;
-var
-  LOffset: Integer;
-begin
-  if HasMemoryDeviceEntry(Index) then
-  begin
-    LOffset := SizeOf(TMemoryChannelInfo) + (Index * 3);
-    Result := PByteArray(RAWMemoryChannelInfo)^[LOffset];
-  end
-  else
-    Result := 0;
-end;
-
-function TMemoryChannelInformation.HasMemoryDeviceEntry(const Index: Integer): Boolean;
-begin
-  Result := (Index >= 0) and (Index < RAWMemoryChannelInfo^.MemoryDeviceCount) and
-            SMBiosFieldAvailable(RAWMemoryChannelInfo^.Header, SizeOf(TMemoryChannelInfo) + (Index * 3), 3);
-end;
-
 { TOnBoardSystemInformation }
 function TOnBoardSystemInformation.Enabled: Boolean;
 begin
