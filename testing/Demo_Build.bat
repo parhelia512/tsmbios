@@ -189,6 +189,41 @@ EXIT
 :23
 msbuild.exe "..\samples - Delphi\Table 29 Electrical Current Probe Information\ElectricalProbeInfo.dproj" /target:Clean;Build /p:Platform=Win32 /p:config=debug
 set BUILD_STATUS=%ERRORLEVEL%
+if %BUILD_STATUS%==0 GOTO 24
+pause
+EXIT
+
+:24
+msbuild.exe "..\samples - Delphi\Table 38 IPMI Device Information\IPMIDeviceInfo.dproj" /target:Clean;Build /p:Platform=Win32 /p:config=debug
+set BUILD_STATUS=%ERRORLEVEL%
+if %BUILD_STATUS%==0 GOTO 25
+pause
+EXIT
+
+:25
+msbuild.exe "..\samples - Delphi\Table 41 Onboard Devices Extended Information\OnboardDevicesExtendedInfo.dproj" /target:Clean;Build /p:Platform=Win32 /p:config=debug
+set BUILD_STATUS=%ERRORLEVEL%
+if %BUILD_STATUS%==0 GOTO 26
+pause
+EXIT
+
+:26
+msbuild.exe "..\samples - Delphi\Table 43 TPM Device\TPMDeviceInfo.dproj" /target:Clean;Build /p:Platform=Win32 /p:config=debug
+set BUILD_STATUS=%ERRORLEVEL%
+if %BUILD_STATUS%==0 GOTO 27
+pause
+EXIT
+
+:27
+msbuild.exe "..\samples - Delphi\Table 44 Processor Additional Information\ProcessorAdditionalInfo.dproj" /target:Clean;Build /p:Platform=Win32 /p:config=debug
+set BUILD_STATUS=%ERRORLEVEL%
+if %BUILD_STATUS%==0 GOTO 28
+pause
+EXIT
+
+:28
+msbuild.exe "..\samples - Delphi\Table 45 Firmware Inventory Information\FirmwareInventoryInfo.dproj" /target:Clean;Build /p:Platform=Win32 /p:config=debug
+set BUILD_STATUS=%ERRORLEVEL%
 if %BUILD_STATUS%==0 GOTO DONE
 pause
 EXIT

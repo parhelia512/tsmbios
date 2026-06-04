@@ -51,10 +51,14 @@ The [SMBIOS](http://www.dmtf.org/standards/smbios) (System Management BIOS) is a
 * Management Device Component (Type 35) - Not Implemented
 * Management Device Threshold Data (Type 36) - Not Implemented
 * Memory Channel (Type 37) - Not Implemented
+* IPMI Device Information (Type 38)
 * System Power Supply (Type 39) - Not Implemented
 * Additional Information (Type 40) - Not Implemented
-* Onboard Devices Extended Information (Type 41) - Not Implemented
+* Onboard Devices Extended Information (Type 41)
 * Management Controller Host Interface (Type 42) - Not Implemented
+* TPM Device (Type 43)
+* Processor Additional Information (Type 44)
+* Firmware Inventory Information (Type 45)
 
 
 ## Sample source code
@@ -68,7 +72,7 @@ This code demonstrates how to retrieve information related to the memory devices
 uses
   Classes,
   SysUtils,
-  uSMBIOS in '..\..\Common\uSMBIOS.pas';
+  uSMBIOS in '..\..\source\uSMBIOS.pas';
 
 procedure GetMemoryDeviceInfo;
 Var

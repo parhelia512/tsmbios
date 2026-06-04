@@ -39,7 +39,7 @@
         <IsPartOfProject Value="True"/>
       </Unit0>
       <Unit1>
-        <Filename Value="..\..\Common\uSMBIOS.pas"/>
+        <Filename Value="..\..\source\uSMBIOS.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit1>
     </Units>
@@ -52,7 +52,7 @@
     </Target>
     <SearchPaths>
       <IncludeFiles Value="$(ProjOutDir)"/>
-      <OtherUnitFiles Value="..\..\Common"/>
+      <OtherUnitFiles Value="..\..\source"/>
       <UnitOutputDirectory Value="lib\$(TargetCPU)-$(TargetOS)"/>
     </SearchPaths>
   </CompilerOptions>

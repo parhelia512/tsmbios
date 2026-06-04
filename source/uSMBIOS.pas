@@ -120,8 +120,8 @@ type
     SystemPowerControls,
     VoltageProbe, CoolingDevice, TemperatureProbe, ElectricalCurrentProbe, OutofBandRemoteAccess, BootIntegrityServicesEntryPoint,
     SystemBootInformation, x64BitMemoryErrorInformation, ManagementDevice, ManagementDeviceComponent, ManagementDeviceThresholdData, MemoryChannel,
-    IPMIDeviceInformation, SystemPowerSupply, AdditionalInformation, OnboardDevicesExtendedInformation, ManagementControllerHostInterface, SMBIOSTable43,
-    SMBIOSTable44, SMBIOSTable45, SMBIOSTable46, SMBIOSTable47, SMBIOSTable48, SMBIOSTable49, SMBIOSTable50, SMBIOSTable51, SMBIOSTable52, SMBIOSTable53,
+    IPMIDeviceInformation, SystemPowerSupply, AdditionalInformation, OnboardDevicesExtendedInformation, ManagementControllerHostInterface, TPMDevice,
+    ProcessorAdditionalInformation, FirmwareInventoryInformation, SMBIOSTable46, SMBIOSTable47, SMBIOSTable48, SMBIOSTable49, SMBIOSTable50, SMBIOSTable51, SMBIOSTable52, SMBIOSTable53,
     SMBIOSTable54, SMBIOSTable55, SMBIOSTable56, SMBIOSTable57, SMBIOSTable58, SMBIOSTable59, SMBIOSTable60, SMBIOSTable61, SMBIOSTable62, SMBIOSTable63,
     SMBIOSTable64, SMBIOSTable65, SMBIOSTable66, SMBIOSTable67, SMBIOSTable68, SMBIOSTable69, SMBIOSTable70, SMBIOSTable71, SMBIOSTable72, SMBIOSTable73,
     SMBIOSTable74, SMBIOSTable75, SMBIOSTable76, SMBIOSTable77, SMBIOSTable78, SMBIOSTable79, SMBIOSTable80, SMBIOSTable81, SMBIOSTable82, SMBIOSTable83,
@@ -141,7 +141,7 @@ const
     'Temperature Probe', 'Electrical Current Probe', 'Out-of-Band Remote Access', 'Boot Integrity Services (BIS) Entry Point', 'System Boot Information',
     '64-Bit Memory Error Information', 'Management Device', 'Management Device Component', 'Management Device Threshold Data', 'Memory Channel',
     'IPMI Device Information', 'System Power Supply', 'Additional Information', 'Onboard Devices Extended Information', 'Management Controller Host Interface',
-    'Not Supported', 'Not Supported', 'Not Supported', 'Not Supported', 'Not Supported', 'Not Supported', 'Not Supported', 'Not Supported', 'Not Supported',
+    'TPM Device', 'Processor Additional Information', 'Firmware Inventory Information', 'Not Supported', 'Not Supported', 'Not Supported', 'Not Supported', 'Not Supported', 'Not Supported',
     'Not Supported', 'Not Supported', 'Not Supported', 'Not Supported', 'Not Supported', 'Not Supported', 'Not Supported', 'Not Supported', 'Not Supported',
     'Not Supported', 'Not Supported', 'Not Supported', 'Not Supported', 'Not Supported', 'Not Supported', 'Not Supported', 'Not Supported', 'Not Supported',
     'Not Supported', 'Not Supported', 'Not Supported', 'Not Supported', 'Not Supported', 'Not Supported', 'Not Supported', 'Not Supported', 'Not Supported',
@@ -4332,6 +4332,8 @@ type
       function GetNominalValue: Word;
   end;
 
+{$I uSMBIOSPriority1Types.inc}
+
   TSMBiosTableEntry = record
     Header: TSmBiosTableHeader;
     index: Integer;
@@ -4363,6 +4365,11 @@ type
   ArrMemoryControllerInfo = Array of TMemoryControllerInformation;
   ArrMemoryModuleInfo = Array of TMemoryModuleInformation;
   ArrGroupAssociationsInfo = Array of TGroupAssociationsInformation;
+  ArrIPMIDeviceInfo = Array of TIPMIDeviceInformation;
+  ArrOnboardDevicesExtendedInfo = Array of TOnboardDevicesExtendedInformation;
+  ArrTPMDeviceInfo = Array of TTPMDeviceInformation;
+  ArrProcessorAdditionalInfo = Array of TProcessorAdditionalInformation;
+  ArrFirmwareInventoryInfo = Array of TFirmwareInventoryInformation;
 {$ENDIF}
 
   TSMBios = class
@@ -4395,6 +4402,11 @@ type
       FMemoryControllerInfo: {$IFDEF NOGENERICS}ArrMemoryControllerInfo;{$ELSE} TArray<TMemoryControllerInformation>; {$ENDIF}
       FMemoryModuleInfo: {$IFDEF NOGENERICS}ArrMemoryModuleInfo;{$ELSE} TArray<TMemoryModuleInformation>; {$ENDIF}
       FGroupAssociationsInformation: {$IFDEF NOGENERICS}ArrGroupAssociationsInfo;{$ELSE} TArray<TGroupAssociationsInformation>; {$ENDIF}
+      FIPMIDeviceInfo: {$IFDEF NOGENERICS}ArrIPMIDeviceInfo;{$ELSE} TArray<TIPMIDeviceInformation>; {$ENDIF}
+      FOnboardDevicesExtendedInfo: {$IFDEF NOGENERICS}ArrOnboardDevicesExtendedInfo;{$ELSE} TArray<TOnboardDevicesExtendedInformation>; {$ENDIF}
+      FTPMDeviceInfo: {$IFDEF NOGENERICS}ArrTPMDeviceInfo;{$ELSE} TArray<TTPMDeviceInformation>; {$ENDIF}
+      FProcessorAdditionalInfo: {$IFDEF NOGENERICS}ArrProcessorAdditionalInfo;{$ELSE} TArray<TProcessorAdditionalInformation>; {$ENDIF}
+      FFirmwareInventoryInfo: {$IFDEF NOGENERICS}ArrFirmwareInventoryInfo;{$ELSE} TArray<TFirmwareInventoryInformation>; {$ENDIF}
 {$IFDEF MSWINDOWS}
 {$IFDEF USEWMI}
       procedure LoadSMBIOSWMI(const RemoteMachine, UserName, Password: string);
@@ -4437,6 +4449,11 @@ type
       function GetHasMemoryControllerInfo: Boolean;
       function GetHasMemoryModuleInfo: Boolean;
       function GetHasGroupAssociationsInfo: Boolean;
+      function GetHasIPMIDeviceInfo: Boolean;
+      function GetHasOnboardDevicesExtendedInfo: Boolean;
+      function GetHasTPMDeviceInfo: Boolean;
+      function GetHasProcessorAdditionalInfo: Boolean;
+      function GetHasFirmwareInventoryInfo: Boolean;
 
     public
       { $REGION 'Documentation' }
@@ -4482,6 +4499,13 @@ type
       /// </summary>
       { $ENDREGION }
       procedure LoadFromFile(const FileName: string; LoadSMBIOSTables: Boolean  = false);
+      { $REGION 'Documentation' }
+      /// <summary>
+      /// Load the TRawSMBIOSData structure from its serialized stream format.
+      /// The stream format is the same format produced by SaveToFile.
+      /// </summary>
+      { $ENDREGION }
+      procedure LoadFromStream(const Stream: TStream; LoadSMBIOSTables: Boolean = false);
 
       { $REGION 'Documentation' }
       /// <summary>
@@ -4489,120 +4513,103 @@ type
       /// </summary>
       { $ENDREGION }
       procedure FindAndLoadFromFile(const FileName: string);
-      property DataString: AnsiString
-        read FDataString;
-      property RawSMBIOSData: TRawSMBIOSData
-        read FRawSMBIOSData;
-      property SmbiosVersion: string
-        read GetSmbiosVersion;
+      { $REGION 'Documentation' }
+      /// <summary>
+      /// Find an SMBIOS 2.x or SMBIOS 3.x entry point in a stream and load the
+      /// formatted table area that follows the entry point.
+      /// </summary>
+      { $ENDREGION }
+      procedure FindAndLoadFromStream(const Stream: TStream);
+      property DataString: AnsiString read FDataString;
+      property RawSMBIOSData: TRawSMBIOSData read FRawSMBIOSData;
+      property SmbiosVersion: string read GetSmbiosVersion;
       property SMBiosTablesList: {$IFDEF NOGENERICS}ArrSMBiosTableEntry {$ELSE}TArray<TSMBiosTableEntry> {$ENDIF} read FSMBiosTablesList;
 
-      property BiosInfo: TBiosInformation
-        read FBiosInfo;
-      property SysInfo: TSystemInformation
-        read FSysInfo;
+      property BiosInfo: TBiosInformation read FBiosInfo;
+      property SysInfo: TSystemInformation read FSysInfo;
 
       property BaseBoardInfo: {$IFDEF NOGENERICS}ArrBaseBoardInfo {$ELSE}TArray<TBaseBoardInformation> {$ENDIF} read FBaseBoardInfo;
-      property HasBaseBoardInfo: Boolean
-        read GetHasBaseBoardInfo;
+      property HasBaseBoardInfo: Boolean read GetHasBaseBoardInfo;
 
       property EnclosureInfo: {$IFDEF NOGENERICS}ArrEnclosureInfo {$ELSE}TArray<TEnclosureInformation> {$ENDIF} read FEnclosureInfo;
-      property HasEnclosureInfo: Boolean
-        read GetHasEnclosureInfo;
+      property HasEnclosureInfo: Boolean read GetHasEnclosureInfo;
 
       property CacheInfo: {$IFDEF NOGENERICS}ArrCacheInfo {$ELSE}TArray<TCacheInformation> {$ENDIF} read FCacheInfo;
-      property HasCacheInfo: Boolean
-        read GetHasCacheInfo;
+      property HasCacheInfo: Boolean read GetHasCacheInfo;
 
       property ProcessorInfo: {$IFDEF NOGENERICS}ArrProcessorInfo {$ELSE}TArray<TProcessorInformation> {$ENDIF} read FProcessorInfo;
-      property HasProcessorInfo: Boolean
-        read GetHasProcessorInfo;
+      property HasProcessorInfo: Boolean read GetHasProcessorInfo;
 
-      property MemoryControllerInfo: {$IFDEF NOGENERICS}ArrMemoryControllerInfo {$ELSE} TArray<TMemoryControllerInformation>
-{$ENDIF} read FMemoryControllerInfo;
-      property HasMemoryControllerInfo: Boolean
-        read GetHasMemoryControllerInfo;
+      property MemoryControllerInfo: {$IFDEF NOGENERICS}ArrMemoryControllerInfo {$ELSE} TArray<TMemoryControllerInformation> {$ENDIF} read FMemoryControllerInfo;
+      property HasMemoryControllerInfo: Boolean read GetHasMemoryControllerInfo;
 
       property PortConnectorInfo: {$IFDEF NOGENERICS}ArrPortConnectorInfo {$ELSE} TArray<TPortConnectorInformation> {$ENDIF} read FPortConnectorInfo;
-      property HasPortConnectorInfo: Boolean
-        read GetHasPortConnectorInfo;
+      property HasPortConnectorInfo: Boolean read GetHasPortConnectorInfo;
 
       property SystemSlotInfo: {$IFDEF NOGENERICS}ArrSystemSlotInfo {$ELSE} TArray<TSystemSlotInformation> {$ENDIF} read FSystemSlotInfo;
-      property HasSystemSlotInfo: Boolean
-        read GetHasSystemSlotInfo;
+      property HasSystemSlotInfo: Boolean read GetHasSystemSlotInfo;
 
       property OnBoardSystemInfo: {$IFDEF NOGENERICS}ArrOnBoardSystemInfo {$ELSE} TArray<TOnBoardSystemInformation> {$ENDIF} read FOnBoardSystemInfo;
-      property HasOnBoardSystemInfo: Boolean
-        read GetHasOnBoardSystemInfo;
+      property HasOnBoardSystemInfo: Boolean read GetHasOnBoardSystemInfo;
 
       property OEMStringsInfo: {$IFDEF NOGENERICS}ArrOEMStringsInfo {$ELSE} TArray<TOEMStringsInformation> {$ENDIF} read FOEMStringsInfo;
-      property HasOEMStringsInfo: Boolean
-        read GetHasOEMStringsInfo;
+      property HasOEMStringsInfo: Boolean read GetHasOEMStringsInfo;
 
       property BIOSLanguageInfo: {$IFDEF NOGENERICS}ArrBIOSLanguageInfo {$ELSE} TArray<TBIOSLanguageInformation> {$ENDIF} read FBIOSLanguageInfo;
-      property HasBIOSLanguageInfo: Boolean
-        read GetHasBIOSLanguageInfo;
+      property HasBIOSLanguageInfo: Boolean read GetHasBIOSLanguageInfo;
 
       property SystemConfInfo: {$IFDEF NOGENERICS}ArrSystemConfInfo {$ELSE} TArray<TSystemConfInformation> {$ENDIF} read FSystemConfInfo;
-      property HasSystemConfInfo: Boolean
-        read GetHasSystemConfInfo;
+      property HasSystemConfInfo: Boolean read GetHasSystemConfInfo;
 
-      property PhysicalMemoryArrayInfo: {$IFDEF NOGENERICS} ArrPhysicalMemoryArrayInfo {$ELSE} TArray<TPhysicalMemoryArrayInformation>
-{$ENDIF} read FPhysicalMemoryArrayInfo;
-      property HasPhysicalMemoryArrayInfo: Boolean
-        read GetHasPhysicalMemoryArrayInfo;
+      property PhysicalMemoryArrayInfo: {$IFDEF NOGENERICS} ArrPhysicalMemoryArrayInfo {$ELSE} TArray<TPhysicalMemoryArrayInformation> {$ENDIF} read FPhysicalMemoryArrayInfo;
+      property HasPhysicalMemoryArrayInfo: Boolean read GetHasPhysicalMemoryArrayInfo;
 
       property MemoryDeviceInfo: {$IFDEF NOGENERICS} ArrMemoryDeviceInfo {$ELSE} TArray<TMemoryDeviceInformation> {$ENDIF} read FMemoryDeviceInfo;
-      property HasMemoryDeviceInfo: Boolean
-        read GetHasMemoryDeviceInfo;
+      property HasMemoryDeviceInfo: Boolean read GetHasMemoryDeviceInfo;
 
       property MemoryModuleInfo: {$IFDEF NOGENERICS} ArrMemoryModuleInfo {$ELSE} TArray<TMemoryModuleInformation> {$ENDIF} read FMemoryModuleInfo;
-      property HasMemoryModuleInfo: Boolean
-        read GetHasMemoryModuleInfo;
+      property HasMemoryModuleInfo: Boolean read GetHasMemoryModuleInfo;
 
       property BatteryInformation: {$IFDEF NOGENERICS} ArrBatteryInfo {$ELSE} TArray<TBatteryInformation> {$ENDIF} read FBatteryInformation;
-      property HasBatteryInfo: Boolean
-        read GetHasBatteryInfo;
+      property HasBatteryInfo: Boolean read GetHasBatteryInfo;
 
-      property MemoryArrayMappedAddressInformation: {$IFDEF NOGENERICS} ArrMemoryArrayMappedAddressInfo {$ELSE} TArray<TMemoryArrayMappedAddressInformation>
-{$ENDIF} read FMemoryArrayMappedAddressInformation;
-      property HasMemoryArrayMappedAddressInfo: Boolean
-        read GetHasMemoryArrayMappedAddressInfo;
+      property MemoryArrayMappedAddressInformation: {$IFDEF NOGENERICS} ArrMemoryArrayMappedAddressInfo {$ELSE} TArray<TMemoryArrayMappedAddressInformation> {$ENDIF} read FMemoryArrayMappedAddressInformation;
+      property HasMemoryArrayMappedAddressInfo: Boolean read GetHasMemoryArrayMappedAddressInfo;
 
-      property MemoryDeviceMappedAddressInformation: {$IFDEF NOGENERICS} ArrMemoryDeviceMappedAddressInfo {$ELSE} TArray<TMemoryDeviceMappedAddressInformation>
-{$ENDIF} read FMemoryDeviceMappedAddressInformation;
-      property HasMemoryDeviceMappedAddressInfo: Boolean
-        read GetHasMemoryDeviceMappedAddressInfo;
+      property MemoryDeviceMappedAddressInformation: {$IFDEF NOGENERICS} ArrMemoryDeviceMappedAddressInfo {$ELSE} TArray<TMemoryDeviceMappedAddressInformation> {$ENDIF} read FMemoryDeviceMappedAddressInformation;
+      property HasMemoryDeviceMappedAddressInfo: Boolean read GetHasMemoryDeviceMappedAddressInfo;
 
-      property BuiltInPointingDeviceInformation: {$IFDEF NOGENERICS} ArrBuiltInPointingDeviceInfo {$ELSE} TArray<TBuiltInPointingDeviceInformation>
-{$ENDIF} read FBuiltInPointingDeviceInformation;
-      property HasBuiltInPointingDeviceInfo: Boolean
-        read GetHasBuiltInPointingDeviceInfo;
+      property BuiltInPointingDeviceInformation: {$IFDEF NOGENERICS} ArrBuiltInPointingDeviceInfo {$ELSE} TArray<TBuiltInPointingDeviceInformation> {$ENDIF} read FBuiltInPointingDeviceInformation;
+      property HasBuiltInPointingDeviceInfo: Boolean read GetHasBuiltInPointingDeviceInfo;
 
-      property VoltageProbeInformation: {$IFDEF NOGENERICS} ArrVoltageProbeInfo {$ELSE} TArray<TVoltageProbeInformation>
-{$ENDIF} read FVoltageProbeInformation;
-      property HasVoltageProbeInfo: Boolean
-        read GetHasVoltageProbeInfo;
+      property VoltageProbeInformation: {$IFDEF NOGENERICS} ArrVoltageProbeInfo {$ELSE} TArray<TVoltageProbeInformation> {$ENDIF} read FVoltageProbeInformation;
+      property HasVoltageProbeInfo: Boolean read GetHasVoltageProbeInfo;
 
-      property CoolingDeviceInformation: {$IFDEF NOGENERICS} ArrCoolingDeviceInfo {$ELSE} TArray<TCoolingDeviceInformation>
-{$ENDIF} read FCoolingDeviceInformation;
-      property HasCoolingDeviceInfo: Boolean
-        read GetHasCoolingDeviceInfo;
+      property CoolingDeviceInformation: {$IFDEF NOGENERICS} ArrCoolingDeviceInfo {$ELSE} TArray<TCoolingDeviceInformation> {$ENDIF} read FCoolingDeviceInformation;
+      property HasCoolingDeviceInfo: Boolean read GetHasCoolingDeviceInfo;
 
-      property TemperatureProbeInformation: {$IFDEF NOGENERICS} ArrTemperatureProbeInfo {$ELSE} TArray<TTemperatureProbeInformation>
-{$ENDIF} read FTemperatureProbeInformation;
-      property HasTemperatureProbeInfo: Boolean
-        read GetHasTemperatureProbeInfo;
+      property TemperatureProbeInformation: {$IFDEF NOGENERICS} ArrTemperatureProbeInfo {$ELSE} TArray<TTemperatureProbeInformation> {$ENDIF} read FTemperatureProbeInformation;
+      property HasTemperatureProbeInfo: Boolean read GetHasTemperatureProbeInfo;
 
-      property ElectricalCurrentProbeInformation: {$IFDEF NOGENERICS} ArrElectricalCurrentProbeInfo {$ELSE} TArray<TElectricalCurrentProbeInformation>
-{$ENDIF} read FElectricalCurrentProbeInformation;
-      property HasElectricalCurrentProbeInfo: Boolean
-        read GetHasElectricalCurrentProbeInfo;
+      property ElectricalCurrentProbeInformation: {$IFDEF NOGENERICS} ArrElectricalCurrentProbeInfo {$ELSE} TArray<TElectricalCurrentProbeInformation> {$ENDIF} read FElectricalCurrentProbeInformation;
+      property HasElectricalCurrentProbeInfo: Boolean read GetHasElectricalCurrentProbeInfo;
 
-      property GroupAssociationsInformation: {$IFDEF NOGENERICS} ArrGroupAssociationsInfo {$ELSE} TArray<TGroupAssociationsInformation>
-{$ENDIF} read FGroupAssociationsInformation;
-      property HasGroupAssociationsInfo: Boolean
-        read GetHasGroupAssociationsInfo;
+      property IPMIDeviceInfo: {$IFDEF NOGENERICS} ArrIPMIDeviceInfo {$ELSE} TArray<TIPMIDeviceInformation> {$ENDIF} read FIPMIDeviceInfo;
+      property HasIPMIDeviceInfo: Boolean read GetHasIPMIDeviceInfo;
+
+      property OnboardDevicesExtendedInfo: {$IFDEF NOGENERICS} ArrOnboardDevicesExtendedInfo {$ELSE} TArray<TOnboardDevicesExtendedInformation> {$ENDIF} read FOnboardDevicesExtendedInfo;
+      property HasOnboardDevicesExtendedInfo: Boolean read GetHasOnboardDevicesExtendedInfo;
+
+      property TPMDeviceInfo: {$IFDEF NOGENERICS} ArrTPMDeviceInfo {$ELSE} TArray<TTPMDeviceInformation> {$ENDIF} read FTPMDeviceInfo;
+      property HasTPMDeviceInfo: Boolean read GetHasTPMDeviceInfo;
+
+      property ProcessorAdditionalInfo: {$IFDEF NOGENERICS} ArrProcessorAdditionalInfo {$ELSE} TArray<TProcessorAdditionalInformation> {$ENDIF} read FProcessorAdditionalInfo;
+      property HasProcessorAdditionalInfo: Boolean read GetHasProcessorAdditionalInfo;
+
+      property FirmwareInventoryInfo: {$IFDEF NOGENERICS} ArrFirmwareInventoryInfo {$ELSE} TArray<TFirmwareInventoryInformation> {$ENDIF} read FFirmwareInventoryInfo;
+      property HasFirmwareInventoryInfo: Boolean read GetHasFirmwareInventoryInfo;
+      property GroupAssociationsInformation: {$IFDEF NOGENERICS} ArrGroupAssociationsInfo {$ELSE} TArray<TGroupAssociationsInformation> {$ENDIF} read FGroupAssociationsInformation;
+      property HasGroupAssociationsInfo: Boolean read GetHasGroupAssociationsInfo;
 
   end;
 
@@ -4639,8 +4646,23 @@ type
     SMBIOSBCDRevision: Byte;
   end;
 
+  TSmBios3EntryPoint = packed record
+    AnchorString: array [0 .. 4] of Byte; // AnsiChar
+    EntryPointChecksum: Byte;
+    EntryPointLength: Byte;
+    SMBIOSMajorVersion: Byte;
+    SMBIOSMinorVersion: Byte;
+    SMBIOSDocRevision: Byte;
+    EntryPointRevision: Byte;
+    Reserved: Byte;
+    MaximumTableSize: DWORD;
+    StructureTableAddress: Int64;
+  end;
+
 const
   SMBIOS_ANCHOR_STRING_VALUE = $5F4D535F;
+  // '_SM3_'
+  SMBIOS3_ANCHOR_STRING_VALUE = [$5F, $53, $4D, $33, $5F];
   // '_DMI_'
   SMBIOS_INTERMEDIATE_ANCHOR_STRING_VALUE = [$5F, $44, $4D, $49, $5F];
 
@@ -4783,7 +4805,7 @@ begin
       inc(Index);
 end;
 
-function SMBiosFieldAvailable(const Header: TSmBiosTableHeader; FieldOffset, FieldSize: Byte): Boolean;
+function SMBiosFieldAvailable(const Header: TSmBiosTableHeader; FieldOffset, FieldSize: Integer): Boolean;
 begin
   Result := Header.Length >= FieldOffset + FieldSize;
 end;
@@ -4932,6 +4954,20 @@ begin
   for i := 0 to Length(FGroupAssociationsInformation) - 1 do
     FGroupAssociationsInformation[i].Free;
 
+  for i := 0 to Length(FIPMIDeviceInfo) - 1 do
+    FIPMIDeviceInfo[i].Free;
+
+  for i := 0 to Length(FOnboardDevicesExtendedInfo) - 1 do
+    FOnboardDevicesExtendedInfo[i].Free;
+
+  for i := 0 to Length(FTPMDeviceInfo) - 1 do
+    FTPMDeviceInfo[i].Free;
+
+  for i := 0 to Length(FProcessorAdditionalInfo) - 1 do
+    FProcessorAdditionalInfo[i].Free;
+
+  for i := 0 to Length(FFirmwareInventoryInfo) - 1 do
+    FFirmwareInventoryInfo[i].Free;
   // Do not keep dynamic arrays pointing at objects that have just been released.
   FOEMStringsInfo := nil;
   FEnclosureInfo := nil;
@@ -4956,6 +4992,11 @@ begin
   FMemoryControllerInfo := nil;
   FMemoryModuleInfo := nil;
   FGroupAssociationsInformation := nil;
+  FIPMIDeviceInfo := nil;
+  FOnboardDevicesExtendedInfo := nil;
+  FTPMDeviceInfo := nil;
+  FProcessorAdditionalInfo := nil;
+  FFirmwareInventoryInfo := nil;
 end;
 
 destructor TSMBios.Destroy;
@@ -4974,63 +5015,102 @@ end;
 procedure TSMBios.FindAndLoadFromFile(const FileName: string);
 var
   FileStream: TFileStream;
-  MagicNumber: DWORD;
-  BytesRead: Integer;
-  SMBIOSEntryPoint: TSmBiosEntryPoint;
-  CheckSum: Byte;
-  i: Integer;
-  Offset: Integer;
 begin
-  Offset := - 1;
   FileStream := TFileStream.Create(FileName, fmOpenRead);
   try
-    FileStream.Position := 0;
-    FillChar(SMBIOSEntryPoint, SizeOf(SMBIOSEntryPoint), #0);
-    repeat
-      BytesRead := FileStream.Read(MagicNumber, SizeOf(MagicNumber));
-      if (BytesRead > 0) and (MagicNumber = SMBIOS_ANCHOR_STRING_VALUE) then
-      begin
-        FileStream.Position := FileStream.Position - SizeOf(MagicNumber);
-        BytesRead := FileStream.Read(SMBIOSEntryPoint, SizeOf(SMBIOSEntryPoint));
-        // '_DMI_'
-        if (BytesRead > 0) and (BytePosEx(SMBIOSEntryPoint.IntermediateAnchorString, [$5F, $44, $4D, $49, $5F]) = 0) then
-        begin
-          CheckSum := 0;
-          for i := 0 to SMBIOSEntryPoint.EntryPointLength - 1 do
-            CheckSum := CheckSum + PByteArray(@SMBIOSEntryPoint)^[i];
-
-          if CheckSum <> 0 then
-            Continue;
-
-          Offset := FileStream.Position; // SMBIOSEntryPoint.StructureTableAddress {- $000C0000};
-          if (Offset >= 0) and (Offset < FileStream.Size) then
-          begin
-            FileStream.Position := Offset;
-
-            if Assigned(FRawSMBIOSData.SMBIOSTableData) then
-              FreeMem(FRawSMBIOSData.SMBIOSTableData);
-
-            FRawSMBIOSData.Length := SMBIOSEntryPoint.StructureTableLength;
-            GetMem(FRawSMBIOSData.SMBIOSTableData, FRawSMBIOSData.Length);
-            FRawSMBIOSData.DmiRevision := SMBIOSEntryPoint.EntryPointRevision;
-            FRawSMBIOSData.SMBIOSMajorVersion := SMBIOSEntryPoint.SMBIOSMajorVersion;
-            FRawSMBIOSData.SMBIOSMinorVersion := SMBIOSEntryPoint.SMBIOSMinorVersion;
-            FileStream.Read(FRawSMBIOSData.SMBIOSTableData^, FRawSMBIOSData.Length);
-            Break;
-          end;
-        end;
-        FileStream.Position := FileStream.Position + 12;
-      end
-      else
-        FileStream.Position := FileStream.Position + 12;
-    until BytesRead = 0;
+    FindAndLoadFromStream(FileStream);
   finally
     FileStream.Free;
   end;
+end;
 
-  if Offset = - 1 then
-    raise Exception.Create(Format('SMBIOS information not found in file %s', [FileName]));
+procedure TSMBios.FindAndLoadFromStream(const Stream: TStream);
+var
+  BytesRead: Integer;
+  CheckSum: Byte;
+  EntryOffset: Int64;
+  Header: array [0 .. 4] of Byte;
+  i: Integer;
+  SMBIOSEntryPoint: TSmBiosEntryPoint;
+  SMBIOS3EntryPoint: TSmBios3EntryPoint;
+  TableOffset: Int64;
+begin
+  ClearSMBiosTables;
+  FSMBiosTablesList := nil;
+  TableOffset := - 1;
+  Stream.Position := 0;
+  while Stream.Position + SizeOf(Header) <= Stream.Size do
+  begin
+    EntryOffset := Stream.Position;
+    BytesRead := Stream.Read(Header, SizeOf(Header));
+    if BytesRead <> SizeOf(Header) then
+      Break;
 
+    if (Header[0] = $5F) and (Header[1] = $53) and (Header[2] = $4D) and
+       (Header[3] = $33) and (Header[4] = $5F) then
+    begin
+      Stream.Position := EntryOffset;
+      FillChar(SMBIOS3EntryPoint, SizeOf(SMBIOS3EntryPoint), 0);
+      Stream.ReadBuffer(SMBIOS3EntryPoint, SizeOf(SMBIOS3EntryPoint));
+      if (SMBIOS3EntryPoint.EntryPointLength >= SizeOf(SMBIOS3EntryPoint)) and
+         (EntryOffset + SMBIOS3EntryPoint.EntryPointLength < Stream.Size) then
+      begin
+        CheckSum := 0;
+        for i := 0 to SMBIOS3EntryPoint.EntryPointLength - 1 do
+          CheckSum := CheckSum + PByteArray(@SMBIOS3EntryPoint)^[i];
+        if CheckSum = 0 then
+        begin
+          TableOffset := EntryOffset + SMBIOS3EntryPoint.EntryPointLength;
+          FRawSMBIOSData.Length := Stream.Size - TableOffset;
+          if (SMBIOS3EntryPoint.MaximumTableSize <> 0) and
+             (FRawSMBIOSData.Length > SMBIOS3EntryPoint.MaximumTableSize) then
+            raise Exception.Create('The SMBIOS 3.x table exceeds the entry point maximum table size');
+          FRawSMBIOSData.DmiRevision := SMBIOS3EntryPoint.SMBIOSDocRevision;
+          FRawSMBIOSData.SMBIOSMajorVersion := SMBIOS3EntryPoint.SMBIOSMajorVersion;
+          FRawSMBIOSData.SMBIOSMinorVersion := SMBIOS3EntryPoint.SMBIOSMinorVersion;
+          Break;
+        end;
+      end;
+    end
+    else if PDWORD(@Header[0])^ = SMBIOS_ANCHOR_STRING_VALUE then
+    begin
+      Stream.Position := EntryOffset;
+      FillChar(SMBIOSEntryPoint, SizeOf(SMBIOSEntryPoint), 0);
+      Stream.ReadBuffer(SMBIOSEntryPoint, SizeOf(SMBIOSEntryPoint));
+      if (SMBIOSEntryPoint.EntryPointLength <= SizeOf(SMBIOSEntryPoint)) and
+         (SMBIOSEntryPoint.IntermediateAnchorString[0] = $5F) and
+         (SMBIOSEntryPoint.IntermediateAnchorString[1] = $44) and
+         (SMBIOSEntryPoint.IntermediateAnchorString[2] = $4D) and
+         (SMBIOSEntryPoint.IntermediateAnchorString[3] = $49) and
+         (SMBIOSEntryPoint.IntermediateAnchorString[4] = $5F) then
+      begin
+        CheckSum := 0;
+        for i := 0 to SMBIOSEntryPoint.EntryPointLength - 1 do
+          CheckSum := CheckSum + PByteArray(@SMBIOSEntryPoint)^[i];
+        if CheckSum = 0 then
+        begin
+          TableOffset := EntryOffset + SMBIOSEntryPoint.EntryPointLength;
+          if TableOffset + SMBIOSEntryPoint.StructureTableLength > Stream.Size then
+            raise Exception.Create('The SMBIOS 2.x table extends beyond the stream');
+          FRawSMBIOSData.Length := SMBIOSEntryPoint.StructureTableLength;
+          FRawSMBIOSData.DmiRevision := SMBIOSEntryPoint.EntryPointRevision;
+          FRawSMBIOSData.SMBIOSMajorVersion := SMBIOSEntryPoint.SMBIOSMajorVersion;
+          FRawSMBIOSData.SMBIOSMinorVersion := SMBIOSEntryPoint.SMBIOSMinorVersion;
+          Break;
+        end;
+      end;
+    end;
+    Stream.Position := EntryOffset + 1;
+  end;
+
+  if TableOffset < 0 then
+    raise Exception.Create('SMBIOS information not found in stream');
+
+  if Assigned(FRawSMBIOSData.SMBIOSTableData) then
+    FreeMem(FRawSMBIOSData.SMBIOSTableData);
+  GetMem(FRawSMBIOSData.SMBIOSTableData, FRawSMBIOSData.Length);
+  Stream.Position := TableOffset;
+  Stream.ReadBuffer(FRawSMBIOSData.SMBIOSTableData^[0], FRawSMBIOSData.Length);
   FSMBiosTablesList := GetSMBiosTablesList;
   ReadSMBiosTables;
 end;
@@ -5150,6 +5230,30 @@ begin
   Result := Length(FVoltageProbeInformation) > 0;
 end;
 
+function TSMBios.GetHasIPMIDeviceInfo: Boolean;
+begin
+  Result := Length(FIPMIDeviceInfo) > 0;
+end;
+
+function TSMBios.GetHasOnboardDevicesExtendedInfo: Boolean;
+begin
+  Result := Length(FOnboardDevicesExtendedInfo) > 0;
+end;
+
+function TSMBios.GetHasTPMDeviceInfo: Boolean;
+begin
+  Result := Length(FTPMDeviceInfo) > 0;
+end;
+
+function TSMBios.GetHasProcessorAdditionalInfo: Boolean;
+begin
+  Result := Length(FProcessorAdditionalInfo) > 0;
+end;
+
+function TSMBios.GetHasFirmwareInventoryInfo: Boolean;
+begin
+  Result := Length(FFirmwareInventoryInfo) > 0;
+end;
 procedure TSMBios.SaveToFile(const FileName: string);
 Var
   LStream: TFileStream;
@@ -5167,30 +5271,34 @@ procedure TSMBios.LoadFromFile(const FileName: string; LoadSMBIOSTables: Boolean
 Var
   LStream: TFileStream;
 begin
-  LStream :=  TFileStream.Create(FileName, fmOpenRead);
+  LStream := TFileStream.Create(FileName, fmOpenRead);
   try
-    ClearSMBiosTables;
-    FSMBiosTablesList := nil;
-
-    // Release the current raw buffer before replacing the metadata read from disk.
-    if Assigned(FRawSMBIOSData.SMBIOSTableData) then
-    begin
-      FreeMem(FRawSMBIOSData.SMBIOSTableData);
-      FRawSMBIOSData.SMBIOSTableData := nil;
-    end;
-
-    LStream.ReadBuffer(FRawSMBIOSData, SizeOf(FRawSMBIOSData) - SizeOf(FRawSMBIOSData.SMBIOSTableData));
-    GetMem(FRawSMBIOSData.SMBIOSTableData, FRawSMBIOSData.Length);
-    LStream.ReadBuffer(FRawSMBIOSData.SMBIOSTableData^[0], FRawSMBIOSData.Length);
-
-    if LoadSMBIOSTables then
-    begin
-      FSMBiosTablesList := GetSMBiosTablesList;
-      ReadSMBiosTables;
-    end;
-
+    LoadFromStream(LStream, LoadSMBIOSTables);
   finally
     LStream.Free;
+  end;
+end;
+
+procedure TSMBios.LoadFromStream(const Stream: TStream; LoadSMBIOSTables: Boolean = false);
+begin
+  ClearSMBiosTables;
+  FSMBiosTablesList := nil;
+
+  // Release the current raw buffer before replacing the metadata read from the stream.
+  if Assigned(FRawSMBIOSData.SMBIOSTableData) then
+  begin
+    FreeMem(FRawSMBIOSData.SMBIOSTableData);
+    FRawSMBIOSData.SMBIOSTableData := nil;
+  end;
+
+  Stream.ReadBuffer(FRawSMBIOSData, SizeOf(FRawSMBIOSData) - SizeOf(FRawSMBIOSData.SMBIOSTableData));
+  GetMem(FRawSMBIOSData.SMBIOSTableData, FRawSMBIOSData.Length);
+  Stream.ReadBuffer(FRawSMBIOSData.SMBIOSTableData^[0], FRawSMBIOSData.Length);
+
+  if LoadSMBIOSTables then
+  begin
+    FSMBiosTablesList := GetSMBiosTablesList;
+    ReadSMBiosTables;
   end;
 end;
 
@@ -6080,6 +6188,75 @@ begin
       end;
     until (LIndex = - 1);
 
+  SetLength(FIPMIDeviceInfo, GetSMBiosTableEntries(IPMIDeviceInformation));
+  i := 0;
+  LIndex := - 1;
+  if Length(FIPMIDeviceInfo) > 0 then
+    repeat
+      LIndex := GetSMBiosTableNextIndex(IPMIDeviceInformation, LIndex);
+      if LIndex >= 0 then
+      begin
+        FIPMIDeviceInfo[i] := TIPMIDeviceInformation.Create;
+        FIPMIDeviceInfo[i].RAWIPMIDeviceInfo := @RawSMBIOSData.SMBIOSTableData^[LIndex];
+        inc(i);
+      end;
+    until (LIndex = - 1);
+
+  SetLength(FOnboardDevicesExtendedInfo, GetSMBiosTableEntries(OnboardDevicesExtendedInformation));
+  i := 0;
+  LIndex := - 1;
+  if Length(FOnboardDevicesExtendedInfo) > 0 then
+    repeat
+      LIndex := GetSMBiosTableNextIndex(OnboardDevicesExtendedInformation, LIndex);
+      if LIndex >= 0 then
+      begin
+        FOnboardDevicesExtendedInfo[i] := TOnboardDevicesExtendedInformation.Create;
+        FOnboardDevicesExtendedInfo[i].RAWOnboardDevicesExtendedInfo := @RawSMBIOSData.SMBIOSTableData^[LIndex];
+        inc(i);
+      end;
+    until (LIndex = - 1);
+
+  SetLength(FTPMDeviceInfo, GetSMBiosTableEntries(TPMDevice));
+  i := 0;
+  LIndex := - 1;
+  if Length(FTPMDeviceInfo) > 0 then
+    repeat
+      LIndex := GetSMBiosTableNextIndex(TPMDevice, LIndex);
+      if LIndex >= 0 then
+      begin
+        FTPMDeviceInfo[i] := TTPMDeviceInformation.Create;
+        FTPMDeviceInfo[i].RAWTPMDeviceInfo := @RawSMBIOSData.SMBIOSTableData^[LIndex];
+        inc(i);
+      end;
+    until (LIndex = - 1);
+
+  SetLength(FProcessorAdditionalInfo, GetSMBiosTableEntries(ProcessorAdditionalInformation));
+  i := 0;
+  LIndex := - 1;
+  if Length(FProcessorAdditionalInfo) > 0 then
+    repeat
+      LIndex := GetSMBiosTableNextIndex(ProcessorAdditionalInformation, LIndex);
+      if LIndex >= 0 then
+      begin
+        FProcessorAdditionalInfo[i] := TProcessorAdditionalInformation.Create;
+        FProcessorAdditionalInfo[i].RAWProcessorAdditionalInfo := @RawSMBIOSData.SMBIOSTableData^[LIndex];
+        inc(i);
+      end;
+    until (LIndex = - 1);
+
+  SetLength(FFirmwareInventoryInfo, GetSMBiosTableEntries(FirmwareInventoryInformation));
+  i := 0;
+  LIndex := - 1;
+  if Length(FFirmwareInventoryInfo) > 0 then
+    repeat
+      LIndex := GetSMBiosTableNextIndex(FirmwareInventoryInformation, LIndex);
+      if LIndex >= 0 then
+      begin
+        FFirmwareInventoryInfo[i] := TFirmwareInventoryInformation.Create;
+        FFirmwareInventoryInfo[i].RAWFirmwareInventoryInfo := @RawSMBIOSData.SMBIOSTableData^[LIndex];
+        inc(i);
+      end;
+    until (LIndex = - 1);
   SetLength(FMemoryControllerInfo, GetSMBiosTableEntries(MemoryControllerInformation));
   i := 0;
   LIndex := - 1;
@@ -6094,6 +6271,8 @@ begin
       end;
     until (LIndex = - 1);
 end;
+
+{$I uSMBIOSPriority1Impl.inc}
 
 { TEnclosureInformation }
 
