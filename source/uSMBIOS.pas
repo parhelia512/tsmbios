@@ -15,7 +15,7 @@
 //
 // The Initial Developer of the Original Code is Rodrigo Ruz V.
 // Portions created by Rodrigo Ruz V. are Copyright (C) 2012-2026 Rodrigo Ruz V.
-// All Rights Reserved.
+// All Rights Reserved..
 //
 // **************************************************************************************************
 unit uSMBIOS;
