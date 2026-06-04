@@ -6409,18 +6409,12 @@ end;
 function TEnclosureInformation.BootUpStateStr: AnsiString;
 begin
   case RAWEnclosureInformation^.BootUpState of
-    $01 :
-      Result := 'Other';
-    $02 :
-      Result := 'Unknown';
-    $03 :
-      Result := 'Safe';
-    $04 :
-      Result := 'Warning';
-    $05 :
-      Result := 'Critical';
-    $06 :
-      Result := 'Non-recoverable'
+    $01 : Result := 'Other';
+    $02 : Result := 'Unknown';
+    $03 : Result := 'Safe';
+    $04 : Result := 'Warning';
+    $05 : Result := 'Critical';
+    $06 : Result := 'Non-recoverable'
     else
       Result := 'Unknown';
   end;
@@ -6434,18 +6428,12 @@ end;
 function TEnclosureInformation.PowerSupplyStateStr: AnsiString;
 begin
   case RAWEnclosureInformation^.PowerSupplyState of
-    $01 :
-      Result := 'Other';
-    $02 :
-      Result := 'Unknown';
-    $03 :
-      Result := 'Safe';
-    $04 :
-      Result := 'Warning';
-    $05 :
-      Result := 'Critical';
-    $06 :
-      Result := 'Non-recoverable'
+    $01 : Result := 'Other';
+    $02 : Result := 'Unknown';
+    $03 : Result := 'Safe';
+    $04 : Result := 'Warning';
+    $05 : Result := 'Critical';
+    $06 : Result := 'Non-recoverable'
     else
       Result := 'Unknown';
   end;
@@ -6465,64 +6453,35 @@ begin
     _Type := EnableBit(RAWEnclosureInformation^._Type, 7, false);
 
   case _Type of
-    $01 :
-      Result := 'Other';
-    $02 :
-      Result := 'Unknown';
-    $03 :
-      Result := 'Desktop';
-    $04 :
-      Result := 'Low Profile Desktop';
-    $05 :
-      Result := 'Pizza Box';
-    $06 :
-      Result := 'Mini Tower';
-    $07 :
-      Result := 'Tower';
-    $08 :
-      Result := 'Portable';
-    $09 :
-      Result := 'LapTop';
-    $0A :
-      Result := 'Notebook';
-    $0B :
-      Result := 'Hand Held';
-    $0C :
-      Result := 'Docking Station';
-    $0D :
-      Result := 'All in One';
-    $0E :
-      Result := 'Sub Notebook';
-    $0F :
-      Result := 'Space-saving';
-    $10 :
-      Result := 'Lunc Box';
-    $11 :
-      Result := 'Main Server Chassis';
-    $12 :
-      Result := 'Expansion Chassis';
-    $13 :
-      Result := 'SubChassis';
-    $14 :
-      Result := 'Bus Expansion Chassis';
-    $15 :
-      Result := 'Peripheral Chassis';
-    $16 :
-      Result := 'RAID Chassis';
-    $17 :
-      Result := 'Rack Mount Chassis';
-    $18 :
-      Result := 'Sealed-case PC';
-    $19 :
-      Result := 'Multi-system chassis';
-    $1A :
-      Result := 'Compact PCI';
-    $1B :
-      Result := 'Advanced TCA';
-    $1C :
-      Result := 'Blade';
-    $1D :
-      Result := 'Blade Enclosure'
+    $01 : Result := 'Other';
+    $02 : Result := 'Unknown';
+    $03 : Result := 'Desktop';
+    $04 : Result := 'Low Profile Desktop';
+    $05 : Result := 'Pizza Box';
+    $06 : Result := 'Mini Tower';
+    $07 : Result := 'Tower';
+    $08 : Result := 'Portable';
+    $09 : Result := 'LapTop';
+    $0A : Result := 'Notebook';
+    $0B : Result := 'Hand Held';
+    $0C : Result := 'Docking Station';
+    $0D : Result := 'All in One';
+    $0E : Result := 'Sub Notebook';
+    $0F : Result := 'Space-saving';
+    $10 : Result := 'Lunc Box';
+    $11 : Result := 'Main Server Chassis';
+    $12 : Result := 'Expansion Chassis';
+    $13 : Result := 'SubChassis';
+    $14 : Result := 'Bus Expansion Chassis';
+    $15 : Result := 'Peripheral Chassis';
+    $16 : Result := 'RAID Chassis';
+    $17 : Result := 'Rack Mount Chassis';
+    $18 : Result := 'Sealed-case PC';
+    $19 : Result := 'Multi-system chassis';
+    $1A : Result := 'Compact PCI';
+    $1B : Result := 'Advanced TCA';
+    $1C : Result := 'Blade';
+    $1D : Result := 'Blade Enclosure'
     else
       Result := 'Unknown';
   end;
@@ -6576,431 +6535,221 @@ function TProcessorInformation.ProcessorFamilyStr: AnsiString;
 begin
   if (RAWProcessorInformation^.ProcessorFamily <> $FE) or not SMBiosFieldAvailable(RAWProcessorInformation^.Header, $28, SizeOf(RAWProcessorInformation^.ProcessorFamily2)) then
     case RAWProcessorInformation^.ProcessorFamily of
-      1 :
-        Result := 'Other';
-      2 :
-        Result := 'Unknown';
-      3 :
-        Result := '8086';
-      4 :
-        Result := '80286';
-      5 :
-        Result := 'Intel386 processor';
-      6 :
-        Result := 'Intel486 processor';
-      7 :
-        Result := '8087';
-      8 :
-        Result := '80287';
-      9 :
-        Result := '80387';
-      10 :
-        Result := '80487';
-      11 :
-        Result := 'Intel® Pentium® processor';
-      12 :
-        Result := 'Pentium® Pro processor';
-      13 :
-        Result := 'Pentium® II processor';
-      14 :
-        Result := 'Pentium® processor with MMX technology';
-      15 :
-        Result := 'Intel® Celeron® processor';
-      16 :
-        Result := 'Pentium® II Xeon processor';
-      17 :
-        Result := 'Pentium® III processor';
-      18 :
-        Result := 'M1 Family';
-      19 :
-        Result := 'M2 Family';
-      20 :
-        Result := 'Intel® Celeron® M processor';
-      21 :
-        Result := 'Intel® Pentium® 4 HT processor';
-      22 .. 23 :
-        Result := 'Available for assignment';
-      24 :
-        Result := 'AMD Duron Processor Family';
-      25 :
-        Result := 'K5 Family';
-      26 :
-        Result := 'K6 Family';
-      27 :
-        Result := 'K6-2';
-      28 :
-        Result := 'K6-3';
-      29 :
-        Result := 'AMD Athlon Processor Family';
-      30 :
-        Result := 'AMD29000 Family';
-      31 :
-        Result := 'K6-2+';
-      32 :
-        Result := 'Power PC Family';
-      33 :
-        Result := 'Power PC 601';
-      34 :
-        Result := 'Power PC 603';
-      35 :
-        Result := 'Power PC 603+';
-      36 :
-        Result := 'Power PC 604';
-      37 :
-        Result := 'Power PC 620';
-      38 :
-        Result := 'Power PC x704';
-      39 :
-        Result := 'Power PC 750';
-      40 :
-        Result := 'Intel® Core Duo processor';
-      41 :
-        Result := 'Intel® Core Duo mobile processor';
-      42 :
-        Result := 'Intel® Core Solo mobile processor';
-      43 :
-        Result := 'Intel® Atom processor';
-      44 .. 47 :
-        Result := 'Available for assignment';
-      48 :
-        Result := 'Alpha Family';
-      49 :
-        Result := 'Alpha 21064';
-      50 :
-        Result := 'Alpha 21066';
-      51 :
-        Result := 'Alpha 21164';
-      52 :
-        Result := 'Alpha 21164PC';
-      53 :
-        Result := 'Alpha 21164a';
-      54 :
-        Result := 'Alpha 21264';
-      55 :
-        Result := 'Alpha 21364';
-      56 :
-        Result := 'AMD Turion II Ultra Dual-Core Mobile';
-      57 :
-        Result := 'AMD Turion II Dual-Core Mobile M Processor';
-      58 :
-        Result := 'AMD Athlon II Dual-Core M Processor';
-      59 :
-        Result := 'AMD Opteron 6100 Series Processor';
-      60 :
-        Result := 'AMD Opteron 4100 Series Processor';
-      61 :
-        Result := 'AMD Opteron 6200 Series Processor';
-      62 :
-        Result := 'AMD Opteron 4200 Series Processor';
-      63 :
-        Result := 'Available for assignment';
-      64 :
-        Result := 'MIPS Family';
-      65 :
-        Result := 'MIPS R4000';
-      66 :
-        Result := 'MIPS R4200';
-      67 :
-        Result := 'MIPS R4400';
-      68 :
-        Result := 'MIPS R4600';
-      69 :
-        Result := 'MIPS R10000';
-      70 :
-        Result := 'AMD C-Series Processor';
-      71 :
-        Result := 'AMD E-Series Processor';
-      72 :
-        Result := 'AMD A-Series Processor';
-      73 :
-        Result := 'AMD G-Series Processor';
-      74 .. 79 :
-        Result := 'Available for assignment';
-      80 :
-        Result := 'SPARC Family';
-      81 :
-        Result := 'SuperSPARC';
-      82 :
-        Result := 'microSPARC II';
-      83 :
-        Result := 'microSPARC IIep';
-      84 :
-        Result := 'UltraSPARC';
-      85 :
-        Result := 'UltraSPARC II';
-      86 :
-        Result := 'UltraSPARC IIi';
-      87 :
-        Result := 'UltraSPARC III';
-      88 :
-        Result := 'UltraSPARC IIIi';
-      89 .. 95 :
-        Result := 'Available for assignment';
-      96 :
-        Result := '68040 Family';
-      97 :
-        Result := '68xxx';
-      98 :
-        Result := '68000';
-      99 :
-        Result := '68010';
-      100 :
-        Result := '68020';
-      101 :
-        Result := '68030';
-      102 .. 111 :
-        Result := 'Available for assignment';
-      112 :
-        Result := 'Hobbit Family';
-      113 .. 119 :
-        Result := 'Available for assignment';
-      120 :
-        Result := 'Crusoe TM5000 Family';
-      121 :
-        Result := 'Crusoe TM3000 Family';
-      122 :
-        Result := 'Efficeon TM8000 Family';
-      123 .. 127 :
-        Result := 'Available for assignment';
-      128 :
-        Result := 'Weitek';
-      129 :
-        Result := 'Available for assignment';
-      130 :
-        Result := 'Itanium processor';
-      131 :
-        Result := 'AMD Athlon 64 Processor Family';
-      132 :
-        Result := 'AMD Opteron Processor Family';
-      133 :
-        Result := 'AMD Sempron Processor Family';
-      134 :
-        Result := 'AMD Turion 64 Mobile Technology';
-      135 :
-        Result := 'Dual-Core AMD Opteron Processor';
-      136 :
-        Result := 'AMD Athlon 64 X2 Dual-Core Processor';
-      137 :
-        Result := 'AMD Turion 64 X2 Mobile Technology';
-      138 :
-        Result := 'Quad-Core AMD Opteron Processor';
-      139 :
-        Result := 'Third-Generation AMD Opteron';
-      140 :
-        Result := 'AMD Phenom FX Quad-Core Processor';
-      141 :
-        Result := 'AMD Phenom X4 Quad-Core Processor';
-      142 :
-        Result := 'AMD Phenom X2 Dual-Core Processor';
-      143 :
-        Result := 'AMD Athlon X2 Dual-Core Processor';
-      144 :
-        Result := 'PA-RISC Family';
-      145 :
-        Result := 'PA-RISC 8500';
-      146 :
-        Result := 'PA-RISC 8000';
-      147 :
-        Result := 'PA-RISC 7300LC';
-      148 :
-        Result := 'PA-RISC 7200';
-      149 :
-        Result := 'PA-RISC 7100LC';
-      150 :
-        Result := 'PA-RISC 7100';
-      151 .. 159 :
-        Result := 'Available for assignment';
-      160 :
-        Result := 'V30 Family';
-      161 :
-        Result := 'Quad-Core Intel® Xeon® processor 3200 Series';
-      162 :
-        Result := 'Dual-Core Intel® Xeon® processor 3000 Series';
-      163 :
-        Result := 'Quad-Core Intel® Xeon® processor 5300 Series';
-      164 :
-        Result := 'Dual-Core Intel® Xeon® processor 5100 Series';
-      165 :
-        Result := 'Dual-Core Intel® Xeon® processor 5000 Series';
-      166 :
-        Result := 'Dual-Core Intel® Xeon® processor LV';
-      167 :
-        Result := 'Dual-Core Intel® Xeon® processor ULV';
-      168 :
-        Result := 'Dual-Core Intel® Xeon® processor';
-      169 :
-        Result := 'Quad-Core Intel® Xeon® processor';
-      170 :
-        Result := 'Quad-Core Intel® Xeon® processor';
-      171 :
-        Result := 'Dual-Core Intel® Xeon® processor';
-      172 :
-        Result := 'Dual-Core Intel® Xeon® processor';
-      173 :
-        Result := 'Quad-Core Intel® Xeon® processor';
-      174 :
-        Result := 'Quad-Core Intel® Xeon® processor';
-      175 :
-        Result := 'Multi-Core Intel® Xeon® processor';
-      176 :
-        Result := 'Pentium® III Xeon processor';
-      177 :
-        Result := 'Pentium® III Processor with Intel';
-      178 :
-        Result := 'Pentium® 4 Processor';
-      179 :
-        Result := 'Intel® Xeon® processor';
-      180 :
-        Result := 'AS400 Family';
-      181 :
-        Result := 'Intel® Xeon processor MP';
-      182 :
-        Result := 'AMD Athlon XP Processor Family';
-      183 :
-        Result := 'AMD Athlon MP Processor Family';
-      184 :
-        Result := 'Intel® Itanium® 2 processor';
-      185 :
-        Result := 'Intel® Pentium® M processor';
-      186 :
-        Result := 'Intel® Celeron® D processor';
-      187 :
-        Result := 'Intel® Pentium® D processor';
-      188 :
-        Result := 'Intel® Pentium® Processor Extreme';
-      189 :
-        Result := 'Intel® Core Solo Processor';
-      190 :
-        Result := 'Reserved';
-      191 :
-        Result := 'Intel® Core 2 Duo Processor';
-      192 :
-        Result := 'Intel® Core 2 Solo processor';
-      193 :
-        Result := 'Intel® Core 2 Extreme processor';
-      194 :
-        Result := 'Intel® Core 2 Quad processor';
-      195 :
-        Result := 'Intel® Core 2 Extreme mobile';
-      196 :
-        Result := 'Intel® Core 2 Duo mobile processor';
-      197 :
-        Result := 'Intel® Core 2 Solo mobile processor';
-      198 :
-        Result := 'Intel® Core i7 processor';
-      199 :
-        Result := 'Dual-Core Intel® Celeron® processor';
-      200 :
-        Result := 'IBM390 Family';
-      201 :
-        Result := 'G4';
-      202 :
-        Result := 'G5';
-      203 :
-        Result := 'ESA/390 G6';
-      204 :
-        Result := 'z/Architectur base';
-      205 :
-        Result := 'Intel® Core i5 processor';
-      206 :
-        Result := 'Intel® Core i3 processor';
-      207 .. 209 :
-        Result := 'Available for assignment';
-      210 :
-        Result := 'VIA C7-M Processor Family';
-      211 :
-        Result := 'VIA C7-D Processor Family';
-      212 :
-        Result := 'VIA C7 Processor Family';
-      213 :
-        Result := 'VIA Eden Processor Family';
-      214 :
-        Result := 'Multi-Core Intel® Xeon® processor';
-      215 :
-        Result := 'Dual-Core Intel® Xeon® processor 3xxx Series';
-      216 :
-        Result := 'Quad-Core Intel® Xeon® processor 3xxx Series';
-      217 :
-        Result := 'VIA Nano Processor Family';
-      218 :
-        Result := 'Dual-Core Intel® Xeon® processor 5xxx Series';
-      219 :
-        Result := 'Quad-Core Intel® Xeon® processor 5xxx Series';
-      220 :
-        Result := 'Available for assignment';
-      221 :
-        Result := 'Dual-Core Intel® Xeon® processor 7xxx Series';
-      222 :
-        Result := 'Quad-Core Intel® Xeon® processor 7xxx Series';
-      223 :
-        Result := 'Multi-Core Intel® Xeon® processor 7xxx Series';
-      224 :
-        Result := 'Multi-Core Intel® Xeon® processor 3400 Series';
-      225 .. 229 :
-        Result := 'Available for assignment';
-      230 :
-        Result := 'Embedded AMD Opteron Quad-Core Processor Family';
-      231 :
-        Result := 'AMD Phenom Triple-Core Processor Family';
-      232 :
-        Result := 'AMD Turion Ultra Dual-Core Mobile Processor Family';
-      233 :
-        Result := 'AMD Turion Dual-Core Mobile Processor Family';
-      234 :
-        Result := 'AMD Athlon Dual-Core Processor Family';
-      235 :
-        Result := 'AMD Sempron SI Processor Family';
-      236 :
-        Result := 'AMD Phenom II Processor Family';
-      237 :
-        Result := 'AMD Athlon II Processor Family';
-      238 :
-        Result := 'Six-Core AMD Opteron Processor Family';
-      239 :
-        Result := 'AMD Sempron M Processor Family';
-      240 .. 249 :
-        Result := 'Available for assignment';
-      250 :
-        Result := 'i860';
-      251 :
-        Result := 'i960';
-      252 .. 253 :
-        Result := 'Available for assignment';
-      254 :
-        Result := 'Indicator to obtain the processor family from the Processor';
-      255 :
-        Result := 'Reserved';
+      1 : Result := 'Other';
+      2 : Result := 'Unknown';
+      3 : Result := '8086';
+      4 : Result := '80286';
+      5 : Result := 'Intel386 processor';
+      6 : Result := 'Intel486 processor';
+      7 : Result := '8087';
+      8 : Result := '80287';
+      9 : Result := '80387';
+      10 : Result := '80487';
+      11 : Result := 'Intel® Pentium® processor';
+      12 : Result := 'Pentium® Pro processor';
+      13 : Result := 'Pentium® II processor';
+      14 : Result := 'Pentium® processor with MMX technology';
+      15 : Result := 'Intel® Celeron® processor';
+      16 : Result := 'Pentium® II Xeon processor';
+      17 : Result := 'Pentium® III processor';
+      18 : Result := 'M1 Family';
+      19 : Result := 'M2 Family';
+      20 : Result := 'Intel® Celeron® M processor';
+      21 : Result := 'Intel® Pentium® 4 HT processor';
+      22 .. 23 : Result := 'Available for assignment';
+      24 : Result := 'AMD Duron Processor Family';
+      25 : Result := 'K5 Family';
+      26 : Result := 'K6 Family';
+      27 : Result := 'K6-2';
+      28 : Result := 'K6-3';
+      29 : Result := 'AMD Athlon Processor Family';
+      30 : Result := 'AMD29000 Family';
+      31 : Result := 'K6-2+';
+      32 : Result := 'Power PC Family';
+      33 : Result := 'Power PC 601';
+      34 : Result := 'Power PC 603';
+      35 : Result := 'Power PC 603+';
+      36 : Result := 'Power PC 604';
+      37 : Result := 'Power PC 620';
+      38 : Result := 'Power PC x704';
+      39 : Result := 'Power PC 750';
+      40 : Result := 'Intel® Core Duo processor';
+      41 : Result := 'Intel® Core Duo mobile processor';
+      42 : Result := 'Intel® Core Solo mobile processor';
+      43 : Result := 'Intel® Atom processor';
+      44 .. 47 : Result := 'Available for assignment';
+      48 : Result := 'Alpha Family';
+      49 : Result := 'Alpha 21064';
+      50 : Result := 'Alpha 21066';
+      51 : Result := 'Alpha 21164';
+      52 : Result := 'Alpha 21164PC';
+      53 : Result := 'Alpha 21164a';
+      54 : Result := 'Alpha 21264';
+      55 : Result := 'Alpha 21364';
+      56 : Result := 'AMD Turion II Ultra Dual-Core Mobile';
+      57 : Result := 'AMD Turion II Dual-Core Mobile M Processor';
+      58 : Result := 'AMD Athlon II Dual-Core M Processor';
+      59 : Result := 'AMD Opteron 6100 Series Processor';
+      60 : Result := 'AMD Opteron 4100 Series Processor';
+      61 : Result := 'AMD Opteron 6200 Series Processor';
+      62 : Result := 'AMD Opteron 4200 Series Processor';
+      63 : Result := 'Available for assignment';
+      64 : Result := 'MIPS Family';
+      65 : Result := 'MIPS R4000';
+      66 : Result := 'MIPS R4200';
+      67 : Result := 'MIPS R4400';
+      68 : Result := 'MIPS R4600';
+      69 : Result := 'MIPS R10000';
+      70 : Result := 'AMD C-Series Processor';
+      71 : Result := 'AMD E-Series Processor';
+      72 : Result := 'AMD A-Series Processor';
+      73 : Result := 'AMD G-Series Processor';
+      74 .. 79 : Result := 'Available for assignment';
+      80 : Result := 'SPARC Family';
+      81 : Result := 'SuperSPARC';
+      82 : Result := 'microSPARC II';
+      83 : Result := 'microSPARC IIep';
+      84 : Result := 'UltraSPARC';
+      85 : Result := 'UltraSPARC II';
+      86 : Result := 'UltraSPARC IIi';
+      87 : Result := 'UltraSPARC III';
+      88 : Result := 'UltraSPARC IIIi';
+      89 .. 95 : Result := 'Available for assignment';
+      96 : Result := '68040 Family';
+      97 : Result := '68xxx';
+      98 : Result := '68000';
+      99 : Result := '68010';
+      100 : Result := '68020';
+      101 : Result := '68030';
+      102 .. 111 : Result := 'Available for assignment';
+      112 : Result := 'Hobbit Family';
+      113 .. 119 : Result := 'Available for assignment';
+      120 : Result := 'Crusoe TM5000 Family';
+      121 : Result := 'Crusoe TM3000 Family';
+      122 : Result := 'Efficeon TM8000 Family';
+      123 .. 127 : Result := 'Available for assignment';
+      128 : Result := 'Weitek';
+      129 : Result := 'Available for assignment';
+      130 : Result := 'Itanium processor';
+      131 : Result := 'AMD Athlon 64 Processor Family';
+      132 : Result := 'AMD Opteron Processor Family';
+      133 : Result := 'AMD Sempron Processor Family';
+      134 : Result := 'AMD Turion 64 Mobile Technology';
+      135 : Result := 'Dual-Core AMD Opteron Processor';
+      136 : Result := 'AMD Athlon 64 X2 Dual-Core Processor';
+      137 : Result := 'AMD Turion 64 X2 Mobile Technology';
+      138 : Result := 'Quad-Core AMD Opteron Processor';
+      139 : Result := 'Third-Generation AMD Opteron';
+      140 : Result := 'AMD Phenom FX Quad-Core Processor';
+      141 : Result := 'AMD Phenom X4 Quad-Core Processor';
+      142 : Result := 'AMD Phenom X2 Dual-Core Processor';
+      143 : Result := 'AMD Athlon X2 Dual-Core Processor';
+      144 : Result := 'PA-RISC Family';
+      145 : Result := 'PA-RISC 8500';
+      146 : Result := 'PA-RISC 8000';
+      147 : Result := 'PA-RISC 7300LC';
+      148 : Result := 'PA-RISC 7200';
+      149 : Result := 'PA-RISC 7100LC';
+      150 : Result := 'PA-RISC 7100';
+      151 .. 159 : Result := 'Available for assignment';
+      160 : Result := 'V30 Family';
+      161 : Result := 'Quad-Core Intel® Xeon® processor 3200 Series';
+      162 : Result := 'Dual-Core Intel® Xeon® processor 3000 Series';
+      163 : Result := 'Quad-Core Intel® Xeon® processor 5300 Series';
+      164 : Result := 'Dual-Core Intel® Xeon® processor 5100 Series';
+      165 : Result := 'Dual-Core Intel® Xeon® processor 5000 Series';
+      166 : Result := 'Dual-Core Intel® Xeon® processor LV';
+      167 : Result := 'Dual-Core Intel® Xeon® processor ULV';
+      168 : Result := 'Dual-Core Intel® Xeon® processor';
+      169 : Result := 'Quad-Core Intel® Xeon® processor';
+      170 : Result := 'Quad-Core Intel® Xeon® processor';
+      171 : Result := 'Dual-Core Intel® Xeon® processor';
+      172 : Result := 'Dual-Core Intel® Xeon® processor';
+      173 : Result := 'Quad-Core Intel® Xeon® processor';
+      174 : Result := 'Quad-Core Intel® Xeon® processor';
+      175 : Result := 'Multi-Core Intel® Xeon® processor';
+      176 : Result := 'Pentium® III Xeon processor';
+      177 : Result := 'Pentium® III Processor with Intel';
+      178 : Result := 'Pentium® 4 Processor';
+      179 : Result := 'Intel® Xeon® processor';
+      180 : Result := 'AS400 Family';
+      181 : Result := 'Intel® Xeon processor MP';
+      182 : Result := 'AMD Athlon XP Processor Family';
+      183 : Result := 'AMD Athlon MP Processor Family';
+      184 : Result := 'Intel® Itanium® 2 processor';
+      185 : Result := 'Intel® Pentium® M processor';
+      186 : Result := 'Intel® Celeron® D processor';
+      187 : Result := 'Intel® Pentium® D processor';
+      188 : Result := 'Intel® Pentium® Processor Extreme';
+      189 : Result := 'Intel® Core Solo Processor';
+      190 : Result := 'Reserved';
+      191 : Result := 'Intel® Core 2 Duo Processor';
+      192 : Result := 'Intel® Core 2 Solo processor';
+      193 : Result := 'Intel® Core 2 Extreme processor';
+      194 : Result := 'Intel® Core 2 Quad processor';
+      195 : Result := 'Intel® Core 2 Extreme mobile';
+      196 : Result := 'Intel® Core 2 Duo mobile processor';
+      197 : Result := 'Intel® Core 2 Solo mobile processor';
+      198 : Result := 'Intel® Core i7 processor';
+      199 : Result := 'Dual-Core Intel® Celeron® processor';
+      200 : Result := 'IBM390 Family';
+      201 : Result := 'G4';
+      202 : Result := 'G5';
+      203 : Result := 'ESA/390 G6';
+      204 : Result := 'z/Architectur base';
+      205 : Result := 'Intel® Core i5 processor';
+      206 : Result := 'Intel® Core i3 processor';
+      207 .. 209 : Result := 'Available for assignment';
+      210 : Result := 'VIA C7-M Processor Family';
+      211 : Result := 'VIA C7-D Processor Family';
+      212 : Result := 'VIA C7 Processor Family';
+      213 : Result := 'VIA Eden Processor Family';
+      214 : Result := 'Multi-Core Intel® Xeon® processor';
+      215 : Result := 'Dual-Core Intel® Xeon® processor 3xxx Series';
+      216 : Result := 'Quad-Core Intel® Xeon® processor 3xxx Series';
+      217 : Result := 'VIA Nano Processor Family';
+      218 : Result := 'Dual-Core Intel® Xeon® processor 5xxx Series';
+      219 : Result := 'Quad-Core Intel® Xeon® processor 5xxx Series';
+      220 : Result := 'Available for assignment';
+      221 : Result := 'Dual-Core Intel® Xeon® processor 7xxx Series';
+      222 : Result := 'Quad-Core Intel® Xeon® processor 7xxx Series';
+      223 : Result := 'Multi-Core Intel® Xeon® processor 7xxx Series';
+      224 : Result := 'Multi-Core Intel® Xeon® processor 3400 Series';
+      225 .. 229 : Result := 'Available for assignment';
+      230 : Result := 'Embedded AMD Opteron Quad-Core Processor Family';
+      231 : Result := 'AMD Phenom Triple-Core Processor Family';
+      232 : Result := 'AMD Turion Ultra Dual-Core Mobile Processor Family';
+      233 : Result := 'AMD Turion Dual-Core Mobile Processor Family';
+      234 : Result := 'AMD Athlon Dual-Core Processor Family';
+      235 : Result := 'AMD Sempron SI Processor Family';
+      236 : Result := 'AMD Phenom II Processor Family';
+      237 : Result := 'AMD Athlon II Processor Family';
+      238 : Result := 'Six-Core AMD Opteron Processor Family';
+      239 : Result := 'AMD Sempron M Processor Family';
+      240 .. 249 : Result := 'Available for assignment';
+      250 : Result := 'i860';
+      251 : Result := 'i960';
+      252 .. 253 : Result := 'Available for assignment';
+      254 : Result := 'Indicator to obtain the processor family from the Processor';
+      255 : Result := 'Reserved';
       else
         Result := 'Unknown';
     end
   else
     case RAWProcessorInformation^.ProcessorFamily2 of
-      256 .. 259, 262 .. 279, 282 .. 299, 303 .. 319, 321 .. 349, 351 .. 499, 501 .. 511 :
-        Result := 'These values are available for assignment';
-      260 :
-        Result := 'SH-3';
-      261 :
-        Result := 'SH-4';
-      280 :
-        Result := 'ARM';
-      281 :
-        Result := 'StrongARM';
-      300 :
-        Result := '6x86';
-      301 :
-        Result := 'MediaGX';
-      302 :
-        Result := 'MII';
-      320 :
-        Result := 'WinChip';
-      350 :
-        Result := 'DSP';
-      500 :
-        Result := 'Video Processor';
-      512 .. 65533 :
-        Result := 'Available for assignment';
-      65534 .. 65535 :
-        Result := 'Reserved'
+      256 .. 259, 262 .. 279, 282 .. 299, 303 .. 319, 321 .. 349, 351 .. 499, 501 .. 511 : Result := 'These values are available for assignment';
+      260 : Result := 'SH-3';
+      261 : Result := 'SH-4';
+      280 : Result := 'ARM';
+      281 : Result := 'StrongARM';
+      300 : Result := '6x86';
+      301 : Result := 'MediaGX';
+      302 : Result := 'MII';
+      320 : Result := 'WinChip';
+      350 : Result := 'DSP';
+      500 : Result := 'Video Processor';
+      512 .. 65533 : Result := 'Available for assignment';
+      65534 .. 65535 : Result := 'Reserved'
       else
         Result := 'Unknown';
     end;
@@ -7014,18 +6763,12 @@ end;
 function TProcessorInformation.ProcessorTypeStr: AnsiString;
 begin
   case RAWProcessorInformation^.ProcessorType of
-    $01 :
-      Result := 'Other';
-    $02 :
-      Result := 'Unknown';
-    $03 :
-      Result := 'Central Processor';
-    $04 :
-      Result := 'Math Processor';
-    $05 :
-      Result := 'DSP Processor';
-    $06 :
-      Result := 'Video Processor'
+    $01 : Result := 'Other';
+    $02 : Result := 'Unknown';
+    $03 : Result := 'Central Processor';
+    $04 : Result := 'Math Processor';
+    $05 : Result := 'DSP Processor';
+    $06 : Result := 'Video Processor'
     else
       Result := 'Unknown';
   end;
@@ -7034,166 +6777,86 @@ end;
 function TProcessorInformation.ProcessorUpgradeStr: AnsiString;
 begin
   case RAWProcessorInformation^.ProcessorUpgrade of
-    $01 :
-      Result := 'Other';
-    $02 :
-      Result := 'Unknown';
-    $03 :
-      Result := 'Daughter Board';
-    $04 :
-      Result := 'ZIF Socket';
-    $05 :
-      Result := 'Replaceable Piggy Back';
-    $06 :
-      Result := 'None';
-    $07 :
-      Result := 'LIF Socket';
-    $08 :
-      Result := 'Slot 1';
-    $09 :
-      Result := 'Slot 2';
-    $0A :
-      Result := '370-pin socket';
-    $0B :
-      Result := 'Slot A';
-    $0C :
-      Result := 'Slot M';
-    $0D :
-      Result := 'Socket 423';
-    $0E :
-      Result := 'Socket A (Socket 462)';
-    $0F :
-      Result := 'Socket 478';
-    $10 :
-      Result := 'Socket 754';
-    $11 :
-      Result := 'Socket 940';
-    $12 :
-      Result := 'Socket 939';
-    $13 :
-      Result := 'Socket mPGA604';
-    $14 :
-      Result := 'Socket LGA771';
-    $15 :
-      Result := 'Socket LGA775';
-    $16 :
-      Result := 'Socket S1';
-    $17 :
-      Result := 'Socket AM2';
-    $18 :
-      Result := 'Socket F (1207)';
-    $19 :
-      Result := 'Socket LGA1366';
-    $1A :
-      Result := 'Socket G34';
-    $1B :
-      Result := 'Socket AM3';
-    $1C :
-      Result := 'Socket C32';
-    $1D :
-      Result := 'Socket LGA1156';
-    $1E :
-      Result := 'Socket LGA1567';
-    $1F :
-      Result := 'Socket PGA988A';
-    $20 :
-      Result := 'Socket BGA1288';
-    $21 :
-      Result := 'Socket rPGA988B';
-    $22 :
-      Result := 'Socket BGA1023';
-    $23 :
-      Result := 'Socket BGA1224';
-    $24 :
-      Result := 'Socket BGA1155';
-    $25 :
-      Result := 'Socket LGA1356';
-    $26 :
-      Result := 'Socket LGA2011';
-    $27 :
-      Result := 'Socket FS1';
-    $28 :
-      Result := 'Socket FS2';
-    $29 :
-      Result := 'Socket FM1';
-    $2A :
-      Result := 'Socket FM2';
-    $2B :
-      Result := 'Socket LGA2011-3';
-    $2C :
-      Result := 'Socket LGA1356-3';
-    $2D :
-      Result := 'Socket LGA1150';
-    $2E :
-      Result := 'Socket BGA1168';
-    $2F :
-      Result := 'Socket BGA1234';
-    $30 :
-      Result := 'Socket BGA1364';
-    $31 :
-      Result := 'Socket AM4';
-    $32 :
-      Result := 'Socket LGA1151';
-    $33 :
-      Result := 'Socket BGA1356';
-    $34 :
-      Result := 'Socket BGA1440';
-    $35 :
-      Result := 'Socket BGA1515';
-    $36 :
-      Result := 'Socket LGA3647-1';
-    $37 :
-      Result := 'Socket SP3';
-    $38 :
-      Result := 'Socket SP3r2';
-    $39 :
-      Result := 'Socket LGA2066';
-    $3A :
-      Result := 'Socket BGA1392';
-    $3B :
-      Result := 'Socket BGA1510';
-    $3C :
-      Result := 'Socket BGA1528';
-    $3D :
-      Result := 'Socket LGA4189';
-    $3E :
-      Result := 'Socket LGA1200';
-    $3F :
-      Result := 'Socket LGA4677';
-    $40 :
-      Result := 'Socket LGA1700';
-    $41 :
-      Result := 'Socket BGA1744';
-    $42 :
-      Result := 'Socket BGA1781';
-    $43 :
-      Result := 'Socket BGA1211';
-    $44 :
-      Result := 'Socket BGA2422';
-    $45 :
-      Result := 'Socket LGA1211';
-    $46 :
-      Result := 'Socket LGA2422';
-    $47 :
-      Result := 'Socket LGA5773';
-    $48 :
-      Result := 'Socket BGA5773';
-    $49 :
-      Result := 'Socket AM5';
-    $4A :
-      Result := 'Socket SP5';
-    $4B :
-      Result := 'Socket SP6';
-    $4C :
-      Result := 'Socket BGA883';
-    $4D :
-      Result := 'Socket BGA1190';
-    $4E :
-      Result := 'Socket BGA4129';
-    $4F :
-      Result := 'Socket LGA4710';
-    $50 :
-      Result := 'Socket LGA7529'
+    $01 : Result := 'Other';
+    $02 : Result := 'Unknown';
+    $03 : Result := 'Daughter Board';
+    $04 : Result := 'ZIF Socket';
+    $05 : Result := 'Replaceable Piggy Back';
+    $06 : Result := 'None';
+    $07 : Result := 'LIF Socket';
+    $08 : Result := 'Slot 1';
+    $09 : Result := 'Slot 2';
+    $0A : Result := '370-pin socket';
+    $0B : Result := 'Slot A';
+    $0C : Result := 'Slot M';
+    $0D : Result := 'Socket 423';
+    $0E : Result := 'Socket A (Socket 462)';
+    $0F : Result := 'Socket 478';
+    $10 : Result := 'Socket 754';
+    $11 : Result := 'Socket 940';
+    $12 : Result := 'Socket 939';
+    $13 : Result := 'Socket mPGA604';
+    $14 : Result := 'Socket LGA771';
+    $15 : Result := 'Socket LGA775';
+    $16 : Result := 'Socket S1';
+    $17 : Result := 'Socket AM2';
+    $18 : Result := 'Socket F (1207)';
+    $19 : Result := 'Socket LGA1366';
+    $1A : Result := 'Socket G34';
+    $1B : Result := 'Socket AM3';
+    $1C : Result := 'Socket C32';
+    $1D : Result := 'Socket LGA1156';
+    $1E : Result := 'Socket LGA1567';
+    $1F : Result := 'Socket PGA988A';
+    $20 : Result := 'Socket BGA1288';
+    $21 : Result := 'Socket rPGA988B';
+    $22 : Result := 'Socket BGA1023';
+    $23 : Result := 'Socket BGA1224';
+    $24 : Result := 'Socket BGA1155';
+    $25 : Result := 'Socket LGA1356';
+    $26 : Result := 'Socket LGA2011';
+    $27 : Result := 'Socket FS1';
+    $28 : Result := 'Socket FS2';
+    $29 : Result := 'Socket FM1';
+    $2A : Result := 'Socket FM2';
+    $2B : Result := 'Socket LGA2011-3';
+    $2C : Result := 'Socket LGA1356-3';
+    $2D : Result := 'Socket LGA1150';
+    $2E : Result := 'Socket BGA1168';
+    $2F : Result := 'Socket BGA1234';
+    $30 : Result := 'Socket BGA1364';
+    $31 : Result := 'Socket AM4';
+    $32 : Result := 'Socket LGA1151';
+    $33 : Result := 'Socket BGA1356';
+    $34 : Result := 'Socket BGA1440';
+    $35 : Result := 'Socket BGA1515';
+    $36 : Result := 'Socket LGA3647-1';
+    $37 : Result := 'Socket SP3';
+    $38 : Result := 'Socket SP3r2';
+    $39 : Result := 'Socket LGA2066';
+    $3A : Result := 'Socket BGA1392';
+    $3B : Result := 'Socket BGA1510';
+    $3C : Result := 'Socket BGA1528';
+    $3D : Result := 'Socket LGA4189';
+    $3E : Result := 'Socket LGA1200';
+    $3F : Result := 'Socket LGA4677';
+    $40 : Result := 'Socket LGA1700';
+    $41 : Result := 'Socket BGA1744';
+    $42 : Result := 'Socket BGA1781';
+    $43 : Result := 'Socket BGA1211';
+    $44 : Result := 'Socket BGA2422';
+    $45 : Result := 'Socket LGA1211';
+    $46 : Result := 'Socket LGA2422';
+    $47 : Result := 'Socket LGA5773';
+    $48 : Result := 'Socket BGA5773';
+    $49 : Result := 'Socket AM5';
+    $4A : Result := 'Socket SP5';
+    $4B : Result := 'Socket SP6';
+    $4C : Result := 'Socket BGA883';
+    $4D : Result := 'Socket BGA1190';
+    $4E : Result := 'Socket BGA4129';
+    $4F : Result := 'Socket LGA4710';
+    $50 : Result := 'Socket LGA7529'
     else
       Result := 'Unknown';
   end;
@@ -7268,34 +6931,20 @@ end;
 function TCacheInformation.AssociativityStr: AnsiString;
 begin
   case RAWCacheInformation^.Associativity of
-    $01 :
-      Result := 'Other';
-    $02 :
-      Result := 'Unknown';
-    $03 :
-      Result := 'Direct Mapped';
-    $04 :
-      Result := '2-way Set-Associative';
-    $05 :
-      Result := '4-way Set-Associative';
-    $06 :
-      Result := 'Fully Associative';
-    $07 :
-      Result := '8-way Set-Associative';
-    $08 :
-      Result := '16-way Set-Associative';
-    $09 :
-      Result := '12-way Set-Associative';
-    $0A :
-      Result := '24-way Set-Associative';
-    $0B :
-      Result := '32-way Set-Associative';
-    $0C :
-      Result := '48-way Set-Associative';
-    $0D :
-      Result := '64-way Set-Associative';
-    $0E :
-      Result := '20-way Set-Associative';
+    $01 : Result := 'Other';
+    $02 : Result := 'Unknown';
+    $03 : Result := 'Direct Mapped';
+    $04 : Result := '2-way Set-Associative';
+    $05 : Result := '4-way Set-Associative';
+    $06 : Result := 'Fully Associative';
+    $07 : Result := '8-way Set-Associative';
+    $08 : Result := '16-way Set-Associative';
+    $09 : Result := '12-way Set-Associative';
+    $0A : Result := '24-way Set-Associative';
+    $0B : Result := '32-way Set-Associative';
+    $0C : Result := '48-way Set-Associative';
+    $0D : Result := '64-way Set-Associative';
+    $0E : Result := '20-way Set-Associative';
     else
       Result := 'Unknown';
   end;
@@ -7409,88 +7058,47 @@ end;
 function TPortConnectorInformation.GetConnectorType(Connector: Byte): AnsiString;
 begin
   case Connector of
-    $00 :
-      Result := 'None';
-    $01 :
-      Result := 'Centronics';
-    $02 :
-      Result := 'Mini Centronics';
-    $03 :
-      Result := 'Proprietary';
-    $04 :
-      Result := 'DB-25 pin male';
-    $05 :
-      Result := 'DB-25 pin female';
-    $06 :
-      Result := 'DB-15 pin male';
-    $07 :
-      Result := 'DB-15 pin female';
-    $08 :
-      Result := 'DB-9 pin male';
-    $09 :
-      Result := 'DB-9 pin female';
-    $0A :
-      Result := 'RJ-11';
-    $0B :
-      Result := 'RJ-45';
-    $0C :
-      Result := '50-pin MiniSCSI';
-    $0D :
-      Result := 'Mini-DIN';
-    $0E :
-      Result := 'Micro-DIN';
-    $0F :
-      Result := 'PS/2';
-    $10 :
-      Result := 'Infrared';
-    $11 :
-      Result := 'HP-HIL';
-    $12 :
-      Result := 'Access Bus (USB)';
-    $13 :
-      Result := 'SSA SCSI';
-    $14 :
-      Result := 'Circular DIN-8 male';
-    $15 :
-      Result := 'Circular DIN-8 female';
-    $16 :
-      Result := 'On Board IDE';
-    $17 :
-      Result := 'On Board Floppy';
-    $18 :
-      Result := '9-pin Dual Inline (pin 10 cut)';
-    $19 :
-      Result := '25-pin Dual Inline (pin 26 cut)';
-    $1A :
-      Result := '50-pin Dual Inline';
-    $1B :
-      Result := '68-pin Dual Inline';
-    $1C :
-      Result := 'On Board Sound Input from CD-ROM';
-    $1D :
-      Result := 'Mini-Centronics Type-14';
-    $1E :
-      Result := 'Mini-Centronics Type-26';
-    $1F :
-      Result := 'Mini-jack (headphones)';
-    $20 :
-      Result := 'BNC';
-    $21 :
-      Result := '1394';
-    $22 :
-      Result := 'SAS/SATA Plug Receptacle';
-    $A0 :
-      Result := 'PC-98';
-    $A1 :
-      Result := 'PC-98Hireso';
-    $A2 :
-      Result := 'PC-H98';
-    $A3 :
-      Result := 'PC-98Note';
-    $A4 :
-      Result := 'PC-98Full';
-    $FF :
-      Result := 'Other  Use Reference Designator Strings to supply information'
+    $00 : Result := 'None';
+    $01 : Result := 'Centronics';
+    $02 : Result := 'Mini Centronics';
+    $03 : Result := 'Proprietary';
+    $04 : Result := 'DB-25 pin male';
+    $05 : Result := 'DB-25 pin female';
+    $06 : Result := 'DB-15 pin male';
+    $07 : Result := 'DB-15 pin female';
+    $08 : Result := 'DB-9 pin male';
+    $09 : Result := 'DB-9 pin female';
+    $0A : Result := 'RJ-11';
+    $0B : Result := 'RJ-45';
+    $0C : Result := '50-pin MiniSCSI';
+    $0D : Result := 'Mini-DIN';
+    $0E : Result := 'Micro-DIN';
+    $0F : Result := 'PS/2';
+    $10 : Result := 'Infrared';
+    $11 : Result := 'HP-HIL';
+    $12 : Result := 'Access Bus (USB)';
+    $13 : Result := 'SSA SCSI';
+    $14 : Result := 'Circular DIN-8 male';
+    $15 : Result := 'Circular DIN-8 female';
+    $16 : Result := 'On Board IDE';
+    $17 : Result := 'On Board Floppy';
+    $18 : Result := '9-pin Dual Inline (pin 10 cut)';
+    $19 : Result := '25-pin Dual Inline (pin 26 cut)';
+    $1A : Result := '50-pin Dual Inline';
+    $1B : Result := '68-pin Dual Inline';
+    $1C : Result := 'On Board Sound Input from CD-ROM';
+    $1D : Result := 'Mini-Centronics Type-14';
+    $1E : Result := 'Mini-Centronics Type-26';
+    $1F : Result := 'Mini-jack (headphones)';
+    $20 : Result := 'BNC';
+    $21 : Result := '1394';
+    $22 : Result := 'SAS/SATA Plug Receptacle';
+    $A0 : Result := 'PC-98';
+    $A1 : Result := 'PC-98Hireso';
+    $A2 : Result := 'PC-H98';
+    $A3 : Result := 'PC-98Note';
+    $A4 : Result := 'PC-98Full';
+    $FF : Result := 'Other  Use Reference Designator Strings to supply information'
     else
       Result := 'Unknown';
   end;
@@ -7505,80 +7113,43 @@ end;
 function TPortConnectorInformation.PortTypeStr: AnsiString;
 begin
   case RAWPortConnectorInformation^.PortType of
-    $00 :
-      Result := 'None';
-    $01 :
-      Result := 'Parallel Port XT/AT Compatible';
-    $02 :
-      Result := 'Parallel Port PS/2';
-    $03 :
-      Result := 'Parallel Port ECP';
-    $04 :
-      Result := 'Parallel Port EPP';
-    $05 :
-      Result := 'Parallel Port ECP/EPP';
-    $06 :
-      Result := 'Serial Port XT/AT Compatible';
-    $07 :
-      Result := 'Serial Port 16450 Compatible';
-    $08 :
-      Result := 'Serial Port 16550 Compatible';
-    $09 :
-      Result := 'Serial Port 16550A Compatible';
-    $0A :
-      Result := 'SCSI Port';
-    $0B :
-      Result := 'MIDI Port';
-    $0C :
-      Result := 'Joy Stick Port';
-    $0D :
-      Result := 'Keyboard Port';
-    $0E :
-      Result := 'Mouse Port';
-    $0F :
-      Result := 'SSA SCSI';
-    $10 :
-      Result := 'USB';
-    $11 :
-      Result := 'FireWire (IEEE P1394)';
-    $12 :
-      Result := 'PCMCIA Type I2';
-    $13 :
-      Result := 'PCMCIA Type II';
-    $14 :
-      Result := 'PCMCIA Type III';
-    $15 :
-      Result := 'Cardbus';
-    $16 :
-      Result := 'Access Bus Port';
-    $17 :
-      Result := 'SCSI II';
-    $18 :
-      Result := 'SCSI Wide';
-    $19 :
-      Result := 'PC-98';
-    $1A :
-      Result := 'PC-98-Hireso';
-    $1B :
-      Result := 'PC-H98';
-    $1C :
-      Result := 'Video Port';
-    $1D :
-      Result := 'Audio Port';
-    $1E :
-      Result := 'Modem Port';
-    $1F :
-      Result := 'Network Port';
-    $20 :
-      Result := 'SATA';
-    $21 :
-      Result := 'SAS';
-    $A0 :
-      Result := '8251 Compatible';
-    $A1 :
-      Result := '8251 FIFO Compatible';
-    $FF :
-      Result := 'Other'
+    $00 : Result := 'None';
+    $01 : Result := 'Parallel Port XT/AT Compatible';
+    $02 : Result := 'Parallel Port PS/2';
+    $03 : Result := 'Parallel Port ECP';
+    $04 : Result := 'Parallel Port EPP';
+    $05 : Result := 'Parallel Port ECP/EPP';
+    $06 : Result := 'Serial Port XT/AT Compatible';
+    $07 : Result := 'Serial Port 16450 Compatible';
+    $08 : Result := 'Serial Port 16550 Compatible';
+    $09 : Result := 'Serial Port 16550A Compatible';
+    $0A : Result := 'SCSI Port';
+    $0B : Result := 'MIDI Port';
+    $0C : Result := 'Joy Stick Port';
+    $0D : Result := 'Keyboard Port';
+    $0E : Result := 'Mouse Port';
+    $0F : Result := 'SSA SCSI';
+    $10 : Result := 'USB';
+    $11 : Result := 'FireWire (IEEE P1394)';
+    $12 : Result := 'PCMCIA Type I2';
+    $13 : Result := 'PCMCIA Type II';
+    $14 : Result := 'PCMCIA Type III';
+    $15 : Result := 'Cardbus';
+    $16 : Result := 'Access Bus Port';
+    $17 : Result := 'SCSI II';
+    $18 : Result := 'SCSI Wide';
+    $19 : Result := 'PC-98';
+    $1A : Result := 'PC-98-Hireso';
+    $1B : Result := 'PC-H98';
+    $1C : Result := 'Video Port';
+    $1D : Result := 'Audio Port';
+    $1E : Result := 'Modem Port';
+    $1F : Result := 'Network Port';
+    $20 : Result := 'SATA';
+    $21 : Result := 'SAS';
+    $A0 : Result := '8251 Compatible';
+    $A1 : Result := '8251 FIFO Compatible';
+    $FF : Result := 'Other'
     else
       Result := 'Unknown';
   end;
@@ -7589,14 +7160,10 @@ end;
 function TSystemSlotInformation.GetCurrentUsage: AnsiString;
 begin
   case RAWSystemSlotInformation^.CurrentUsage of
-    $01 :
-      Result := 'Other';
-    $02 :
-      Result := 'Unknown';
-    $03 :
-      Result := 'Available';
-    $04 :
-      Result := 'In use';
+    $01 : Result := 'Other';
+    $02 : Result := 'Unknown';
+    $03 : Result := 'Available';
+    $04 : Result := 'In use';
     else
       Result := 'Unknown';
   end;
@@ -7605,34 +7172,20 @@ end;
 function TSystemSlotInformation.GetSlotDataBusWidth: AnsiString;
 begin
   case RAWSystemSlotInformation^.SlotDataBusWidth of
-    $01 :
-      Result := 'Other';
-    $02 :
-      Result := 'Unknown';
-    $03 :
-      Result := '8 bit';
-    $04 :
-      Result := '16 bit';
-    $05 :
-      Result := '32 bit';
-    $06 :
-      Result := '64 bit';
-    $07 :
-      Result := '128 bit';
-    $08 :
-      Result := '1x or x1';
-    $09 :
-      Result := '2x or x2';
-    $0A :
-      Result := '4x or x4';
-    $0B :
-      Result := '8x or x8';
-    $0C :
-      Result := '12x or x12';
-    $0D :
-      Result := '16x or x16';
-    $0E :
-      Result := '32x or x32'
+    $01 : Result := 'Other';
+    $02 : Result := 'Unknown';
+    $03 : Result := '8 bit';
+    $04 : Result := '16 bit';
+    $05 : Result := '32 bit';
+    $06 : Result := '64 bit';
+    $07 : Result := '128 bit';
+    $08 : Result := '1x or x1';
+    $09 : Result := '2x or x2';
+    $0A : Result := '4x or x4';
+    $0B : Result := '8x or x8';
+    $0C : Result := '12x or x12';
+    $0D : Result := '16x or x16';
+    $0E : Result := '32x or x32'
     else
       Result := 'Unknown';
   end;
@@ -7641,14 +7194,10 @@ end;
 function TSystemSlotInformation.GetSlotLength: AnsiString;
 begin
   case RAWSystemSlotInformation^.SlotLength of
-    $01 :
-      Result := 'Other';
-    $02 :
-      Result := 'Unknown';
-    $03 :
-      Result := 'Short Length';
-    $04 :
-      Result := 'Long Length'
+    $01 : Result := 'Other';
+    $02 : Result := 'Unknown';
+    $03 : Result := 'Short Length';
+    $04 : Result := 'Long Length'
     else
       Result := 'Unknown';
   end;
@@ -7683,164 +7232,85 @@ end;
 function TSystemSlotInformation.GetSlotType: AnsiString;
 begin
   case RAWSystemSlotInformation^.SlotType of
-    $01 :
-      Result := 'Other';
-    $02 :
-      Result := 'Unknown';
-    $03 :
-      Result := 'ISA';
-    $04 :
-      Result := 'MCA';
-    $05 :
-      Result := 'EISA';
-    $06 :
-      Result := 'PCI';
-    $07 :
-      Result := 'PC Card (PCMCIA)';
-    $08 :
-      Result := 'VL-VESA';
-    $09 :
-      Result := 'Proprietary';
-    $0A :
-      Result := 'Processor Card Slot';
-    $0B :
-      Result := 'Proprietary Memory Card Slot';
-    $0C :
-      Result := 'I/O Riser Card Slot';
-    $0D :
-      Result := 'NuBus';
-    $0E :
-      Result := 'PCI  66MHz Capable';
-    $0F :
-      Result := 'AGP';
-    $10 :
-      Result := 'AGP 2X';
-    $11 :
-      Result := 'AGP 4X';
-    $12 :
-      Result := 'PCI-X';
-    $13 :
-      Result := 'AGP 8X';
-    $14 :
-      Result := 'M.2 Socket 1-DP';
-    $15 :
-      Result := 'M.2 Socket 1-SD';
-    $16 :
-      Result := 'M.2 Socket 2';
-    $17 :
-      Result := 'M.2 Socket 3';
-    $18 :
-      Result := 'MXM Type I';
-    $19 :
-      Result := 'MXM Type II';
-    $1A :
-      Result := 'MXM Type III Standard';
-    $1B :
-      Result := 'MXM Type III HE';
-    $1C :
-      Result := 'MXM Type IV';
-    $1D :
-      Result := 'MXM 3.0 Type A';
-    $1E :
-      Result := 'MXM 3.0 Type B';
-    $1F :
-      Result := 'PCI Express Gen 2 SFF-8639';
-    $20 :
-      Result := 'PCI Express Gen 3 SFF-8639';
-    $21 :
-      Result := 'PCI Express Mini 52-pin without bottom-side keep-outs';
-    $22 :
-      Result := 'PCI Express Mini 52-pin with bottom-side keep-outs';
-    $23 :
-      Result := 'PCI Express Mini 76-pin';
-    $24 :
-      Result := 'PCI Express Gen 4 SFF-8639';
-    $25 :
-      Result := 'PCI Express Gen 5 SFF-8639';
-    $26 :
-      Result := 'OCP NIC 3.0 Small Form Factor';
-    $27 :
-      Result := 'OCP NIC 3.0 Large Form Factor';
-    $28 :
-      Result := 'OCP NIC prior to 3.0';
-    $30 :
-      Result := 'CXL Flexbus 1.0';
-    $A0 :
-      Result := 'PC-98/C20';
-    $A1 :
-      Result := 'PC-98/C24';
-    $A2 :
-      Result := 'PC-98/E';
-    $A3 :
-      Result := 'PC-98/Local Bus';
-    $A4 :
-      Result := 'PC-98/Card';
-    $A5 :
-      Result := 'PCI Express';
-    $A6 :
-      Result := 'PCI Express x1';
-    $A7 :
-      Result := 'PCI Express x2';
-    $A8 :
-      Result := 'PCI Express x4';
-    $A9 :
-      Result := 'PCI Express x8';
-    $AA :
-      Result := 'PCI Express x16';
-    $AB :
-      Result := 'PCI Express Gen 2';
-    $AC :
-      Result := 'PCI Express Gen 2 x1';
-    $AD :
-      Result := 'PCI Express Gen 2 x2';
-    $AE :
-      Result := 'PCI Express Gen 2 x4';
-    $AF :
-      Result := 'PCI Express Gen 2 x8';
-    $B0 :
-      Result := 'PCI Express Gen 2 x16';
-    $B1 :
-      Result := 'PCI Express Gen 3';
-    $B2 :
-      Result := 'PCI Express Gen 3 x1';
-    $B3 :
-      Result := 'PCI Express Gen 3 x2';
-    $B4 :
-      Result := 'PCI Express Gen 3 x4';
-    $B5 :
-      Result := 'PCI Express Gen 3 x8';
-    $B6 :
-      Result := 'PCI Express Gen 3 x16';
-    $B8 :
-      Result := 'PCI Express Gen 4';
-    $B9 :
-      Result := 'PCI Express Gen 4 x1';
-    $BA :
-      Result := 'PCI Express Gen 4 x2';
-    $BB :
-      Result := 'PCI Express Gen 4 x4';
-    $BC :
-      Result := 'PCI Express Gen 4 x8';
-    $BD :
-      Result := 'PCI Express Gen 4 x16';
-    $BE :
-      Result := 'PCI Express Gen 5';
-    $BF :
-      Result := 'PCI Express Gen 5 x1';
-    $C0 :
-      Result := 'PCI Express Gen 5 x2';
-    $C1 :
-      Result := 'PCI Express Gen 5 x4';
-    $C2 :
-      Result := 'PCI Express Gen 5 x8';
-    $C3 :
-      Result := 'PCI Express Gen 5 x16';
-    $C4 :
-      Result := 'PCI Express Gen 6';
-    $C5 :
-      Result := 'EDSFF E1';
-    $C6 :
-      Result := 'EDSFF E3'
+    $01 : Result := 'Other';
+    $02 : Result := 'Unknown';
+    $03 : Result := 'ISA';
+    $04 : Result := 'MCA';
+    $05 : Result := 'EISA';
+    $06 : Result := 'PCI';
+    $07 : Result := 'PC Card (PCMCIA)';
+    $08 : Result := 'VL-VESA';
+    $09 : Result := 'Proprietary';
+    $0A : Result := 'Processor Card Slot';
+    $0B : Result := 'Proprietary Memory Card Slot';
+    $0C : Result := 'I/O Riser Card Slot';
+    $0D : Result := 'NuBus';
+    $0E : Result := 'PCI  66MHz Capable';
+    $0F : Result := 'AGP';
+    $10 : Result := 'AGP 2X';
+    $11 : Result := 'AGP 4X';
+    $12 : Result := 'PCI-X';
+    $13 : Result := 'AGP 8X';
+    $14 : Result := 'M.2 Socket 1-DP';
+    $15 : Result := 'M.2 Socket 1-SD';
+    $16 : Result := 'M.2 Socket 2';
+    $17 : Result := 'M.2 Socket 3';
+    $18 : Result := 'MXM Type I';
+    $19 : Result := 'MXM Type II';
+    $1A : Result := 'MXM Type III Standard';
+    $1B : Result := 'MXM Type III HE';
+    $1C : Result := 'MXM Type IV';
+    $1D : Result := 'MXM 3.0 Type A';
+    $1E : Result := 'MXM 3.0 Type B';
+    $1F : Result := 'PCI Express Gen 2 SFF-8639';
+    $20 : Result := 'PCI Express Gen 3 SFF-8639';
+    $21 : Result := 'PCI Express Mini 52-pin without bottom-side keep-outs';
+    $22 : Result := 'PCI Express Mini 52-pin with bottom-side keep-outs';
+    $23 : Result := 'PCI Express Mini 76-pin';
+    $24 : Result := 'PCI Express Gen 4 SFF-8639';
+    $25 : Result := 'PCI Express Gen 5 SFF-8639';
+    $26 : Result := 'OCP NIC 3.0 Small Form Factor';
+    $27 : Result := 'OCP NIC 3.0 Large Form Factor';
+    $28 : Result := 'OCP NIC prior to 3.0';
+    $30 : Result := 'CXL Flexbus 1.0';
+    $A0 : Result := 'PC-98/C20';
+    $A1 : Result := 'PC-98/C24';
+    $A2 : Result := 'PC-98/E';
+    $A3 : Result := 'PC-98/Local Bus';
+    $A4 : Result := 'PC-98/Card';
+    $A5 : Result := 'PCI Express';
+    $A6 : Result := 'PCI Express x1';
+    $A7 : Result := 'PCI Express x2';
+    $A8 : Result := 'PCI Express x4';
+    $A9 : Result := 'PCI Express x8';
+    $AA : Result := 'PCI Express x16';
+    $AB : Result := 'PCI Express Gen 2';
+    $AC : Result := 'PCI Express Gen 2 x1';
+    $AD : Result := 'PCI Express Gen 2 x2';
+    $AE : Result := 'PCI Express Gen 2 x4';
+    $AF : Result := 'PCI Express Gen 2 x8';
+    $B0 : Result := 'PCI Express Gen 2 x16';
+    $B1 : Result := 'PCI Express Gen 3';
+    $B2 : Result := 'PCI Express Gen 3 x1';
+    $B3 : Result := 'PCI Express Gen 3 x2';
+    $B4 : Result := 'PCI Express Gen 3 x4';
+    $B5 : Result := 'PCI Express Gen 3 x8';
+    $B6 : Result := 'PCI Express Gen 3 x16';
+    $B8 : Result := 'PCI Express Gen 4';
+    $B9 : Result := 'PCI Express Gen 4 x1';
+    $BA : Result := 'PCI Express Gen 4 x2';
+    $BB : Result := 'PCI Express Gen 4 x4';
+    $BC : Result := 'PCI Express Gen 4 x8';
+    $BD : Result := 'PCI Express Gen 4 x16';
+    $BE : Result := 'PCI Express Gen 5';
+    $BF : Result := 'PCI Express Gen 5 x1';
+    $C0 : Result := 'PCI Express Gen 5 x2';
+    $C1 : Result := 'PCI Express Gen 5 x4';
+    $C2 : Result := 'PCI Express Gen 5 x8';
+    $C3 : Result := 'PCI Express Gen 5 x16';
+    $C4 : Result := 'PCI Express Gen 6';
+    $C5 : Result := 'EDSFF E1';
+    $C6 : Result := 'EDSFF E3'
     else
       Result := 'Unknown';
   end;
@@ -7958,32 +7428,19 @@ end;
 function TBaseBoardInformation.BoardTypeStr: AnsiString;
 begin
   case RAWBaseBoardInformation^.BoardType of
-    $01 :
-      Result := 'Unknown';
-    $02 :
-      Result := 'Other';
-    $03 :
-      Result := 'Server Blade';
-    $04 :
-      Result := 'Connectivity Switch';
-    $05 :
-      Result := 'System Management Module';
-    $06 :
-      Result := 'Processor Module';
-    $07 :
-      Result := 'I/O Module';
-    $08 :
-      Result := 'Memory Module';
-    $09 :
-      Result := 'Daughter board';
-    $0A :
-      Result := 'Motherboard (includes processor, memory, and I/O)';
-    $0B :
-      Result := 'Processor/Memory Module';
-    $0C :
-      Result := 'Processor/IO Module';
-    $0D :
-      Result := 'Interconnect Board'
+    $01 : Result := 'Unknown';
+    $02 : Result := 'Other';
+    $03 : Result := 'Server Blade';
+    $04 : Result := 'Connectivity Switch';
+    $05 : Result := 'System Management Module';
+    $06 : Result := 'Processor Module';
+    $07 : Result := 'I/O Module';
+    $08 : Result := 'Memory Module';
+    $09 : Result := 'Daughter board';
+    $0A : Result := 'Motherboard (includes processor, memory, and I/O)';
+    $0B : Result := 'Processor/Memory Module';
+    $0C : Result := 'Processor/IO Module';
+    $0D : Result := 'Interconnect Board'
     else
       Result := 'Unknown';
   end;
@@ -8026,20 +7483,13 @@ end;
 function TPhysicalMemoryArrayInformation.GetErrorCorrectionStr: AnsiString;
 begin
   case RAWPhysicalMemoryArrayInformation^.MemoryErrorCorrection of
-    $01 :
-      Result := 'Other';
-    $02 :
-      Result := 'Unknown';
-    $03 :
-      Result := 'None';
-    $04 :
-      Result := 'Parity';
-    $05 :
-      Result := 'Single-bit ECC';
-    $06 :
-      Result := 'Multi-bit ECC';
-    $07 :
-      Result := 'CRC'
+    $01 : Result := 'Other';
+    $02 : Result := 'Unknown';
+    $03 : Result := 'None';
+    $04 : Result := 'Parity';
+    $05 : Result := 'Single-bit ECC';
+    $06 : Result := 'Multi-bit ECC';
+    $07 : Result := 'CRC'
     else
       Result := 'Unknown';
   end;
@@ -8048,16 +7498,11 @@ end;
 function TPhysicalMemoryArrayInformation.GetLocationStr: AnsiString;
 begin
   case RAWPhysicalMemoryArrayInformation^.Location of
-    $01 :
-      Result := 'Other';
-    $02 :
-      Result := 'Unknown';
-    $03 :
-      Result := 'System board or motherboard';
-    $04 :
-      Result := 'ISA add-on card';
-    $05 :
-      Result := 'EISA add-on card'
+    $01 : Result := 'Other';
+    $02 : Result := 'Unknown';
+    $03 : Result := 'System board or motherboard';
+    $04 : Result := 'ISA add-on card';
+    $05 : Result := 'EISA add-on card'
     else
       Result := 'Unknown';
   end;
@@ -8079,20 +7524,13 @@ end;
 function TPhysicalMemoryArrayInformation.GetUseStr: AnsiString;
 begin
   case RAWPhysicalMemoryArrayInformation^.Use of
-    $01 :
-      Result := 'Other';
-    $02 :
-      Result := 'Unknown';
-    $03 :
-      Result := 'System memory';
-    $04 :
-      Result := 'Video memory';
-    $05 :
-      Result := 'Flash memory';
-    $06 :
-      Result := 'Non-volatile RAM';
-    $07 :
-      Result := 'Cache memory'
+    $01 : Result := 'Other';
+    $02 : Result := 'Unknown';
+    $03 : Result := 'System memory';
+    $04 : Result := 'Video memory';
+    $05 : Result := 'Flash memory';
+    $06 : Result := 'Non-volatile RAM';
+    $07 : Result := 'Cache memory'
     else
       Result := 'Unknown';
   end;
@@ -8166,38 +7604,22 @@ end;
 function TMemoryDeviceInformation.GetFormFactor: AnsiString;
 begin
   case RAWMemoryDeviceInfo^.FormFactor of
-    $01 :
-      Result := 'Other';
-    $02 :
-      Result := 'Unknown';
-    $03 :
-      Result := 'SIMM';
-    $04 :
-      Result := 'SIP';
-    $05 :
-      Result := 'Chip';
-    $06 :
-      Result := 'DIP';
-    $07 :
-      Result := 'ZIP';
-    $08 :
-      Result := 'Proprietary Card';
-    $09 :
-      Result := 'DIMM';
-    $0A :
-      Result := 'TSOP';
-    $0B :
-      Result := 'Row of chips';
-    $0C :
-      Result := 'RIMM';
-    $0D :
-      Result := 'SODIMM';
-    $0E :
-      Result := 'SRIMM';
-    $0F :
-      Result := 'FB-DIMM';
-    $10 :
-      Result := 'Die'
+    $01 : Result := 'Other';
+    $02 : Result := 'Unknown';
+    $03 : Result := 'SIMM';
+    $04 : Result := 'SIP';
+    $05 : Result := 'Chip';
+    $06 : Result := 'DIP';
+    $07 : Result := 'ZIP';
+    $08 : Result := 'Proprietary Card';
+    $09 : Result := 'DIMM';
+    $0A : Result := 'TSOP';
+    $0B : Result := 'Row of chips';
+    $0C : Result := 'RIMM';
+    $0D : Result := 'SODIMM';
+    $0E : Result := 'SRIMM';
+    $0F : Result := 'FB-DIMM';
+    $10 : Result := 'Die'
     else
       Result := 'Unknown';
   end;
@@ -8206,74 +7628,40 @@ end;
 function TMemoryDeviceInformation.GetMemoryTypeStr: AnsiString;
 begin
   case RAWMemoryDeviceInfo^.MemoryType of
-    $01 :
-      Result := 'Other';
-    $02 :
-      Result := 'Unknown';
-    $03 :
-      Result := 'DRAM';
-    $04 :
-      Result := 'EDRAM';
-    $05 :
-      Result := 'VRAM';
-    $06 :
-      Result := 'SRAM';
-    $07 :
-      Result := 'RAM';
-    $08 :
-      Result := 'ROM';
-    $09 :
-      Result := 'FLASH';
-    $0A :
-      Result := 'EEPROM';
-    $0B :
-      Result := 'FEPROM';
-    $0C :
-      Result := 'EPROM';
-    $0D :
-      Result := 'CDRAM';
-    $0E :
-      Result := '3DRAM';
-    $0F :
-      Result := 'SDRAM';
-    $10 :
-      Result := 'SGRAM';
-    $11 :
-      Result := 'RDRAM';
-    $12 :
-      Result := 'DDR';
-    $13 :
-      Result := 'DDR2';
-    $14 :
-      Result := 'DDR2 FB-DIMM';
-    $15 .. $17 :
-      Result := 'Reserved';
-    $18 :
-      Result := 'DDR3';
-    $19 :
-      Result := 'FBD2';
-    $1A :
-      Result := 'DDR4';
-    $1B :
-      Result := 'LPDDR';
-    $1C :
-      Result := 'LPDDR2';
-    $1D :
-      Result := 'LPDDR3';
-    $1E :
-      Result := 'LPDDR4';
-    $1F :
-      Result := 'Logical non-volatile device';
-    $20 :
-      Result := 'HBM';
-    $21 :
-      Result := 'HBM2';
-    $22 :
-      Result := 'DDR5';
-    $23 :
-      Result := 'LPDDR5';
-    $24 :
-      Result := 'HBM3'
+    $01 : Result := 'Other';
+    $02 : Result := 'Unknown';
+    $03 : Result := 'DRAM';
+    $04 : Result := 'EDRAM';
+    $05 : Result := 'VRAM';
+    $06 : Result := 'SRAM';
+    $07 : Result := 'RAM';
+    $08 : Result := 'ROM';
+    $09 : Result := 'FLASH';
+    $0A : Result := 'EEPROM';
+    $0B : Result := 'FEPROM';
+    $0C : Result := 'EPROM';
+    $0D : Result := 'CDRAM';
+    $0E : Result := '3DRAM';
+    $0F : Result := 'SDRAM';
+    $10 : Result := 'SGRAM';
+    $11 : Result := 'RDRAM';
+    $12 : Result := 'DDR';
+    $13 : Result := 'DDR2';
+    $14 : Result := 'DDR2 FB-DIMM';
+    $15 .. $17 : Result := 'Reserved';
+    $18 : Result := 'DDR3';
+    $19 : Result := 'FBD2';
+    $1A : Result := 'DDR4';
+    $1B : Result := 'LPDDR';
+    $1C : Result := 'LPDDR2';
+    $1D : Result := 'LPDDR3';
+    $1E : Result := 'LPDDR4';
+    $1F : Result := 'Logical non-volatile device';
+    $20 : Result := 'HBM';
+    $21 : Result := 'HBM2';
+    $22 : Result := 'DDR5';
+    $23 : Result := 'LPDDR5';
+    $24 : Result := 'HBM3'
     else
       Result := 'Unknown';
   end;
@@ -8293,20 +7681,13 @@ begin
   end;
 
   case RAWMemoryDeviceInfo^.MemoryTechnology of
-    $01 :
-      Result := 'Other';
-    $02 :
-      Result := 'Unknown';
-    $03 :
-      Result := 'DRAM';
-    $04 :
-      Result := 'NVDIMM-N';
-    $05 :
-      Result := 'NVDIMM-F';
-    $06 :
-      Result := 'NVDIMM-P';
-    $07 :
-      Result := 'Intel Optane persistent memory'
+    $01 : Result := 'Other';
+    $02 : Result := 'Unknown';
+    $03 : Result := 'DRAM';
+    $04 : Result := 'NVDIMM-N';
+    $05 : Result := 'NVDIMM-F';
+    $06 : Result := 'NVDIMM-P';
+    $07 : Result := 'Intel Optane persistent memory'
     else
       Result := 'Unknown';
   end;
@@ -8493,22 +7874,14 @@ end;
 function TBatteryInformation.GetDeviceChemistry: AnsiString;
 begin
   case RAWBatteryInfo^.DeviceChemistry of
-    $01 :
-      Result := 'Other';
-    $02 :
-      Result := 'Unknown';
-    $03 :
-      Result := 'Lead Acid';
-    $04 :
-      Result := 'Nickel Cadmium';
-    $05 :
-      Result := 'Nickel metal hydride';
-    $06 :
-      Result := 'Lithium-ion';
-    $07 :
-      Result := 'Zinc air';
-    $08 :
-      Result := 'Lithium Polymer'
+    $01 : Result := 'Other';
+    $02 : Result := 'Unknown';
+    $03 : Result := 'Lead Acid';
+    $04 : Result := 'Nickel Cadmium';
+    $05 : Result := 'Nickel metal hydride';
+    $06 : Result := 'Lithium-ion';
+    $07 : Result := 'Zinc air';
+    $08 : Result := 'Lithium Polymer'
     else
       Result := 'Unknown';
   end;
@@ -8565,14 +7938,10 @@ end;
 function SystemResetBootOptionToStr(const Value: Byte): AnsiString;
 begin
   case Value of
-    $00 :
-      Result := 'Reserved';
-    $01 :
-      Result := 'Operating system';
-    $02 :
-      Result := 'System utilities';
-    $03 :
-      Result := 'Do not reboot';
+    $00 : Result := 'Reserved';
+    $01 : Result := 'Operating system';
+    $02 : Result := 'System utilities';
+    $03 : Result := 'Do not reboot';
     else
       Result := 'Unknown';
   end;
@@ -8630,28 +7999,17 @@ end;
 function TBuiltInPointingDeviceInformation.GetInterface: string;
 begin
   case RAWBuiltInPointingDeviceInfo^._Interface of
-    $01 :
-      Result := 'Other';
-    $02 :
-      Result := 'Unknown';
-    $03 :
-      Result := 'Serial';
-    $04 :
-      Result := 'PS/2';
-    $05 :
-      Result := 'Infrared';
-    $06 :
-      Result := 'HP-HIL';
-    $07 :
-      Result := 'Bus mouse';
-    $08 :
-      Result := 'ADB (Apple Desktop Bus)';
-    $A0 :
-      Result := 'Bus mouse DB-9';
-    $A1 :
-      Result := 'Bus mouse micro-DIN';
-    $A2 :
-      Result := 'USB'
+    $01 : Result := 'Other';
+    $02 : Result := 'Unknown';
+    $03 : Result := 'Serial';
+    $04 : Result := 'PS/2';
+    $05 : Result := 'Infrared';
+    $06 : Result := 'HP-HIL';
+    $07 : Result := 'Bus mouse';
+    $08 : Result := 'ADB (Apple Desktop Bus)';
+    $A0 : Result := 'Bus mouse DB-9';
+    $A1 : Result := 'Bus mouse micro-DIN';
+    $A2 : Result := 'USB'
     else
       Result := 'Unknown';
   end;
@@ -8660,24 +8018,15 @@ end;
 function TBuiltInPointingDeviceInformation.GetType: string;
 begin
   case RAWBuiltInPointingDeviceInfo^._Type of
-    $01 :
-      Result := 'Other';
-    $02 :
-      Result := 'Unknown';
-    $03 :
-      Result := 'Mouse';
-    $04 :
-      Result := 'Track Ball';
-    $05 :
-      Result := 'Track Point';
-    $06 :
-      Result := 'Glide Point';
-    $07 :
-      Result := 'Touch Pad';
-    $08 :
-      Result := 'Touch Screen';
-    $09 :
-      Result := 'Optical Sensor'
+    $01 : Result := 'Other';
+    $02 : Result := 'Unknown';
+    $03 : Result := 'Mouse';
+    $04 : Result := 'Track Ball';
+    $05 : Result := 'Track Point';
+    $06 : Result := 'Glide Point';
+    $07 : Result := 'Touch Pad';
+    $08 : Result := 'Touch Screen';
+    $09 : Result := 'Optical Sensor'
     else
       Result := 'Unknown';
   end;
@@ -8988,26 +8337,16 @@ begin
   _Type := GetBitsValue(RAWOnBoardSystemInfo^.DeviceType, 6, 0);
 
   case _Type of
-    $01 :
-      Result := 'Other';
-    $02 :
-      Result := 'Unknown';
-    $03 :
-      Result := 'Video';
-    $04 :
-      Result := 'SCSI Controller';
-    $05 :
-      Result := 'Ethernet';
-    $06 :
-      Result := 'Token Ring';
-    $07 :
-      Result := 'Sound';
-    $08 :
-      Result := 'PATA Controller';
-    $09 :
-      Result := 'SATA Controller';
-    $0A :
-      Result := 'SAS Controller'
+    $01 : Result := 'Other';
+    $02 : Result := 'Unknown';
+    $03 : Result := 'Video';
+    $04 : Result := 'SCSI Controller';
+    $05 : Result := 'Ethernet';
+    $06 : Result := 'Token Ring';
+    $07 : Result := 'Sound';
+    $08 : Result := 'PATA Controller';
+    $09 : Result := 'SATA Controller';
+    $0A : Result := 'SAS Controller'
     else
       Result := 'Unknown';
   end;
@@ -9019,20 +8358,13 @@ end;
 function TMemoryControllerInformation.GetCurrentInterleaveDescr: string;
 begin
   case RAWMemoryControllerInformation^.CurrentInterleave of
-    $01 :
-      Result := 'Other';
-    $02 :
-      Result := 'Unknown';
-    $03 :
-      Result := 'One-Way Interleave';
-    $04 :
-      Result := 'Two-Way Interleave';
-    $05 :
-      Result := 'Four-Way Interleave';
-    $06 :
-      Result := 'Eight-Way Interleave';
-    $07 :
-      Result := 'Sixteen-Way Interleave'
+    $01 : Result := 'Other';
+    $02 : Result := 'Unknown';
+    $03 : Result := 'One-Way Interleave';
+    $04 : Result := 'Two-Way Interleave';
+    $05 : Result := 'Four-Way Interleave';
+    $06 : Result := 'Eight-Way Interleave';
+    $07 : Result := 'Sixteen-Way Interleave'
     else
       Result := 'Unknown';
   end;
@@ -9041,20 +8373,13 @@ end;
 function TMemoryControllerInformation.GetSupportedInterleaveDescr: string;
 begin
   case RAWMemoryControllerInformation^.SupportedInterleave of
-    $01 :
-      Result := 'Other';
-    $02 :
-      Result := 'Unknown';
-    $03 :
-      Result := 'One-Way Interleave';
-    $04 :
-      Result := 'Two-Way Interleave';
-    $05 :
-      Result := 'Four-Way Interleave';
-    $06 :
-      Result := 'Eight-Way Interleave';
-    $07 :
-      Result := 'Sixteen-Way Interleave'
+    $01 : Result := 'Other';
+    $02 : Result := 'Unknown';
+    $03 : Result := 'One-Way Interleave';
+    $04 : Result := 'Two-Way Interleave';
+    $05 : Result := 'Four-Way Interleave';
+    $06 : Result := 'Eight-Way Interleave';
+    $07 : Result := 'Sixteen-Way Interleave'
     else
       Result := 'Unknown';
   end;
@@ -9063,22 +8388,14 @@ end;
 function TMemoryControllerInformation.GetErrorDetectingMethodDescr: string;
 begin
   case RAWMemoryControllerInformation^.ErrorDetectingMethod of
-    $01 :
-      Result := 'Other';
-    $02 :
-      Result := 'Unknown';
-    $03 :
-      Result := 'None';
-    $04 :
-      Result := '8-bit Parity';
-    $05 :
-      Result := '32-bit ECC';
-    $06 :
-      Result := '64-bit ECC';
-    $07 :
-      Result := '128-bit ECC';
-    $08 :
-      Result := 'CRC'
+    $01 : Result := 'Other';
+    $02 : Result := 'Unknown';
+    $03 : Result := 'None';
+    $04 : Result := '8-bit Parity';
+    $05 : Result := '32-bit ECC';
+    $06 : Result := '64-bit ECC';
+    $07 : Result := '128-bit ECC';
+    $08 : Result := 'CRC'
     else
       Result := 'Unknown';
   end;
