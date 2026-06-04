@@ -11,9 +11,6 @@ procedure GetSystemInfo;
   Var
     SMBios: TSMBios;
     LSystem: TSystemInformation;
-   {$IFNDEF LINUX}
-    UUID: Array [0 .. 31] of AnsiChar;
-   {$ENDIF}
   begin
     SMBios := TSMBios.Create;
     try
@@ -24,10 +21,10 @@ procedure GetSystemInfo;
       WriteLn('Product Name  ' + LSystem.ProductNameStr);
       WriteLn('Version       ' + LSystem.VersionStr);
       WriteLn('Serial Number ' + LSystem.SerialNumberStr);
-      {$IFNDEF LINUX}
-      BinToHex(@LSystem.RAWSystemInformation.UUID, UUID, SizeOf(LSystem.RAWSystemInformation.UUID));
-      WriteLn('UUID          ' + UUID);
-      {$ENDIF}
+      if LSystem.HasUUID then
+        WriteLn('UUID          ' + LSystem.UUIDStr);
+      if LSystem.HasWakeUpType then
+        WriteLn('Wake-up Type  ' + LSystem.WakeUpTypeStr);
       if SMBiosAtLeast(SMBios, 2, 4)
       then
       begin
