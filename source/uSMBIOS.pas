@@ -4612,6 +4612,112 @@ type
   end;
   { $REGION 'Documentation' }
   /// <summary>
+  /// This structure describes the Boot Integrity Services entry point.
+  /// </summary>
+  /// <remarks>
+  /// SMBIOS Type 31, Boot Integrity Services Entry Point. This structure was added in SMBIOS 2.3.
+  /// </remarks>
+  { $ENDREGION }
+  TBootIntegrityServicesEntryPointInfo = packed record
+    Header: TSmBiosTableHeader;
+    { $REGION 'Documentation' }
+    /// <summary>
+    /// Structure-level checksum. The 8-bit sum of all bytes in the formatted structure must be zero.
+    /// </summary>
+    /// <remarks>
+    /// 2.3+
+    /// </remarks>
+    { $ENDREGION }
+    Checksum: Byte;
+    { $REGION 'Documentation' }
+    /// <summary>
+    /// Reserved byte.
+    /// </summary>
+    /// <remarks>
+    /// 2.3+
+    /// </remarks>
+    { $ENDREGION }
+    Reserved1: Byte;
+    { $REGION 'Documentation' }
+    /// <summary>
+    /// Reserved word.
+    /// </summary>
+    /// <remarks>
+    /// 2.3+
+    /// </remarks>
+    { $ENDREGION }
+    Reserved2: Word;
+    { $REGION 'Documentation' }
+    /// <summary>
+    /// 16-bit BIS entry point encoded as segment:offset.
+    /// </summary>
+    /// <remarks>
+    /// 2.3+
+    /// </remarks>
+    { $ENDREGION }
+    EntryPoint16: LongWord;
+    { $REGION 'Documentation' }
+    /// <summary>
+    /// 32-bit physical address of the BIS entry point.
+    /// </summary>
+    /// <remarks>
+    /// 2.3+
+    /// </remarks>
+    { $ENDREGION }
+    EntryPoint32: LongWord;
+    { $REGION 'Documentation' }
+    /// <summary>
+    /// Reserved bytes.
+    /// </summary>
+    /// <remarks>
+    /// 2.3+
+    /// </remarks>
+    { $ENDREGION }
+    Reserved3: array [0 .. 11] of Byte;
+  end;
+
+  TBootIntegrityServicesEntryPointInformation = class
+    public
+      RAWBootIntegrityServicesEntryPointInfo: ^TBootIntegrityServicesEntryPointInfo;
+      { $REGION 'Documentation' }
+      /// <summary>
+      /// Returns True when Header.Length is large enough to contain the SMBIOS 2.3 Type 31 formatted area.
+      /// </summary>
+      { $ENDREGION }
+      function IsStructureLengthValid: Boolean;
+      { $REGION 'Documentation' }
+      /// <summary>
+      /// Returns True when the 8-bit sum of all formatted structure bytes is zero.
+      /// </summary>
+      { $ENDREGION }
+      function ChecksumIsValid: Boolean;
+      { $REGION 'Documentation' }
+      /// <summary>
+      /// Returns the 16-bit entry point segment encoded in EntryPoint16 bits 31:16.
+      /// </summary>
+      { $ENDREGION }
+      function GetEntryPoint16Segment: Word;
+      { $REGION 'Documentation' }
+      /// <summary>
+      /// Returns the 16-bit entry point offset encoded in EntryPoint16 bits 15:0.
+      /// </summary>
+      { $ENDREGION }
+      function GetEntryPoint16Offset: Word;
+      { $REGION 'Documentation' }
+      /// <summary>
+      /// Returns True when EntryPoint16 is non-zero.
+      /// </summary>
+      { $ENDREGION }
+      function EntryPoint16IsValid: Boolean;
+      { $REGION 'Documentation' }
+      /// <summary>
+      /// Returns True when EntryPoint32 is non-zero.
+      /// </summary>
+      { $ENDREGION }
+      function EntryPoint32IsValid: Boolean;
+  end;
+  { $REGION 'Documentation' }
+  /// <summary>
   /// This structure describes system boot status information.
   /// </summary>
   /// <remarks>
@@ -4796,6 +4902,7 @@ type
   ArrTemperatureProbeInfo = Array of TTemperatureProbeInformation;
   ArrElectricalCurrentProbeInfo = Array of TElectricalCurrentProbeInformation;
   ArrOutOfBandRemoteAccessInfo = Array of TOutOfBandRemoteAccessInformation;
+  ArrBootIntegrityServicesEntryPointInfo = Array of TBootIntegrityServicesEntryPointInformation;
   ArrSystemBootInfo = Array of TSystemBootInformation;
   Arrx64BitMemoryErrorInfo = Array of Tx64BitMemoryErrorInformation;
   ArrOnBoardSystemInfo = Array of TOnBoardSystemInformation;
@@ -4839,6 +4946,7 @@ type
       FTemperatureProbeInformation: {$IFDEF NOGENERICS}ArrTemperatureProbeInfo; {$ELSE}TArray<TTemperatureProbeInformation>;{$ENDIF}
       FElectricalCurrentProbeInformation: {$IFDEF NOGENERICS}ArrElectricalCurrentProbeInfo; {$ELSE}TArray<TElectricalCurrentProbeInformation>;{$ENDIF}
       FOutOfBandRemoteAccessInformation: {$IFDEF NOGENERICS}ArrOutOfBandRemoteAccessInfo; {$ELSE}TArray<TOutOfBandRemoteAccessInformation>;{$ENDIF}
+      FBootIntegrityServicesEntryPointInformation: {$IFDEF NOGENERICS}ArrBootIntegrityServicesEntryPointInfo; {$ELSE}TArray<TBootIntegrityServicesEntryPointInformation>;{$ENDIF}
       FSystemBootInformation: {$IFDEF NOGENERICS}ArrSystemBootInfo; {$ELSE}TArray<TSystemBootInformation>;{$ENDIF}
       Fx64BitMemoryErrorInformation: {$IFDEF NOGENERICS}Arrx64BitMemoryErrorInfo; {$ELSE}TArray<Tx64BitMemoryErrorInformation>;{$ENDIF}
       FOnBoardSystemInfo: {$IFDEF NOGENERICS}ArrOnBoardSystemInfo; {$ELSE} TArray<TOnBoardSystemInformation>; {$ENDIF}
@@ -4892,6 +5000,7 @@ type
       function GetHasTemperatureProbeInfo: Boolean;
       function GetHasElectricalCurrentProbeInfo: Boolean;
       function GetHasOutOfBandRemoteAccessInfo: Boolean;
+      function GetHasBootIntegrityServicesEntryPointInfo: Boolean;
       function GetHasSystemBootInfo: Boolean;
       function GetHasx64BitMemoryErrorInfo: Boolean;
       function GetHasOnBoardSystemInfo: Boolean;
@@ -5054,6 +5163,9 @@ type
 
       property OutOfBandRemoteAccessInformation: {$IFDEF NOGENERICS} ArrOutOfBandRemoteAccessInfo {$ELSE} TArray<TOutOfBandRemoteAccessInformation> {$ENDIF} read FOutOfBandRemoteAccessInformation;
       property HasOutOfBandRemoteAccessInfo: Boolean read GetHasOutOfBandRemoteAccessInfo;
+
+      property BootIntegrityServicesEntryPointInformation: {$IFDEF NOGENERICS} ArrBootIntegrityServicesEntryPointInfo {$ELSE} TArray<TBootIntegrityServicesEntryPointInformation> {$ENDIF} read FBootIntegrityServicesEntryPointInformation;
+      property HasBootIntegrityServicesEntryPointInfo: Boolean read GetHasBootIntegrityServicesEntryPointInfo;
 
       property SystemBootInfo: {$IFDEF NOGENERICS} ArrSystemBootInfo {$ELSE} TArray<TSystemBootInformation> {$ENDIF} read FSystemBootInformation;
       property HasSystemBootInfo: Boolean read GetHasSystemBootInfo;
@@ -5385,6 +5497,9 @@ begin
   for i := 0 to Length(FOutOfBandRemoteAccessInformation) - 1 do
     FOutOfBandRemoteAccessInformation[i].Free;
 
+  for i := 0 to Length(FBootIntegrityServicesEntryPointInformation) - 1 do
+    FBootIntegrityServicesEntryPointInformation[i].Free;
+
   for i := 0 to Length(FSystemBootInformation) - 1 do
     FSystemBootInformation[i].Free;
 
@@ -5465,6 +5580,7 @@ begin
   FOnBoardSystemInfo := nil;
   FElectricalCurrentProbeInformation := nil;
   FOutOfBandRemoteAccessInformation := nil;
+  FBootIntegrityServicesEntryPointInformation := nil;
   FSystemBootInformation := nil;
   Fx64BitMemoryErrorInformation := nil;
   FTemperatureProbeInformation := nil;
@@ -5659,6 +5775,11 @@ end;
 function TSMBios.GetHasOutOfBandRemoteAccessInfo: Boolean;
 begin
   Result := Length(FOutOfBandRemoteAccessInformation) > 0;
+end;
+
+function TSMBios.GetHasBootIntegrityServicesEntryPointInfo: Boolean;
+begin
+  Result := Length(FBootIntegrityServicesEntryPointInformation) > 0;
 end;
 
 function TSMBios.GetHasSystemBootInfo: Boolean;
@@ -6748,6 +6869,20 @@ begin
       begin
         FOutOfBandRemoteAccessInformation[i] := TOutOfBandRemoteAccessInformation.Create;
         FOutOfBandRemoteAccessInformation[i].RAWOutOfBandRemoteAccessInfo := @RawSMBIOSData.SMBIOSTableData^[LIndex];
+        inc(i);
+      end;
+    until (LIndex = - 1);
+
+  SetLength(FBootIntegrityServicesEntryPointInformation, GetSMBiosTableEntries(BootIntegrityServicesEntryPoint));
+  i := 0;
+  LIndex := - 1;
+  if Length(FBootIntegrityServicesEntryPointInformation) > 0 then
+    repeat
+      LIndex := GetSMBiosTableNextIndex(BootIntegrityServicesEntryPoint, LIndex);
+      if LIndex >= 0 then
+      begin
+        FBootIntegrityServicesEntryPointInformation[i] := TBootIntegrityServicesEntryPointInformation.Create;
+        FBootIntegrityServicesEntryPointInformation[i].RAWBootIntegrityServicesEntryPointInfo := @RawSMBIOSData.SMBIOSTableData^[LIndex];
         inc(i);
       end;
     until (LIndex = - 1);
@@ -8891,6 +9026,48 @@ end;
 function TOutOfBandRemoteAccessInformation.OutboundConnectionEnabled: Boolean;
 begin
   Result := (RAWOutOfBandRemoteAccessInfo^.Connections and $02) <> 0;
+end;
+
+{ TBootIntegrityServicesEntryPointInformation }
+
+function TBootIntegrityServicesEntryPointInformation.ChecksumIsValid: Boolean;
+var
+  i: Integer;
+  LChecksum: Byte;
+begin
+  Result := False;
+  if not IsStructureLengthValid then
+    Exit;
+
+  LChecksum := 0;
+  for i := 0 to RAWBootIntegrityServicesEntryPointInfo^.Header.Length - 1 do
+    LChecksum := LChecksum + PByteArray(RAWBootIntegrityServicesEntryPointInfo)^[i];
+  Result := LChecksum = 0;
+end;
+
+function TBootIntegrityServicesEntryPointInformation.EntryPoint16IsValid: Boolean;
+begin
+  Result := RAWBootIntegrityServicesEntryPointInfo^.EntryPoint16 <> 0;
+end;
+
+function TBootIntegrityServicesEntryPointInformation.EntryPoint32IsValid: Boolean;
+begin
+  Result := RAWBootIntegrityServicesEntryPointInfo^.EntryPoint32 <> 0;
+end;
+
+function TBootIntegrityServicesEntryPointInformation.GetEntryPoint16Offset: Word;
+begin
+  Result := Word(RAWBootIntegrityServicesEntryPointInfo^.EntryPoint16 and $FFFF);
+end;
+
+function TBootIntegrityServicesEntryPointInformation.GetEntryPoint16Segment: Word;
+begin
+  Result := Word((RAWBootIntegrityServicesEntryPointInfo^.EntryPoint16 shr 16) and $FFFF);
+end;
+
+function TBootIntegrityServicesEntryPointInformation.IsStructureLengthValid: Boolean;
+begin
+  Result := RAWBootIntegrityServicesEntryPointInfo^.Header.Length >= SizeOf(TBootIntegrityServicesEntryPointInfo);
 end;
 
 { TSystemBootInformation }
