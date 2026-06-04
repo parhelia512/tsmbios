@@ -121,7 +121,7 @@ type
     VoltageProbe, CoolingDevice, TemperatureProbe, ElectricalCurrentProbe, OutofBandRemoteAccess, BootIntegrityServicesEntryPoint,
     SystemBootInformation, x64BitMemoryErrorInformation, ManagementDevice, ManagementDeviceComponent, ManagementDeviceThresholdData, MemoryChannel,
     IPMIDeviceInformation, SystemPowerSupply, AdditionalInformation, OnboardDevicesExtendedInformation, ManagementControllerHostInterface, TPMDevice,
-    ProcessorAdditionalInformation, FirmwareInventoryInformation, SMBIOSTable46, SMBIOSTable47, SMBIOSTable48, SMBIOSTable49, SMBIOSTable50, SMBIOSTable51, SMBIOSTable52, SMBIOSTable53,
+    ProcessorAdditionalInformation, FirmwareInventoryInformation, StringProperty, SMBIOSTable47, SMBIOSTable48, SMBIOSTable49, SMBIOSTable50, SMBIOSTable51, SMBIOSTable52, SMBIOSTable53,
     SMBIOSTable54, SMBIOSTable55, SMBIOSTable56, SMBIOSTable57, SMBIOSTable58, SMBIOSTable59, SMBIOSTable60, SMBIOSTable61, SMBIOSTable62, SMBIOSTable63,
     SMBIOSTable64, SMBIOSTable65, SMBIOSTable66, SMBIOSTable67, SMBIOSTable68, SMBIOSTable69, SMBIOSTable70, SMBIOSTable71, SMBIOSTable72, SMBIOSTable73,
     SMBIOSTable74, SMBIOSTable75, SMBIOSTable76, SMBIOSTable77, SMBIOSTable78, SMBIOSTable79, SMBIOSTable80, SMBIOSTable81, SMBIOSTable82, SMBIOSTable83,
@@ -2495,6 +2495,61 @@ type
   /// together to form a memory address space.
   /// </summary>
   { $ENDREGION }
+  /// <summary>SMBIOS Type 15 System Event Log formatted area.</summary>
+  TSystemEventLogInfo = packed record
+    Header: TSmBiosTableHeader;
+    /// <summary>Length, in bytes, of the overall event log area.</summary>
+    LogAreaLength: Word;
+    /// <summary>Starting offset within nonvolatile storage of the event log header.</summary>
+    LogHeaderStartOffset: Word;
+    /// <summary>Starting offset within nonvolatile storage of the first event log data byte.</summary>
+    LogDataStartOffset: Word;
+    /// <summary>Location and method used by higher-level software to access the log area.</summary>
+    AccessMethod: Byte;
+    /// <summary>System event log status bit field.</summary>
+    LogStatus: Byte;
+    /// <summary>Token that changes when the event log changes; 00000000h means not implemented.</summary>
+    LogChangeToken: DWORD;
+    /// <summary>Address data associated with the access method.</summary>
+    AccessMethodAddress: DWORD;
+    /// <summary>SMBIOS 2.1+ log header format enumeration.</summary>
+    LogHeaderFormat: Byte;
+    /// <summary>SMBIOS 2.1+ number of supported event log type descriptors.</summary>
+    NumberOfSupportedLogTypeDescriptors: Byte;
+    /// <summary>SMBIOS 2.1+ length of each supported event log type descriptor.</summary>
+    LengthOfEachLogTypeDescriptor: Byte;
+  end;
+
+  TSystemEventLogInformation = class
+    public
+      RAWSystemEventLogInfo: ^TSystemEventLogInfo;
+      /// <summary>Returns the event log access method description.</summary>
+      function GetAccessMethodStr: AnsiString;
+      /// <summary>Returns True when LogStatus bit 0 indicates the log area is valid.</summary>
+      function LogAreaIsValid: Boolean;
+      /// <summary>Returns True when LogStatus bit 1 indicates the log area is full.</summary>
+      function LogAreaIsFull: Boolean;
+      /// <summary>Returns True when the SMBIOS 2.1+ log header descriptor fields are present.</summary>
+      function HasLogHeaderDescriptorFields: Boolean;
+      /// <summary>Returns the SMBIOS 2.1+ log header format description, or Unknown when the field is unavailable.</summary>
+      function GetLogHeaderFormatStr: AnsiString;
+      /// <summary>Returns the Indexed I/O index address encoded in AccessMethodAddress for access methods 00h..02h.</summary>
+      function GetAccessMethodIndexAddress: Word;
+      /// <summary>Returns the Indexed I/O data address encoded in AccessMethodAddress for access methods 00h..02h.</summary>
+      function GetAccessMethodDataAddress: Word;
+      /// <summary>Returns the GPNV handle encoded in AccessMethodAddress for access method 04h.</summary>
+      function GetAccessMethodGPNVHandle: Word;
+      /// <summary>Returns True when the requested supported event log type descriptor exists in the formatted area.</summary>
+      function HasSupportedLogTypeDescriptor(Index: Integer): Boolean;
+      /// <summary>Returns the supported event log type byte for the requested descriptor, or 0 when unavailable.</summary>
+      function GetSupportedLogType(Index: Integer): Byte;
+      /// <summary>Returns the supported event log type description for the requested descriptor.</summary>
+      function GetSupportedLogTypeStr(Index: Integer): AnsiString;
+      /// <summary>Returns the variable data format type byte for the requested descriptor, or 0 when unavailable.</summary>
+      function GetSupportedVariableDataFormatType(Index: Integer): Byte;
+      /// <summary>Returns the variable data format type description for the requested descriptor.</summary>
+      function GetSupportedVariableDataFormatTypeStr(Index: Integer): AnsiString;
+  end;
   TPhysicalMemoryArrayInfo = packed record
     Header: TSmBiosTableHeader;
     { $REGION 'Documentation' }
@@ -2618,6 +2673,41 @@ type
   /// This structure provides the address mapping for a Physical Memory Array.
   /// </summary>
   { $ENDREGION }
+  /// <summary>SMBIOS Type 18 32-Bit Memory Error Information formatted area.</summary>
+  TMemoryErrorInfo = packed record
+    Header: TSmBiosTableHeader;
+    /// <summary>Type of error associated with the current memory error status.</summary>
+    ErrorType: Byte;
+    /// <summary>Granularity to which the memory error can be resolved.</summary>
+    ErrorGranularity: Byte;
+    /// <summary>Memory access operation that caused the error.</summary>
+    ErrorOperation: Byte;
+    /// <summary>Vendor-specific syndrome value associated with the error.</summary>
+    VendorSyndrome: DWORD;
+    /// <summary>32-bit physical address of the error, relative to the memory array.</summary>
+    MemoryArrayErrorAddress: DWORD;
+    /// <summary>32-bit physical address of the error, relative to the device.</summary>
+    DeviceErrorAddress: DWORD;
+    /// <summary>Range, in bytes, within which the error can be determined.</summary>
+    ErrorResolution: DWORD;
+  end;
+
+  TMemoryErrorInformation = class
+    public
+      RAWMemoryErrorInfo: ^TMemoryErrorInfo;
+      /// <summary>Get the string representation of the ErrorType field.</summary>
+      function GetErrorTypeStr: AnsiString;
+      /// <summary>Get the string representation of the ErrorGranularity field.</summary>
+      function GetErrorGranularityStr: AnsiString;
+      /// <summary>Get the string representation of the ErrorOperation field.</summary>
+      function GetErrorOperationStr: AnsiString;
+      /// <summary>Returns True when MemoryArrayErrorAddress contains the SMBIOS unknown sentinel 80000000h.</summary>
+      function MemoryArrayErrorAddressIsUnknown: Boolean;
+      /// <summary>Returns True when DeviceErrorAddress contains the SMBIOS unknown sentinel 80000000h.</summary>
+      function DeviceErrorAddressIsUnknown: Boolean;
+      /// <summary>Returns True when ErrorResolution contains the SMBIOS unknown sentinel 80000000h.</summary>
+      function ErrorResolutionIsUnknown: Boolean;
+  end;
   TMemoryArrayMappedAddress = packed record
     Header: TSmBiosTableHeader;
     { $REGION 'Documentation' }
@@ -4868,8 +4958,403 @@ type
       { $ENDREGION }
       function GetErrorOperationStr: AnsiString;
   end;
+  /// <summary>SMBIOS Type 34 Management Device formatted area.</summary>
+  TManagementDeviceInfo = packed record
+    Header: TSmBiosTableHeader;
+    /// <summary>String number for the management device description.</summary>
+    Description: Byte;
+    /// <summary>Management device type.</summary>
+    DeviceType: Byte;
+    /// <summary>Management device address.</summary>
+    Address: DWORD;
+    /// <summary>Management device address type.</summary>
+    AddressType: Byte;
+  end;
 
-{$I uSMBIOSPriority1Types.inc}
+  TManagementDeviceInformation = class
+    public
+      RAWManagementDeviceInfo: ^TManagementDeviceInfo;
+      /// <summary>Returns the management device description string.</summary>
+      function GetDescriptionStr: AnsiString;
+      /// <summary>Returns the management device type description.</summary>
+      function GetDeviceTypeStr: AnsiString;
+      /// <summary>Returns the management device address type description.</summary>
+      function GetAddressTypeStr: AnsiString;
+  end;
+
+  /// <summary>SMBIOS Type 35 Management Device Component formatted area.</summary>
+  TManagementDeviceComponentInfo = packed record
+    Header: TSmBiosTableHeader;
+    /// <summary>String number for the management device component description.</summary>
+    Description: Byte;
+    /// <summary>Handle of the associated Management Device structure.</summary>
+    ManagementDeviceHandle: Word;
+    /// <summary>Handle of the component associated with the management device.</summary>
+    ComponentHandle: Word;
+    /// <summary>Handle of the associated Management Device Threshold Data structure.</summary>
+    ThresholdHandle: Word;
+  end;
+
+  TManagementDeviceComponentInformation = class
+    public
+      RAWManagementDeviceComponentInfo: ^TManagementDeviceComponentInfo;
+      /// <summary>Returns the management device component description string.</summary>
+      function GetDescriptionStr: AnsiString;
+  end;
+
+  /// <summary>SMBIOS Type 36 Management Device Threshold Data formatted area.</summary>
+  TManagementDeviceThresholdDataInfo = packed record
+    Header: TSmBiosTableHeader;
+    /// <summary>Lower non-critical threshold value.</summary>
+    LowerThresholdNonCritical: Word;
+    /// <summary>Upper non-critical threshold value.</summary>
+    UpperThresholdNonCritical: Word;
+    /// <summary>Lower critical threshold value.</summary>
+    LowerThresholdCritical: Word;
+    /// <summary>Upper critical threshold value.</summary>
+    UpperThresholdCritical: Word;
+    /// <summary>Lower non-recoverable threshold value.</summary>
+    LowerThresholdNonRecoverable: Word;
+    /// <summary>Upper non-recoverable threshold value.</summary>
+    UpperThresholdNonRecoverable: Word;
+  end;
+
+  TManagementDeviceThresholdDataInformation = class
+    public
+      RAWManagementDeviceThresholdDataInfo: ^TManagementDeviceThresholdDataInfo;
+  end;
+  /// <summary>SMBIOS Type 37 Memory Channel formatted area.</summary>
+  TMemoryChannelInfo = packed record
+    Header: TSmBiosTableHeader;
+    /// <summary>Memory channel type.</summary>
+    ChannelType: Byte;
+    /// <summary>Maximum channel load supported by this channel.</summary>
+    MaximumChannelLoad: Byte;
+    /// <summary>Number of memory device load/handle entries following this fixed area.</summary>
+    MemoryDeviceCount: Byte;
+  end;
+
+  TMemoryChannelInformation = class
+    public
+      RAWMemoryChannelInfo: ^TMemoryChannelInfo;
+      /// <summary>Returns the memory channel type description.</summary>
+      function GetChannelTypeStr: AnsiString;
+      /// <summary>Returns True when the requested memory device load/handle entry exists in the formatted area.</summary>
+      function HasMemoryDeviceEntry(Index: Integer): Boolean;
+      /// <summary>Returns the memory device load for the requested entry, or 0 when Index is outside the formatted area.</summary>
+      function GetMemoryDeviceLoad(Index: Integer): Byte;
+      /// <summary>Returns the memory device handle for the requested entry, or FFFFh when Index is outside the formatted area.</summary>
+      function GetMemoryDeviceHandle(Index: Integer): Word;
+  end;
+  /// <summary>SMBIOS Type 38 IPMI Device Information formatted area.</summary>
+  TIPMIDeviceInfo = packed record
+    Header: TSmBiosTableHeader;
+    /// <summary>Baseboard Management Controller host interface type.</summary>
+    InterfaceType: Byte;
+    /// <summary>IPMI specification revision in BCD format.</summary>
+    IPMISpecificationRevision: Byte;
+    /// <summary>I2C slave address of the Baseboard Management Controller.</summary>
+    I2CSlaveAddress: Byte;
+    /// <summary>NV storage device I2C slave address, or FFh when no device is present.</summary>
+    NVStorageDeviceAddress: Byte;
+    /// <summary>Base address used by the host interface.</summary>
+    BaseAddress: Int64;
+    /// <summary>Register spacing, least-significant-bit, and interrupt information.</summary>
+    BaseAddressModifierInterruptInfo: Byte;
+    /// <summary>Interrupt number for the IPMI interface.</summary>
+    InterruptNumber: Byte;
+  end;
+
+  TIPMIDeviceInformation = class
+    public
+      RAWIPMIDeviceInfo: ^TIPMIDeviceInfo;
+      /// <summary>Returns the host interface type description.</summary>
+      function GetInterfaceTypeStr: AnsiString;
+      /// <summary>Returns the IPMI specification revision encoded by the raw BCD field.</summary>
+      function GetSpecificationVersionStr: AnsiString;
+  end;
+
+  /// <summary>SMBIOS Type 39 System Power Supply formatted area.</summary>
+  TSystemPowerSupplyInfo = packed record
+    Header: TSmBiosTableHeader;
+    /// <summary>Power unit group number for redundant or associated power supplies.</summary>
+    PowerUnitGroup: Byte;
+    /// <summary>String number for the power supply location.</summary>
+    Location: Byte;
+    /// <summary>String number for the device name.</summary>
+    DeviceName: Byte;
+    /// <summary>String number for the manufacturer.</summary>
+    Manufacturer: Byte;
+    /// <summary>String number for the serial number.</summary>
+    SerialNumber: Byte;
+    /// <summary>String number for the asset tag number.</summary>
+    AssetTagNumber: Byte;
+    /// <summary>String number for the model part number.</summary>
+    ModelPartNumber: Byte;
+    /// <summary>String number for the revision level.</summary>
+    RevisionLevel: Byte;
+    /// <summary>Maximum sustained power output in watts; 8000h indicates unknown.</summary>
+    MaxPowerCapacity: Word;
+    /// <summary>Power supply characteristics bit field.</summary>
+    PowerSupplyCharacteristics: Word;
+    /// <summary>Handle of the input voltage probe associated with this supply.</summary>
+    InputVoltageProbeHandle: Word;
+    /// <summary>Handle of the cooling device associated with this supply.</summary>
+    CoolingDeviceHandle: Word;
+    /// <summary>Handle of the input current probe associated with this supply.</summary>
+    InputCurrentProbeHandle: Word;
+  end;
+
+  TSystemPowerSupplyInformation = class
+    public
+      RAWSystemPowerSupplyInfo: ^TSystemPowerSupplyInfo;
+      /// <summary>Returns the power supply location string.</summary>
+      function LocationStr: AnsiString;
+      /// <summary>Returns the device name string.</summary>
+      function DeviceNameStr: AnsiString;
+      /// <summary>Returns the manufacturer string.</summary>
+      function ManufacturerStr: AnsiString;
+      /// <summary>Returns the serial number string.</summary>
+      function SerialNumberStr: AnsiString;
+      /// <summary>Returns the asset tag number string.</summary>
+      function AssetTagNumberStr: AnsiString;
+      /// <summary>Returns the model part number string.</summary>
+      function ModelPartNumberStr: AnsiString;
+      /// <summary>Returns the revision level string.</summary>
+      function RevisionLevelStr: AnsiString;
+      /// <summary>Returns True when MaxPowerCapacity is 8000h.</summary>
+      function MaxPowerCapacityIsUnknown: Boolean;
+      /// <summary>Returns True when bit 0 of PowerSupplyCharacteristics indicates hot replaceable.</summary>
+      function IsHotReplaceable: Boolean;
+      /// <summary>Returns True when bit 1 of PowerSupplyCharacteristics indicates present.</summary>
+      function IsPresent: Boolean;
+      /// <summary>Returns True when bit 2 of PowerSupplyCharacteristics indicates unplugged from the wall.</summary>
+      function IsUnplugged: Boolean;
+      /// <summary>Returns the input voltage range switching value encoded in bits 6:3.</summary>
+      function GetInputVoltageRangeSwitching: Byte;
+      /// <summary>Returns the input voltage range switching description encoded in bits 6:3.</summary>
+      function GetInputVoltageRangeSwitchingStr: AnsiString;
+      /// <summary>Returns the power supply status value encoded in bits 9:7.</summary>
+      function GetStatus: Byte;
+      /// <summary>Returns the power supply status description encoded in bits 9:7.</summary>
+      function GetStatusStr: AnsiString;
+      /// <summary>Returns the power supply type value encoded in bits 13:10.</summary>
+      function GetPowerSupplyType: Byte;
+      /// <summary>Returns the power supply type description encoded in bits 13:10.</summary>
+      function GetPowerSupplyTypeStr: AnsiString;
+  end;
+
+  /// <summary>SMBIOS Type 40 Additional Information formatted area.</summary>
+  TAdditionalInformationInfo = packed record
+    Header: TSmBiosTableHeader;
+    /// <summary>Number of Additional Information Entry instances following this byte.</summary>
+    NumberOfAdditionalInformationEntries: Byte;
+  end;
+
+  TAdditionalInformationInformation = class
+    public
+      RAWAdditionalInformationInfo: ^TAdditionalInformationInfo;
+      /// <summary>Returns True when the requested Additional Information Entry exists in the formatted area.</summary>
+      function HasAdditionalInformationEntry(Index: Integer): Boolean;
+      /// <summary>Returns the byte length of the requested Additional Information Entry, or 0 when unavailable.</summary>
+      function GetAdditionalInformationEntryLength(Index: Integer): Byte;
+      /// <summary>Returns the referenced structure handle for the requested entry, or FFFFh when unavailable.</summary>
+      function GetReferencedHandle(Index: Integer): Word;
+      /// <summary>Returns the referenced field offset for the requested entry, or 0 when unavailable.</summary>
+      function GetReferencedOffset(Index: Integer): Byte;
+      /// <summary>Returns the optional string associated with the referenced field for the requested entry.</summary>
+      function GetEntryStringStr(Index: Integer): AnsiString;
+      /// <summary>Returns the size of the Value bytes for the requested entry, or 0 when unavailable.</summary>
+      function GetEntryValueSize(Index: Integer): Byte;
+      /// <summary>Returns one byte from the requested entry Value field, or 0 when unavailable.</summary>
+      function GetEntryValueByte(Index, ValueIndex: Integer): Byte;
+  end;
+
+  /// <summary>SMBIOS Type 41 Onboard Devices Extended Information formatted area.</summary>
+  TOnboardDevicesExtendedInfo = packed record
+    Header: TSmBiosTableHeader;
+    /// <summary>String number for the onboard device reference designation.</summary>
+    ReferenceDesignation: Byte;
+    /// <summary>Device type in bits 6:0 and enabled state in bit 7.</summary>
+    DeviceType: Byte;
+    /// <summary>Instance number for devices with the same type and designation.</summary>
+    DeviceTypeInstance: Byte;
+    /// <summary>PCI segment group number for the device.</summary>
+    SegmentGroupNumber: Word;
+    /// <summary>PCI bus number for the device.</summary>
+    BusNumber: Byte;
+    /// <summary>PCI device number in bits 7:3 and function number in bits 2:0.</summary>
+    DeviceFunctionNumber: Byte;
+  end;
+
+  TOnboardDevicesExtendedInformation = class
+    public
+      RAWOnboardDevicesExtendedInfo: ^TOnboardDevicesExtendedInfo;
+      /// <summary>Returns the onboard device reference designation string.</summary>
+      function ReferenceDesignationStr: AnsiString;
+      /// <summary>Returns True when the onboard device is enabled.</summary>
+      function Enabled: Boolean;
+      /// <summary>Returns the onboard device type description.</summary>
+      function GetDeviceTypeStr: AnsiString;
+      /// <summary>Returns the PCI device number encoded in bits 7:3.</summary>
+      function GetDeviceNumber: Byte;
+      /// <summary>Returns the PCI function number encoded in bits 2:0.</summary>
+      function GetFunctionNumber: Byte;
+  end;
+
+  /// <summary>SMBIOS Type 42 Management Controller Host Interface formatted area.</summary>
+  TManagementControllerHostInterfaceInfo = packed record
+    Header: TSmBiosTableHeader;
+    /// <summary>Management controller host interface type.</summary>
+    InterfaceType: Byte;
+    /// <summary>Length in bytes of the interface-type-specific data following this field.</summary>
+    InterfaceTypeSpecificDataLength: Byte;
+  end;
+
+  TManagementControllerHostInterfaceInformation = class
+    public
+      RAWManagementControllerHostInterfaceInfo: ^TManagementControllerHostInterfaceInfo;
+      /// <summary>Returns the management controller host interface type description.</summary>
+      function GetInterfaceTypeStr: AnsiString;
+      /// <summary>Returns True when interface-type-specific data bytes are present in the formatted area.</summary>
+      function HasInterfaceTypeSpecificData: Boolean;
+      /// <summary>Returns one interface-type-specific data byte, or 0 when Index is outside the formatted area.</summary>
+      function GetInterfaceTypeSpecificDataByte(Index: Integer): Byte;
+      /// <summary>Returns the number of protocol records following the interface-type-specific data.</summary>
+      function GetProtocolRecordCount: Byte;
+      /// <summary>Returns True when the requested protocol record exists in the formatted area.</summary>
+      function HasProtocolRecord(Index: Integer): Boolean;
+      /// <summary>Returns the protocol type for the requested protocol record, or 0 when unavailable.</summary>
+      function GetProtocolType(Index: Integer): Byte;
+      /// <summary>Returns the protocol type description for the requested protocol record.</summary>
+      function GetProtocolTypeStr(Index: Integer): AnsiString;
+      /// <summary>Returns the protocol-type-specific data length for the requested protocol record, or 0 when unavailable.</summary>
+      function GetProtocolTypeSpecificDataLength(Index: Integer): Byte;
+      /// <summary>Returns one protocol-type-specific data byte, or 0 when Index/DataIndex is outside the formatted area.</summary>
+      function GetProtocolTypeSpecificDataByte(Index, DataIndex: Integer): Byte;
+  end;
+
+  /// <summary>SMBIOS Type 43 TPM Device formatted area.</summary>
+  TTPMDeviceInfo = packed record
+    Header: TSmBiosTableHeader;
+    /// <summary>Four-character Trusted Computing Group vendor identifier.</summary>
+    VendorID: array [0 .. 3] of AnsiChar;
+    /// <summary>Major version of the TPM specification.</summary>
+    MajorSpecVersion: Byte;
+    /// <summary>Minor version of the TPM specification.</summary>
+    MinorSpecVersion: Byte;
+    /// <summary>Vendor-specific TPM firmware version component 1.</summary>
+    FirmwareVersion1: DWORD;
+    /// <summary>Vendor-specific TPM firmware version component 2.</summary>
+    FirmwareVersion2: DWORD;
+    /// <summary>String number for an optional TPM device description.</summary>
+    Description: Byte;
+    /// <summary>TPM device characteristics bit field.</summary>
+    Characteristics: Int64;
+    /// <summary>OEM-specific information.</summary>
+    OEMDefined: DWORD;
+  end;
+
+  /// <summary>SMBIOS Type 46 String Property formatted area.</summary>
+  TStringPropertyInfo = packed record
+    Header: TSmBiosTableHeader;
+    /// <summary>Identifier of the string property described by this structure.</summary>
+    StringPropertyID: Word;
+    /// <summary>String number for the string property value.</summary>
+    StringPropertyValue: Byte;
+    /// <summary>Handle of the structure this string property applies to.</summary>
+    ParentHandle: Word;
+  end;
+
+  TStringPropertyInformation = class
+    public
+      RAWStringPropertyInfo: ^TStringPropertyInfo;
+      /// <summary>Returns the string property ID description.</summary>
+      function GetStringPropertyIDStr: AnsiString;
+      /// <summary>Returns the string property value string.</summary>
+      function StringPropertyValueStr: AnsiString;
+  end;
+
+  TTPMDeviceInformation = class
+    public
+      RAWTPMDeviceInfo: ^TTPMDeviceInfo;
+      /// <summary>Returns the four-character Trusted Computing Group vendor identifier.</summary>
+      function VendorIDStr: AnsiString;
+      /// <summary>Returns the TPM specification version.</summary>
+      function GetSpecificationVersionStr: AnsiString;
+      /// <summary>Returns the optional TPM device description string.</summary>
+      function DescriptionStr: AnsiString;
+  end;
+
+  /// <summary>SMBIOS Type 44 Processor Additional Information formatted area.</summary>
+  TProcessorAdditionalInfo = packed record
+    Header: TSmBiosTableHeader;
+    /// <summary>Handle of the associated Type 4 Processor Information structure.</summary>
+    ReferencedHandle: Word;
+    /// <summary>Length of the processor-specific block, including the architecture type byte.</summary>
+    ProcessorSpecificBlockLength: Byte;
+    /// <summary>Processor architecture type at the start of the processor-specific block.</summary>
+    ProcessorType: Byte;
+  end;
+
+  TProcessorAdditionalInformation = class
+    public
+      RAWProcessorAdditionalInfo: ^TProcessorAdditionalInfo;
+      /// <summary>Returns the processor architecture type description.</summary>
+      function GetProcessorTypeStr: AnsiString;
+      /// <summary>Returns the byte count following the processor architecture type byte.</summary>
+      function GetProcessorSpecificDataSize: Byte;
+  end;
+
+  /// <summary>SMBIOS Type 45 Firmware Inventory Information fixed formatted area.</summary>
+  TFirmwareInventoryInfo = packed record
+    Header: TSmBiosTableHeader;
+    /// <summary>String number for the firmware component name.</summary>
+    FirmwareComponentName: Byte;
+    /// <summary>String number for the firmware version.</summary>
+    FirmwareVersion: Byte;
+    /// <summary>Format of the firmware version string.</summary>
+    FirmwareVersionFormat: Byte;
+    /// <summary>String number for the firmware identifier.</summary>
+    FirmwareID: Byte;
+    /// <summary>Format of the firmware identifier string.</summary>
+    FirmwareIDFormat: Byte;
+    /// <summary>String number for the firmware release date.</summary>
+    ReleaseDate: Byte;
+    /// <summary>String number for the firmware manufacturer.</summary>
+    Manufacturer: Byte;
+    /// <summary>String number for the lowest supported firmware version.</summary>
+    LowestSupportedFirmwareVersion: Byte;
+    /// <summary>Firmware image size in bytes, or unknown when all bits are set.</summary>
+    ImageSize: Int64;
+    /// <summary>Firmware inventory characteristics bit field.</summary>
+    Characteristics: Word;
+    /// <summary>Current firmware state.</summary>
+    State: Byte;
+    /// <summary>Number of associated component handles following this fixed area.</summary>
+    AssociatedComponentCount: Byte;
+  end;
+
+  TFirmwareInventoryInformation = class
+    public
+      RAWFirmwareInventoryInfo: ^TFirmwareInventoryInfo;
+      /// <summary>Returns the firmware component name string.</summary>
+      function FirmwareComponentNameStr: AnsiString;
+      /// <summary>Returns the firmware version string.</summary>
+      function FirmwareVersionStr: AnsiString;
+      /// <summary>Returns the firmware identifier string.</summary>
+      function FirmwareIDStr: AnsiString;
+      /// <summary>Returns the firmware release date string.</summary>
+      function ReleaseDateStr: AnsiString;
+      /// <summary>Returns the firmware manufacturer string.</summary>
+      function ManufacturerStr: AnsiString;
+      /// <summary>Returns the lowest supported firmware version string.</summary>
+      function LowestSupportedFirmwareVersionStr: AnsiString;
+      /// <summary>Returns the current firmware state description.</summary>
+      function GetStateStr: AnsiString;
+      /// <summary>Returns an associated component handle, or 0 when Index is outside the formatted area.</summary>
+      function GetAssociatedComponentHandle(Index: Byte): Word;
+  end;
 
   TSMBiosTableEntry = record
     Header: TSmBiosTableHeader;
@@ -4894,6 +5379,7 @@ type
   ArrSystemResetInfo = Array of TSystemResetInformation;
   ArrHardwareSecurityInfo = Array of THardwareSecurityInformation;
   ArrSystemPowerControlsInfo = Array of TSystemPowerControlsInformation;
+  ArrMemoryErrorInfo = Array of TMemoryErrorInformation;
   ArrMemoryArrayMappedAddressInfo = Array of TMemoryArrayMappedAddressInformation;
   ArrMemoryDeviceMappedAddressInfo = Array of TMemoryDeviceMappedAddressInformation;
   ArrBuiltInPointingDeviceInfo = Array of TBuiltInPointingDeviceInformation;
@@ -4909,11 +5395,20 @@ type
   ArrMemoryControllerInfo = Array of TMemoryControllerInformation;
   ArrMemoryModuleInfo = Array of TMemoryModuleInformation;
   ArrGroupAssociationsInfo = Array of TGroupAssociationsInformation;
+  ArrSystemEventLogInfo = Array of TSystemEventLogInformation;
+  ArrManagementDeviceInfo = Array of TManagementDeviceInformation;
+  ArrManagementDeviceComponentInfo = Array of TManagementDeviceComponentInformation;
+  ArrManagementDeviceThresholdDataInfo = Array of TManagementDeviceThresholdDataInformation;
+  ArrMemoryChannelInfo = Array of TMemoryChannelInformation;
   ArrIPMIDeviceInfo = Array of TIPMIDeviceInformation;
+  ArrSystemPowerSupplyInfo = Array of TSystemPowerSupplyInformation;
+  ArrAdditionalInformationInfo = Array of TAdditionalInformationInformation;
   ArrOnboardDevicesExtendedInfo = Array of TOnboardDevicesExtendedInformation;
+  ArrManagementControllerHostInterfaceInfo = Array of TManagementControllerHostInterfaceInformation;
   ArrTPMDeviceInfo = Array of TTPMDeviceInformation;
   ArrProcessorAdditionalInfo = Array of TProcessorAdditionalInformation;
   ArrFirmwareInventoryInfo = Array of TFirmwareInventoryInformation;
+  ArrStringPropertyInfo = Array of TStringPropertyInformation;
 {$ENDIF}
 
   TSMBios = class
@@ -4938,6 +5433,7 @@ type
       FSystemResetInformation: {$IFDEF NOGENERICS}ArrSystemResetInfo; {$ELSE}TArray<TSystemResetInformation>;{$ENDIF}
       FHardwareSecurityInformation: {$IFDEF NOGENERICS}ArrHardwareSecurityInfo; {$ELSE}TArray<THardwareSecurityInformation>;{$ENDIF}
       FSystemPowerControlsInformation: {$IFDEF NOGENERICS}ArrSystemPowerControlsInfo; {$ELSE}TArray<TSystemPowerControlsInformation>;{$ENDIF}
+      FMemoryErrorInformation: {$IFDEF NOGENERICS}ArrMemoryErrorInfo; {$ELSE}TArray<TMemoryErrorInformation>;{$ENDIF}
       FMemoryArrayMappedAddressInformation: {$IFDEF NOGENERICS}ArrMemoryArrayMappedAddressInfo; {$ELSE}TArray<TMemoryArrayMappedAddressInformation>;{$ENDIF}
       FMemoryDeviceMappedAddressInformation: {$IFDEF NOGENERICS}ArrMemoryDeviceMappedAddressInfo; {$ELSE}TArray<TMemoryDeviceMappedAddressInformation>;{$ENDIF}
       FBuiltInPointingDeviceInformation: {$IFDEF NOGENERICS}ArrBuiltInPointingDeviceInfo; {$ELSE}TArray<TBuiltInPointingDeviceInformation>;{$ENDIF}
@@ -4953,11 +5449,20 @@ type
       FMemoryControllerInfo: {$IFDEF NOGENERICS}ArrMemoryControllerInfo;{$ELSE} TArray<TMemoryControllerInformation>; {$ENDIF}
       FMemoryModuleInfo: {$IFDEF NOGENERICS}ArrMemoryModuleInfo;{$ELSE} TArray<TMemoryModuleInformation>; {$ENDIF}
       FGroupAssociationsInformation: {$IFDEF NOGENERICS}ArrGroupAssociationsInfo;{$ELSE} TArray<TGroupAssociationsInformation>; {$ENDIF}
+      FSystemEventLogInfo: {$IFDEF NOGENERICS}ArrSystemEventLogInfo;{$ELSE} TArray<TSystemEventLogInformation>; {$ENDIF}
+      FManagementDeviceInfo: {$IFDEF NOGENERICS}ArrManagementDeviceInfo;{$ELSE} TArray<TManagementDeviceInformation>; {$ENDIF}
+      FManagementDeviceComponentInfo: {$IFDEF NOGENERICS}ArrManagementDeviceComponentInfo;{$ELSE} TArray<TManagementDeviceComponentInformation>; {$ENDIF}
+      FManagementDeviceThresholdDataInfo: {$IFDEF NOGENERICS}ArrManagementDeviceThresholdDataInfo;{$ELSE} TArray<TManagementDeviceThresholdDataInformation>; {$ENDIF}
+      FMemoryChannelInfo: {$IFDEF NOGENERICS}ArrMemoryChannelInfo;{$ELSE} TArray<TMemoryChannelInformation>; {$ENDIF}
       FIPMIDeviceInfo: {$IFDEF NOGENERICS}ArrIPMIDeviceInfo;{$ELSE} TArray<TIPMIDeviceInformation>; {$ENDIF}
+      FSystemPowerSupplyInfo: {$IFDEF NOGENERICS}ArrSystemPowerSupplyInfo;{$ELSE} TArray<TSystemPowerSupplyInformation>; {$ENDIF}
+      FAdditionalInformationInfo: {$IFDEF NOGENERICS}ArrAdditionalInformationInfo;{$ELSE} TArray<TAdditionalInformationInformation>; {$ENDIF}
       FOnboardDevicesExtendedInfo: {$IFDEF NOGENERICS}ArrOnboardDevicesExtendedInfo;{$ELSE} TArray<TOnboardDevicesExtendedInformation>; {$ENDIF}
+      FManagementControllerHostInterfaceInfo: {$IFDEF NOGENERICS}ArrManagementControllerHostInterfaceInfo;{$ELSE} TArray<TManagementControllerHostInterfaceInformation>; {$ENDIF}
       FTPMDeviceInfo: {$IFDEF NOGENERICS}ArrTPMDeviceInfo;{$ELSE} TArray<TTPMDeviceInformation>; {$ENDIF}
       FProcessorAdditionalInfo: {$IFDEF NOGENERICS}ArrProcessorAdditionalInfo;{$ELSE} TArray<TProcessorAdditionalInformation>; {$ENDIF}
       FFirmwareInventoryInfo: {$IFDEF NOGENERICS}ArrFirmwareInventoryInfo;{$ELSE} TArray<TFirmwareInventoryInformation>; {$ENDIF}
+      FStringPropertyInfo: {$IFDEF NOGENERICS}ArrStringPropertyInfo;{$ELSE} TArray<TStringPropertyInformation>; {$ENDIF}
 {$IFDEF MSWINDOWS}
 {$IFDEF USEWMI}
       procedure LoadSMBIOSWMI(const RemoteMachine, UserName, Password: string);
@@ -4988,6 +5493,7 @@ type
       function GetHasSystemConfInfo: Boolean;
       function GetHasPhysicalMemoryArrayInfo: Boolean;
       function GetHasMemoryDeviceInfo: Boolean;
+      function GetHasMemoryErrorInfo: Boolean;
       function GetHasBatteryInfo: Boolean;
       function GetHasSystemResetInfo: Boolean;
       function GetHasHardwareSecurityInfo: Boolean;
@@ -5007,11 +5513,20 @@ type
       function GetHasMemoryControllerInfo: Boolean;
       function GetHasMemoryModuleInfo: Boolean;
       function GetHasGroupAssociationsInfo: Boolean;
+      function GetHasSystemEventLogInfo: Boolean;
+      function GetHasManagementDeviceInfo: Boolean;
+      function GetHasManagementDeviceComponentInfo: Boolean;
+      function GetHasManagementDeviceThresholdDataInfo: Boolean;
+      function GetHasMemoryChannelInfo: Boolean;
       function GetHasIPMIDeviceInfo: Boolean;
+      function GetHasSystemPowerSupplyInfo: Boolean;
+      function GetHasAdditionalInformationInfo: Boolean;
       function GetHasOnboardDevicesExtendedInfo: Boolean;
+      function GetHasManagementControllerHostInterfaceInfo: Boolean;
       function GetHasTPMDeviceInfo: Boolean;
       function GetHasProcessorAdditionalInfo: Boolean;
       function GetHasFirmwareInventoryInfo: Boolean;
+      function GetHasStringPropertyInfo: Boolean;
 
     public
       { $REGION 'Documentation' }
@@ -5143,6 +5658,9 @@ type
       property MemoryArrayMappedAddressInformation: {$IFDEF NOGENERICS} ArrMemoryArrayMappedAddressInfo {$ELSE} TArray<TMemoryArrayMappedAddressInformation> {$ENDIF} read FMemoryArrayMappedAddressInformation;
       property HasMemoryArrayMappedAddressInfo: Boolean read GetHasMemoryArrayMappedAddressInfo;
 
+      property MemoryErrorInfo: {$IFDEF NOGENERICS} ArrMemoryErrorInfo {$ELSE} TArray<TMemoryErrorInformation> {$ENDIF} read FMemoryErrorInformation;
+      property HasMemoryErrorInfo: Boolean read GetHasMemoryErrorInfo;
+
       property MemoryDeviceMappedAddressInformation: {$IFDEF NOGENERICS} ArrMemoryDeviceMappedAddressInfo {$ELSE} TArray<TMemoryDeviceMappedAddressInformation> {$ENDIF} read FMemoryDeviceMappedAddressInformation;
       property HasMemoryDeviceMappedAddressInfo: Boolean read GetHasMemoryDeviceMappedAddressInfo;
 
@@ -5173,11 +5691,32 @@ type
       property x64BitMemoryErrorInfo: {$IFDEF NOGENERICS} Arrx64BitMemoryErrorInfo {$ELSE} TArray<Tx64BitMemoryErrorInformation> {$ENDIF} read Fx64BitMemoryErrorInformation;
       property Hasx64BitMemoryErrorInfo: Boolean read GetHasx64BitMemoryErrorInfo;
 
+      property ManagementDeviceInfo: {$IFDEF NOGENERICS} ArrManagementDeviceInfo {$ELSE} TArray<TManagementDeviceInformation> {$ENDIF} read FManagementDeviceInfo;
+      property HasManagementDeviceInfo: Boolean read GetHasManagementDeviceInfo;
+
+      property ManagementDeviceComponentInfo: {$IFDEF NOGENERICS} ArrManagementDeviceComponentInfo {$ELSE} TArray<TManagementDeviceComponentInformation> {$ENDIF} read FManagementDeviceComponentInfo;
+      property HasManagementDeviceComponentInfo: Boolean read GetHasManagementDeviceComponentInfo;
+
+      property ManagementDeviceThresholdDataInfo: {$IFDEF NOGENERICS} ArrManagementDeviceThresholdDataInfo {$ELSE} TArray<TManagementDeviceThresholdDataInformation> {$ENDIF} read FManagementDeviceThresholdDataInfo;
+      property HasManagementDeviceThresholdDataInfo: Boolean read GetHasManagementDeviceThresholdDataInfo;
+
+      property MemoryChannelInfo: {$IFDEF NOGENERICS} ArrMemoryChannelInfo {$ELSE} TArray<TMemoryChannelInformation> {$ENDIF} read FMemoryChannelInfo;
+      property HasMemoryChannelInfo: Boolean read GetHasMemoryChannelInfo;
+
       property IPMIDeviceInfo: {$IFDEF NOGENERICS} ArrIPMIDeviceInfo {$ELSE} TArray<TIPMIDeviceInformation> {$ENDIF} read FIPMIDeviceInfo;
       property HasIPMIDeviceInfo: Boolean read GetHasIPMIDeviceInfo;
 
+      property SystemPowerSupplyInfo: {$IFDEF NOGENERICS} ArrSystemPowerSupplyInfo {$ELSE} TArray<TSystemPowerSupplyInformation> {$ENDIF} read FSystemPowerSupplyInfo;
+      property HasSystemPowerSupplyInfo: Boolean read GetHasSystemPowerSupplyInfo;
+
+      property AdditionalInformationInfo: {$IFDEF NOGENERICS} ArrAdditionalInformationInfo {$ELSE} TArray<TAdditionalInformationInformation> {$ENDIF} read FAdditionalInformationInfo;
+      property HasAdditionalInformationInfo: Boolean read GetHasAdditionalInformationInfo;
+
       property OnboardDevicesExtendedInfo: {$IFDEF NOGENERICS} ArrOnboardDevicesExtendedInfo {$ELSE} TArray<TOnboardDevicesExtendedInformation> {$ENDIF} read FOnboardDevicesExtendedInfo;
       property HasOnboardDevicesExtendedInfo: Boolean read GetHasOnboardDevicesExtendedInfo;
+
+      property ManagementControllerHostInterfaceInfo: {$IFDEF NOGENERICS} ArrManagementControllerHostInterfaceInfo {$ELSE} TArray<TManagementControllerHostInterfaceInformation> {$ENDIF} read FManagementControllerHostInterfaceInfo;
+      property HasManagementControllerHostInterfaceInfo: Boolean read GetHasManagementControllerHostInterfaceInfo;
 
       property TPMDeviceInfo: {$IFDEF NOGENERICS} ArrTPMDeviceInfo {$ELSE} TArray<TTPMDeviceInformation> {$ENDIF} read FTPMDeviceInfo;
       property HasTPMDeviceInfo: Boolean read GetHasTPMDeviceInfo;
@@ -5187,8 +5726,14 @@ type
 
       property FirmwareInventoryInfo: {$IFDEF NOGENERICS} ArrFirmwareInventoryInfo {$ELSE} TArray<TFirmwareInventoryInformation> {$ENDIF} read FFirmwareInventoryInfo;
       property HasFirmwareInventoryInfo: Boolean read GetHasFirmwareInventoryInfo;
+
+      property StringPropertyInfo: {$IFDEF NOGENERICS} ArrStringPropertyInfo {$ELSE} TArray<TStringPropertyInformation> {$ENDIF} read FStringPropertyInfo;
+      property HasStringPropertyInfo: Boolean read GetHasStringPropertyInfo;
       property GroupAssociationsInformation: {$IFDEF NOGENERICS} ArrGroupAssociationsInfo {$ELSE} TArray<TGroupAssociationsInformation> {$ENDIF} read FGroupAssociationsInformation;
       property HasGroupAssociationsInfo: Boolean read GetHasGroupAssociationsInfo;
+
+      property SystemEventLogInfo: {$IFDEF NOGENERICS} ArrSystemEventLogInfo {$ELSE} TArray<TSystemEventLogInformation> {$ENDIF} read FSystemEventLogInfo;
+      property HasSystemEventLogInfo: Boolean read GetHasSystemEventLogInfo;
 
   end;
 
@@ -5521,6 +6066,9 @@ begin
   for i := 0 to Length(FMemoryDeviceInfo) - 1 do
     FMemoryDeviceInfo[i].Free;
 
+  for i := 0 to Length(FMemoryErrorInformation) - 1 do
+    FMemoryErrorInformation[i].Free;
+
   for i := 0 to Length(FMemoryArrayMappedAddressInformation) - 1 do
     FMemoryArrayMappedAddressInformation[i].Free;
 
@@ -5554,11 +6102,35 @@ begin
   for i := 0 to Length(FGroupAssociationsInformation) - 1 do
     FGroupAssociationsInformation[i].Free;
 
+  for i := 0 to Length(FSystemEventLogInfo) - 1 do
+    FSystemEventLogInfo[i].Free;
+
+  for i := 0 to Length(FManagementDeviceInfo) - 1 do
+    FManagementDeviceInfo[i].Free;
+
+  for i := 0 to Length(FManagementDeviceComponentInfo) - 1 do
+    FManagementDeviceComponentInfo[i].Free;
+
+  for i := 0 to Length(FManagementDeviceThresholdDataInfo) - 1 do
+    FManagementDeviceThresholdDataInfo[i].Free;
+
+  for i := 0 to Length(FMemoryChannelInfo) - 1 do
+    FMemoryChannelInfo[i].Free;
+
   for i := 0 to Length(FIPMIDeviceInfo) - 1 do
     FIPMIDeviceInfo[i].Free;
 
+  for i := 0 to Length(FSystemPowerSupplyInfo) - 1 do
+    FSystemPowerSupplyInfo[i].Free;
+
+  for i := 0 to Length(FAdditionalInformationInfo) - 1 do
+    FAdditionalInformationInfo[i].Free;
+
   for i := 0 to Length(FOnboardDevicesExtendedInfo) - 1 do
     FOnboardDevicesExtendedInfo[i].Free;
+
+  for i := 0 to Length(FManagementControllerHostInterfaceInfo) - 1 do
+    FManagementControllerHostInterfaceInfo[i].Free;
 
   for i := 0 to Length(FTPMDeviceInfo) - 1 do
     FTPMDeviceInfo[i].Free;
@@ -5568,6 +6140,9 @@ begin
 
   for i := 0 to Length(FFirmwareInventoryInfo) - 1 do
     FFirmwareInventoryInfo[i].Free;
+
+  for i := 0 to Length(FStringPropertyInfo) - 1 do
+    FStringPropertyInfo[i].Free;
   // Do not keep dynamic arrays pointing at objects that have just been released.
   FOEMStringsInfo := nil;
   FEnclosureInfo := nil;
@@ -5588,6 +6163,7 @@ begin
   FVoltageProbeInformation := nil;
   FBuiltInPointingDeviceInformation := nil;
   FMemoryDeviceInfo := nil;
+  FMemoryErrorInformation := nil;
   FMemoryArrayMappedAddressInformation := nil;
   FMemoryDeviceMappedAddressInformation := nil;
   FBatteryInformation := nil;
@@ -5599,11 +6175,20 @@ begin
   FMemoryControllerInfo := nil;
   FMemoryModuleInfo := nil;
   FGroupAssociationsInformation := nil;
+  FSystemEventLogInfo := nil;
+  FManagementDeviceInfo := nil;
+  FManagementDeviceComponentInfo := nil;
+  FManagementDeviceThresholdDataInfo := nil;
+  FMemoryChannelInfo := nil;
   FIPMIDeviceInfo := nil;
+  FSystemPowerSupplyInfo := nil;
+  FAdditionalInformationInfo := nil;
   FOnboardDevicesExtendedInfo := nil;
+  FManagementControllerHostInterfaceInfo := nil;
   FTPMDeviceInfo := nil;
   FProcessorAdditionalInfo := nil;
   FFirmwareInventoryInfo := nil;
+  FStringPropertyInfo := nil;
 end;
 
 destructor TSMBios.Destroy;
@@ -5817,9 +6402,19 @@ begin
   Result := Length(FGroupAssociationsInformation) > 0;
 end;
 
+function TSMBios.GetHasSystemEventLogInfo: Boolean;
+begin
+  Result := Length(FSystemEventLogInfo) > 0;
+end;
+
 function TSMBios.GetHasMemoryDeviceInfo: Boolean;
 begin
   Result := Length(FMemoryDeviceInfo) > 0;
+end;
+
+function TSMBios.GetHasMemoryErrorInfo: Boolean;
+begin
+  Result := Length(FMemoryErrorInformation) > 0;
 end;
 
 function TSMBios.GetHasMemoryDeviceMappedAddressInfo: Boolean;
@@ -5872,14 +6467,49 @@ begin
   Result := Length(FVoltageProbeInformation) > 0;
 end;
 
+function TSMBios.GetHasManagementDeviceInfo: Boolean;
+begin
+  Result := Length(FManagementDeviceInfo) > 0;
+end;
+
+function TSMBios.GetHasManagementDeviceComponentInfo: Boolean;
+begin
+  Result := Length(FManagementDeviceComponentInfo) > 0;
+end;
+
+function TSMBios.GetHasManagementDeviceThresholdDataInfo: Boolean;
+begin
+  Result := Length(FManagementDeviceThresholdDataInfo) > 0;
+end;
+
+function TSMBios.GetHasMemoryChannelInfo: Boolean;
+begin
+  Result := Length(FMemoryChannelInfo) > 0;
+end;
+
 function TSMBios.GetHasIPMIDeviceInfo: Boolean;
 begin
   Result := Length(FIPMIDeviceInfo) > 0;
 end;
 
+function TSMBios.GetHasSystemPowerSupplyInfo: Boolean;
+begin
+  Result := Length(FSystemPowerSupplyInfo) > 0;
+end;
+
+function TSMBios.GetHasAdditionalInformationInfo: Boolean;
+begin
+  Result := Length(FAdditionalInformationInfo) > 0;
+end;
+
 function TSMBios.GetHasOnboardDevicesExtendedInfo: Boolean;
 begin
   Result := Length(FOnboardDevicesExtendedInfo) > 0;
+end;
+
+function TSMBios.GetHasManagementControllerHostInterfaceInfo: Boolean;
+begin
+  Result := Length(FManagementControllerHostInterfaceInfo) > 0;
 end;
 
 function TSMBios.GetHasTPMDeviceInfo: Boolean;
@@ -5895,6 +6525,11 @@ end;
 function TSMBios.GetHasFirmwareInventoryInfo: Boolean;
 begin
   Result := Length(FFirmwareInventoryInfo) > 0;
+end;
+
+function TSMBios.GetHasStringPropertyInfo: Boolean;
+begin
+  Result := Length(FStringPropertyInfo) > 0;
 end;
 procedure TSMBios.SaveToFile(const FileName: string);
 Var
@@ -6636,6 +7271,19 @@ begin
       end;
     until (LIndex = - 1);
 
+  SetLength(FSystemEventLogInfo, GetSMBiosTableEntries(SystemEventLog));
+  i := 0;
+  LIndex := - 1;
+  if Length(FSystemEventLogInfo) > 0 then
+    repeat
+      LIndex := GetSMBiosTableNextIndex(SystemEventLog, LIndex);
+      if LIndex >= 0 then
+      begin
+        FSystemEventLogInfo[i] := TSystemEventLogInformation.Create;
+        FSystemEventLogInfo[i].RAWSystemEventLogInfo := @RawSMBIOSData.SMBIOSTableData^[LIndex];
+        inc(i);
+      end;
+    until (LIndex = - 1);
   SetLength(FPhysicalMemoryArrayInfo, GetSMBiosTableEntries(PhysicalMemoryArray));
   i := 0;
   LIndex := - 1;
@@ -6761,6 +7409,19 @@ begin
       end;
     until (LIndex = - 1);
 
+  SetLength(FMemoryErrorInformation, GetSMBiosTableEntries(MemoryErrorInformation));
+  i := 0;
+  LIndex := - 1;
+  if Length(FMemoryErrorInformation) > 0 then
+    repeat
+      LIndex := GetSMBiosTableNextIndex(MemoryErrorInformation, LIndex);
+      if LIndex >= 0 then
+      begin
+        FMemoryErrorInformation[i] := TMemoryErrorInformation.Create;
+        FMemoryErrorInformation[i].RAWMemoryErrorInfo := @RawSMBIOSData.SMBIOSTableData^[LIndex];
+        inc(i);
+      end;
+    until (LIndex = - 1);
   SetLength(FMemoryArrayMappedAddressInformation, GetSMBiosTableEntries(MemoryArrayMappedAddress));
   i := 0;
   LIndex := - 1;
@@ -6927,6 +7588,60 @@ begin
       end;
     until (LIndex = - 1);
 
+  SetLength(FManagementDeviceInfo, GetSMBiosTableEntries(ManagementDevice));
+  i := 0;
+  LIndex := - 1;
+  if Length(FManagementDeviceInfo) > 0 then
+    repeat
+      LIndex := GetSMBiosTableNextIndex(ManagementDevice, LIndex);
+      if LIndex >= 0 then
+      begin
+        FManagementDeviceInfo[i] := TManagementDeviceInformation.Create;
+        FManagementDeviceInfo[i].RAWManagementDeviceInfo := @RawSMBIOSData.SMBIOSTableData^[LIndex];
+        inc(i);
+      end;
+    until (LIndex = - 1);
+
+  SetLength(FManagementDeviceComponentInfo, GetSMBiosTableEntries(ManagementDeviceComponent));
+  i := 0;
+  LIndex := - 1;
+  if Length(FManagementDeviceComponentInfo) > 0 then
+    repeat
+      LIndex := GetSMBiosTableNextIndex(ManagementDeviceComponent, LIndex);
+      if LIndex >= 0 then
+      begin
+        FManagementDeviceComponentInfo[i] := TManagementDeviceComponentInformation.Create;
+        FManagementDeviceComponentInfo[i].RAWManagementDeviceComponentInfo := @RawSMBIOSData.SMBIOSTableData^[LIndex];
+        inc(i);
+      end;
+    until (LIndex = - 1);
+
+  SetLength(FManagementDeviceThresholdDataInfo, GetSMBiosTableEntries(ManagementDeviceThresholdData));
+  i := 0;
+  LIndex := - 1;
+  if Length(FManagementDeviceThresholdDataInfo) > 0 then
+    repeat
+      LIndex := GetSMBiosTableNextIndex(ManagementDeviceThresholdData, LIndex);
+      if LIndex >= 0 then
+      begin
+        FManagementDeviceThresholdDataInfo[i] := TManagementDeviceThresholdDataInformation.Create;
+        FManagementDeviceThresholdDataInfo[i].RAWManagementDeviceThresholdDataInfo := @RawSMBIOSData.SMBIOSTableData^[LIndex];
+        inc(i);
+      end;
+    until (LIndex = - 1);
+  SetLength(FMemoryChannelInfo, GetSMBiosTableEntries(MemoryChannel));
+  i := 0;
+  LIndex := - 1;
+  if Length(FMemoryChannelInfo) > 0 then
+    repeat
+      LIndex := GetSMBiosTableNextIndex(MemoryChannel, LIndex);
+      if LIndex >= 0 then
+      begin
+        FMemoryChannelInfo[i] := TMemoryChannelInformation.Create;
+        FMemoryChannelInfo[i].RAWMemoryChannelInfo := @RawSMBIOSData.SMBIOSTableData^[LIndex];
+        inc(i);
+      end;
+    until (LIndex = - 1);
   SetLength(FIPMIDeviceInfo, GetSMBiosTableEntries(IPMIDeviceInformation));
   i := 0;
   LIndex := - 1;
@@ -6941,6 +7656,34 @@ begin
       end;
     until (LIndex = - 1);
 
+  SetLength(FSystemPowerSupplyInfo, GetSMBiosTableEntries(SystemPowerSupply));
+  i := 0;
+  LIndex := - 1;
+  if Length(FSystemPowerSupplyInfo) > 0 then
+    repeat
+      LIndex := GetSMBiosTableNextIndex(SystemPowerSupply, LIndex);
+      if LIndex >= 0 then
+      begin
+        FSystemPowerSupplyInfo[i] := TSystemPowerSupplyInformation.Create;
+        FSystemPowerSupplyInfo[i].RAWSystemPowerSupplyInfo := @RawSMBIOSData.SMBIOSTableData^[LIndex];
+        inc(i);
+      end;
+    until (LIndex = - 1);
+
+  SetLength(FAdditionalInformationInfo, GetSMBiosTableEntries(AdditionalInformation));
+  i := 0;
+  LIndex := - 1;
+  if Length(FAdditionalInformationInfo) > 0 then
+    repeat
+      LIndex := GetSMBiosTableNextIndex(AdditionalInformation, LIndex);
+      if LIndex >= 0 then
+      begin
+        FAdditionalInformationInfo[i] := TAdditionalInformationInformation.Create;
+        FAdditionalInformationInfo[i].RAWAdditionalInformationInfo := @RawSMBIOSData.SMBIOSTableData^[LIndex];
+        inc(i);
+      end;
+    until (LIndex = - 1);
+
   SetLength(FOnboardDevicesExtendedInfo, GetSMBiosTableEntries(OnboardDevicesExtendedInformation));
   i := 0;
   LIndex := - 1;
@@ -6951,6 +7694,20 @@ begin
       begin
         FOnboardDevicesExtendedInfo[i] := TOnboardDevicesExtendedInformation.Create;
         FOnboardDevicesExtendedInfo[i].RAWOnboardDevicesExtendedInfo := @RawSMBIOSData.SMBIOSTableData^[LIndex];
+        inc(i);
+      end;
+    until (LIndex = - 1);
+
+  SetLength(FManagementControllerHostInterfaceInfo, GetSMBiosTableEntries(ManagementControllerHostInterface));
+  i := 0;
+  LIndex := - 1;
+  if Length(FManagementControllerHostInterfaceInfo) > 0 then
+    repeat
+      LIndex := GetSMBiosTableNextIndex(ManagementControllerHostInterface, LIndex);
+      if LIndex >= 0 then
+      begin
+        FManagementControllerHostInterfaceInfo[i] := TManagementControllerHostInterfaceInformation.Create;
+        FManagementControllerHostInterfaceInfo[i].RAWManagementControllerHostInterfaceInfo := @RawSMBIOSData.SMBIOSTableData^[LIndex];
         inc(i);
       end;
     until (LIndex = - 1);
@@ -6996,6 +7753,20 @@ begin
         inc(i);
       end;
     until (LIndex = - 1);
+  SetLength(FStringPropertyInfo, GetSMBiosTableEntries(StringProperty));
+  i := 0;
+  LIndex := - 1;
+  if Length(FStringPropertyInfo) > 0 then
+    repeat
+      LIndex := GetSMBiosTableNextIndex(StringProperty, LIndex);
+      if LIndex >= 0 then
+      begin
+        FStringPropertyInfo[i] := TStringPropertyInformation.Create;
+        FStringPropertyInfo[i].RAWStringPropertyInfo := @RawSMBIOSData.SMBIOSTableData^[LIndex];
+        inc(i);
+      end;
+    until (LIndex = - 1);
+
   SetLength(FMemoryControllerInfo, GetSMBiosTableEntries(MemoryControllerInformation));
   i := 0;
   LIndex := - 1;
@@ -7011,7 +7782,633 @@ begin
     until (LIndex = - 1);
 end;
 
-{$I uSMBIOSPriority1Impl.inc}
+{ TManagementDeviceInformation }
+
+function TManagementDeviceInformation.GetDescriptionStr: AnsiString;
+begin
+  Result := GetSMBiosString(@RAWManagementDeviceInfo^, RAWManagementDeviceInfo^.Header.Length, RAWManagementDeviceInfo^.Description);
+end;
+
+function TManagementDeviceInformation.GetDeviceTypeStr: AnsiString;
+begin
+  case RAWManagementDeviceInfo^.DeviceType of
+    $01: Result := 'Other';
+    $02: Result := 'Unknown';
+    $03: Result := 'LM75';
+    $04: Result := 'LM78';
+    $05: Result := 'LM79';
+    $06: Result := 'LM80';
+    $07: Result := 'LM81';
+    $08: Result := 'ADM9240';
+    $09: Result := 'DS1780';
+    $0A: Result := 'MAX1617';
+    $0B: Result := 'GL518SM';
+    $0C: Result := 'W83781D';
+    $0D: Result := 'HT82H791';
+    else Result := 'Unknown';
+  end;
+end;
+
+function TManagementDeviceInformation.GetAddressTypeStr: AnsiString;
+begin
+  case RAWManagementDeviceInfo^.AddressType of
+    $01: Result := 'Other';
+    $02: Result := 'Unknown';
+    $03: Result := 'I/O Port';
+    $04: Result := 'Memory';
+    $05: Result := 'SMBus';
+    else Result := 'Unknown';
+  end;
+end;
+
+{ TManagementDeviceComponentInformation }
+
+function TManagementDeviceComponentInformation.GetDescriptionStr: AnsiString;
+begin
+  Result := GetSMBiosString(@RAWManagementDeviceComponentInfo^, RAWManagementDeviceComponentInfo^.Header.Length,
+    RAWManagementDeviceComponentInfo^.Description);
+end;
+{ TMemoryChannelInformation }
+
+function TMemoryChannelInformation.GetChannelTypeStr: AnsiString;
+begin
+  case RAWMemoryChannelInfo^.ChannelType of
+    $01: Result := 'Other';
+    $02: Result := 'Unknown';
+    $03: Result := 'RamBus';
+    $04: Result := 'SyncLink';
+    else Result := 'Unknown';
+  end;
+end;
+
+function TMemoryChannelInformation.HasMemoryDeviceEntry(Index: Integer): Boolean;
+begin
+  Result := (Index >= 0) and (Index < RAWMemoryChannelInfo^.MemoryDeviceCount) and
+    SMBiosFieldAvailable(RAWMemoryChannelInfo^.Header, $07 + (Index * 3), 3);
+end;
+
+function TMemoryChannelInformation.GetMemoryDeviceLoad(Index: Integer): Byte;
+begin
+  Result := 0;
+  if HasMemoryDeviceEntry(Index) then
+    Result := PByteArray(RAWMemoryChannelInfo)^[$07 + (Index * 3)];
+end;
+
+function TMemoryChannelInformation.GetMemoryDeviceHandle(Index: Integer): Word;
+begin
+  Result := $FFFF;
+  if HasMemoryDeviceEntry(Index) then
+    Move(PByteArray(RAWMemoryChannelInfo)^[$08 + (Index * 3)], Result, SizeOf(Result));
+end;
+{ TIPMIDeviceInformation }
+
+function TIPMIDeviceInformation.GetInterfaceTypeStr: AnsiString;
+begin
+  case RAWIPMIDeviceInfo^.InterfaceType of
+    $00: Result := 'Unknown';
+    $01: Result := 'KCS: Keyboard Controller Style';
+    $02: Result := 'SMIC: Server Management Interface Chip';
+    $03: Result := 'BT: Block Transfer';
+    $04: Result := 'SSIF: SMBus System Interface';
+    else Result := 'OEM-assigned';
+  end;
+end;
+
+function TIPMIDeviceInformation.GetSpecificationVersionStr: AnsiString;
+begin
+  Result := AnsiString(Format('%d.%d', [RAWIPMIDeviceInfo^.IPMISpecificationRevision and $0F,
+    RAWIPMIDeviceInfo^.IPMISpecificationRevision shr 4]));
+end;
+
+{ TSystemPowerSupplyInformation }
+
+function TSystemPowerSupplyInformation.LocationStr: AnsiString;
+begin
+  Result := GetSMBiosString(@RAWSystemPowerSupplyInfo^, RAWSystemPowerSupplyInfo^.Header.Length,
+    RAWSystemPowerSupplyInfo^.Location);
+end;
+
+function TSystemPowerSupplyInformation.DeviceNameStr: AnsiString;
+begin
+  Result := GetSMBiosString(@RAWSystemPowerSupplyInfo^, RAWSystemPowerSupplyInfo^.Header.Length,
+    RAWSystemPowerSupplyInfo^.DeviceName);
+end;
+
+function TSystemPowerSupplyInformation.ManufacturerStr: AnsiString;
+begin
+  Result := GetSMBiosString(@RAWSystemPowerSupplyInfo^, RAWSystemPowerSupplyInfo^.Header.Length,
+    RAWSystemPowerSupplyInfo^.Manufacturer);
+end;
+
+function TSystemPowerSupplyInformation.SerialNumberStr: AnsiString;
+begin
+  Result := GetSMBiosString(@RAWSystemPowerSupplyInfo^, RAWSystemPowerSupplyInfo^.Header.Length,
+    RAWSystemPowerSupplyInfo^.SerialNumber);
+end;
+
+function TSystemPowerSupplyInformation.AssetTagNumberStr: AnsiString;
+begin
+  Result := GetSMBiosString(@RAWSystemPowerSupplyInfo^, RAWSystemPowerSupplyInfo^.Header.Length,
+    RAWSystemPowerSupplyInfo^.AssetTagNumber);
+end;
+
+function TSystemPowerSupplyInformation.ModelPartNumberStr: AnsiString;
+begin
+  Result := GetSMBiosString(@RAWSystemPowerSupplyInfo^, RAWSystemPowerSupplyInfo^.Header.Length,
+    RAWSystemPowerSupplyInfo^.ModelPartNumber);
+end;
+
+function TSystemPowerSupplyInformation.RevisionLevelStr: AnsiString;
+begin
+  Result := GetSMBiosString(@RAWSystemPowerSupplyInfo^, RAWSystemPowerSupplyInfo^.Header.Length,
+    RAWSystemPowerSupplyInfo^.RevisionLevel);
+end;
+
+function TSystemPowerSupplyInformation.MaxPowerCapacityIsUnknown: Boolean;
+begin
+  Result := RAWSystemPowerSupplyInfo^.MaxPowerCapacity = $8000;
+end;
+
+function TSystemPowerSupplyInformation.IsHotReplaceable: Boolean;
+begin
+  Result := (RAWSystemPowerSupplyInfo^.PowerSupplyCharacteristics and $0001) <> 0;
+end;
+
+function TSystemPowerSupplyInformation.IsPresent: Boolean;
+begin
+  Result := (RAWSystemPowerSupplyInfo^.PowerSupplyCharacteristics and $0002) <> 0;
+end;
+
+function TSystemPowerSupplyInformation.IsUnplugged: Boolean;
+begin
+  Result := (RAWSystemPowerSupplyInfo^.PowerSupplyCharacteristics and $0004) <> 0;
+end;
+
+function TSystemPowerSupplyInformation.GetInputVoltageRangeSwitching: Byte;
+begin
+  Result := (RAWSystemPowerSupplyInfo^.PowerSupplyCharacteristics shr 3) and $0F;
+end;
+
+function TSystemPowerSupplyInformation.GetInputVoltageRangeSwitchingStr: AnsiString;
+begin
+  case GetInputVoltageRangeSwitching of
+    $01: Result := 'Other';
+    $02: Result := 'Unknown';
+    $03: Result := 'Manual';
+    $04: Result := 'Auto-switch';
+    $05: Result := 'Wide range';
+    $06: Result := 'Not applicable';
+    else Result := 'Unknown';
+  end;
+end;
+
+function TSystemPowerSupplyInformation.GetStatus: Byte;
+begin
+  Result := (RAWSystemPowerSupplyInfo^.PowerSupplyCharacteristics shr 7) and $07;
+end;
+
+function TSystemPowerSupplyInformation.GetStatusStr: AnsiString;
+begin
+  case GetStatus of
+    $01: Result := 'Other';
+    $02: Result := 'Unknown';
+    $03: Result := 'OK';
+    $04: Result := 'Non-critical';
+    $05: Result := 'Critical; power supply off-line';
+    else Result := 'Unknown';
+  end;
+end;
+
+function TSystemPowerSupplyInformation.GetPowerSupplyType: Byte;
+begin
+  Result := (RAWSystemPowerSupplyInfo^.PowerSupplyCharacteristics shr 10) and $0F;
+end;
+
+function TSystemPowerSupplyInformation.GetPowerSupplyTypeStr: AnsiString;
+begin
+  case GetPowerSupplyType of
+    $01: Result := 'Other';
+    $02: Result := 'Unknown';
+    $03: Result := 'Linear';
+    $04: Result := 'Switching';
+    $05: Result := 'Battery';
+    $06: Result := 'UPS';
+    $07: Result := 'Converter';
+    $08: Result := 'Regulator';
+    else Result := 'Unknown';
+  end;
+end;
+
+{ TAdditionalInformationInformation }
+
+function AdditionalInformationEntryOffset(const Info: TAdditionalInformationInformation; Index: Integer;
+  out Offset: Integer): Boolean;
+var
+  EntryIndex: Integer;
+  EntryLength: Byte;
+begin
+  Result := false;
+  Offset := $05;
+  if (Info = nil) or (Index < 0) or (Index >= Info.RAWAdditionalInformationInfo^.NumberOfAdditionalInformationEntries) then
+    Exit;
+
+  for EntryIndex := 0 to Index do
+  begin
+    if not SMBiosFieldAvailable(Info.RAWAdditionalInformationInfo^.Header, Offset, SizeOf(Byte)) then
+      Exit;
+
+    EntryLength := PByteArray(Info.RAWAdditionalInformationInfo)^[Offset];
+    if (EntryLength < 5) or
+       not SMBiosFieldAvailable(Info.RAWAdditionalInformationInfo^.Header, Offset, EntryLength) then
+      Exit;
+
+    if EntryIndex = Index then
+    begin
+      Result := true;
+      Exit;
+    end;
+
+    Inc(Offset, EntryLength);
+  end;
+end;
+
+function TAdditionalInformationInformation.HasAdditionalInformationEntry(Index: Integer): Boolean;
+var
+  Offset: Integer;
+begin
+  Result := AdditionalInformationEntryOffset(Self, Index, Offset);
+end;
+
+function TAdditionalInformationInformation.GetAdditionalInformationEntryLength(Index: Integer): Byte;
+var
+  Offset: Integer;
+begin
+  Result := 0;
+  if AdditionalInformationEntryOffset(Self, Index, Offset) then
+    Result := PByteArray(RAWAdditionalInformationInfo)^[Offset];
+end;
+
+function TAdditionalInformationInformation.GetReferencedHandle(Index: Integer): Word;
+var
+  Offset: Integer;
+begin
+  Result := $FFFF;
+  if AdditionalInformationEntryOffset(Self, Index, Offset) then
+    Move(PByteArray(RAWAdditionalInformationInfo)^[Offset + 1], Result, SizeOf(Result));
+end;
+
+function TAdditionalInformationInformation.GetReferencedOffset(Index: Integer): Byte;
+var
+  Offset: Integer;
+begin
+  Result := 0;
+  if AdditionalInformationEntryOffset(Self, Index, Offset) then
+    Result := PByteArray(RAWAdditionalInformationInfo)^[Offset + 3];
+end;
+
+function TAdditionalInformationInformation.GetEntryStringStr(Index: Integer): AnsiString;
+var
+  Offset: Integer;
+begin
+  Result := '';
+  if AdditionalInformationEntryOffset(Self, Index, Offset) then
+    Result := GetSMBiosString(@RAWAdditionalInformationInfo^, RAWAdditionalInformationInfo^.Header.Length,
+      PByteArray(RAWAdditionalInformationInfo)^[Offset + 4]);
+end;
+
+function TAdditionalInformationInformation.GetEntryValueSize(Index: Integer): Byte;
+var
+  Offset: Integer;
+  EntryLength: Byte;
+begin
+  Result := 0;
+  if AdditionalInformationEntryOffset(Self, Index, Offset) then
+  begin
+    EntryLength := PByteArray(RAWAdditionalInformationInfo)^[Offset];
+    if EntryLength > 5 then
+      Result := EntryLength - 5;
+  end;
+end;
+
+function TAdditionalInformationInformation.GetEntryValueByte(Index, ValueIndex: Integer): Byte;
+var
+  Offset: Integer;
+begin
+  Result := 0;
+  if (ValueIndex < 0) or not AdditionalInformationEntryOffset(Self, Index, Offset) then
+    Exit;
+
+  if ValueIndex < GetEntryValueSize(Index) then
+    Result := PByteArray(RAWAdditionalInformationInfo)^[Offset + 5 + ValueIndex];
+end;
+
+{ TOnboardDevicesExtendedInformation }
+
+function TOnboardDevicesExtendedInformation.ReferenceDesignationStr: AnsiString;
+begin
+  Result := GetSMBiosString(@RAWOnboardDevicesExtendedInfo^,
+    RAWOnboardDevicesExtendedInfo^.Header.Length, RAWOnboardDevicesExtendedInfo^.ReferenceDesignation);
+end;
+
+function TOnboardDevicesExtendedInformation.Enabled: Boolean;
+begin
+  Result := (RAWOnboardDevicesExtendedInfo^.DeviceType and $80) <> 0;
+end;
+
+function TOnboardDevicesExtendedInformation.GetDeviceTypeStr: AnsiString;
+begin
+  case RAWOnboardDevicesExtendedInfo^.DeviceType and $7F of
+    $01: Result := 'Other';
+    $02: Result := 'Unknown';
+    $03: Result := 'Video';
+    $04: Result := 'SCSI Controller';
+    $05: Result := 'Ethernet';
+    $06: Result := 'Token Ring';
+    $07: Result := 'Sound';
+    $08: Result := 'PATA Controller';
+    $09: Result := 'SATA Controller';
+    $0A: Result := 'SAS Controller';
+    else Result := 'Unknown';
+  end;
+end;
+
+function TOnboardDevicesExtendedInformation.GetDeviceNumber: Byte;
+begin
+  Result := RAWOnboardDevicesExtendedInfo^.DeviceFunctionNumber shr 3;
+end;
+
+function TOnboardDevicesExtendedInformation.GetFunctionNumber: Byte;
+begin
+  Result := RAWOnboardDevicesExtendedInfo^.DeviceFunctionNumber and $07;
+end;
+
+{ TManagementControllerHostInterfaceInformation }
+
+function MCHIProtocolCountOffset(const Info: TManagementControllerHostInterfaceInformation; out Offset: Integer): Boolean;
+begin
+  Result := false;
+  Offset := SizeOf(TManagementControllerHostInterfaceInfo) +
+    Info.RAWManagementControllerHostInterfaceInfo^.InterfaceTypeSpecificDataLength;
+  if SMBiosFieldAvailable(Info.RAWManagementControllerHostInterfaceInfo^.Header, Offset, SizeOf(Byte)) then
+    Result := true;
+end;
+
+function MCHIProtocolRecordOffset(const Info: TManagementControllerHostInterfaceInformation; Index: Integer;
+  out Offset: Integer): Boolean;
+var
+  CountOffset: Integer;
+  RecordIndex: Integer;
+  RecordLength: Integer;
+begin
+  Result := false;
+  Offset := 0;
+  if (Info = nil) or (Index < 0) or not MCHIProtocolCountOffset(Info, CountOffset) or
+     (Index >= PByteArray(Info.RAWManagementControllerHostInterfaceInfo)^[CountOffset]) then
+    Exit;
+
+  Offset := CountOffset + 1;
+  for RecordIndex := 0 to Index do
+  begin
+    if not SMBiosFieldAvailable(Info.RAWManagementControllerHostInterfaceInfo^.Header, Offset, 2) then
+      Exit;
+
+    RecordLength := 2 + PByteArray(Info.RAWManagementControllerHostInterfaceInfo)^[Offset + 1];
+    if not SMBiosFieldAvailable(Info.RAWManagementControllerHostInterfaceInfo^.Header, Offset, RecordLength) then
+      Exit;
+
+    if RecordIndex = Index then
+    begin
+      Result := true;
+      Exit;
+    end;
+
+    Inc(Offset, RecordLength);
+  end;
+end;
+
+function TManagementControllerHostInterfaceInformation.GetInterfaceTypeStr: AnsiString;
+begin
+  case RAWManagementControllerHostInterfaceInfo^.InterfaceType of
+    $00: Result := 'Unknown';
+    $02: Result := 'KCS: Keyboard Controller Style';
+    $03: Result := '8250 UART Register Compatible';
+    $04: Result := '16450 UART Register Compatible';
+    $05: Result := '16550/16550A UART Register Compatible';
+    $06: Result := '16650/16650A UART Register Compatible';
+    $07: Result := '16750/16750A UART Register Compatible';
+    $08: Result := '16850/16850A UART Register Compatible';
+    $40: Result := 'Network Host Interface';
+    $F0 .. $FF: Result := 'OEM-defined';
+    else Result := 'Reserved';
+  end;
+end;
+
+function TManagementControllerHostInterfaceInformation.HasInterfaceTypeSpecificData: Boolean;
+begin
+  Result := RAWManagementControllerHostInterfaceInfo^.InterfaceTypeSpecificDataLength > 0;
+end;
+
+function TManagementControllerHostInterfaceInformation.GetInterfaceTypeSpecificDataByte(Index: Integer): Byte;
+begin
+  Result := 0;
+  if (Index >= 0) and (Index < RAWManagementControllerHostInterfaceInfo^.InterfaceTypeSpecificDataLength) and
+     SMBiosFieldAvailable(RAWManagementControllerHostInterfaceInfo^.Header,
+       SizeOf(TManagementControllerHostInterfaceInfo) + Index, SizeOf(Byte)) then
+    Result := PByteArray(RAWManagementControllerHostInterfaceInfo)^[SizeOf(TManagementControllerHostInterfaceInfo) + Index];
+end;
+
+function TManagementControllerHostInterfaceInformation.GetProtocolRecordCount: Byte;
+var
+  Offset: Integer;
+begin
+  Result := 0;
+  if MCHIProtocolCountOffset(Self, Offset) then
+    Result := PByteArray(RAWManagementControllerHostInterfaceInfo)^[Offset];
+end;
+
+function TManagementControllerHostInterfaceInformation.HasProtocolRecord(Index: Integer): Boolean;
+var
+  Offset: Integer;
+begin
+  Result := MCHIProtocolRecordOffset(Self, Index, Offset);
+end;
+
+function TManagementControllerHostInterfaceInformation.GetProtocolType(Index: Integer): Byte;
+var
+  Offset: Integer;
+begin
+  Result := 0;
+  if MCHIProtocolRecordOffset(Self, Index, Offset) then
+    Result := PByteArray(RAWManagementControllerHostInterfaceInfo)^[Offset];
+end;
+
+function TManagementControllerHostInterfaceInformation.GetProtocolTypeStr(Index: Integer): AnsiString;
+begin
+  case GetProtocolType(Index) of
+    $00: Result := 'Unknown';
+    $02: Result := 'IPMI';
+    $03: Result := 'MCTP';
+    $04: Result := 'Redfish over IP';
+    $F0 .. $FF: Result := 'OEM-defined';
+    else Result := 'Reserved';
+  end;
+end;
+
+function TManagementControllerHostInterfaceInformation.GetProtocolTypeSpecificDataLength(Index: Integer): Byte;
+var
+  Offset: Integer;
+begin
+  Result := 0;
+  if MCHIProtocolRecordOffset(Self, Index, Offset) then
+    Result := PByteArray(RAWManagementControllerHostInterfaceInfo)^[Offset + 1];
+end;
+
+function TManagementControllerHostInterfaceInformation.GetProtocolTypeSpecificDataByte(Index, DataIndex: Integer): Byte;
+var
+  Offset: Integer;
+begin
+  Result := 0;
+  if (DataIndex < 0) or not MCHIProtocolRecordOffset(Self, Index, Offset) then
+    Exit;
+
+  if DataIndex < GetProtocolTypeSpecificDataLength(Index) then
+    Result := PByteArray(RAWManagementControllerHostInterfaceInfo)^[Offset + 2 + DataIndex];
+end;
+
+{ TTPMDeviceInformation }
+
+function TTPMDeviceInformation.VendorIDStr: AnsiString;
+begin
+  SetLength(Result, 4);
+  Move(RAWTPMDeviceInfo^.VendorID[0], Result[1], 4);
+end;
+
+function TTPMDeviceInformation.GetSpecificationVersionStr: AnsiString;
+begin
+  Result := AnsiString(Format('%d.%d', [RAWTPMDeviceInfo^.MajorSpecVersion, RAWTPMDeviceInfo^.MinorSpecVersion]));
+end;
+
+function TTPMDeviceInformation.DescriptionStr: AnsiString;
+begin
+  Result := GetSMBiosString(@RAWTPMDeviceInfo^, RAWTPMDeviceInfo^.Header.Length, RAWTPMDeviceInfo^.Description);
+end;
+
+{ TProcessorAdditionalInformation }
+
+function TProcessorAdditionalInformation.GetProcessorTypeStr: AnsiString;
+begin
+  case RAWProcessorAdditionalInfo^.ProcessorType of
+    $01: Result := 'IA32';
+    $02: Result := 'x64';
+    $03: Result := 'Itanium';
+    $04: Result := 'ARM32';
+    $05: Result := 'ARM64';
+    $06: Result := 'RISC-V RV32';
+    $07: Result := 'RISC-V RV64';
+    $08: Result := 'RISC-V RV128';
+    $09: Result := 'LoongArch32';
+    $0A: Result := 'LoongArch64';
+    else Result := 'Unknown';
+  end;
+end;
+
+function TProcessorAdditionalInformation.GetProcessorSpecificDataSize: Byte;
+begin
+  if RAWProcessorAdditionalInfo^.ProcessorSpecificBlockLength > 0 then
+    Result := RAWProcessorAdditionalInfo^.ProcessorSpecificBlockLength - 1
+  else
+    Result := 0;
+end;
+
+{ TFirmwareInventoryInformation }
+
+function TFirmwareInventoryInformation.FirmwareComponentNameStr: AnsiString;
+begin
+  Result := GetSMBiosString(@RAWFirmwareInventoryInfo^, RAWFirmwareInventoryInfo^.Header.Length,
+    RAWFirmwareInventoryInfo^.FirmwareComponentName);
+end;
+
+function TFirmwareInventoryInformation.FirmwareVersionStr: AnsiString;
+begin
+  Result := GetSMBiosString(@RAWFirmwareInventoryInfo^, RAWFirmwareInventoryInfo^.Header.Length,
+    RAWFirmwareInventoryInfo^.FirmwareVersion);
+end;
+
+function TFirmwareInventoryInformation.FirmwareIDStr: AnsiString;
+begin
+  Result := GetSMBiosString(@RAWFirmwareInventoryInfo^, RAWFirmwareInventoryInfo^.Header.Length,
+    RAWFirmwareInventoryInfo^.FirmwareID);
+end;
+
+function TFirmwareInventoryInformation.ReleaseDateStr: AnsiString;
+begin
+  Result := GetSMBiosString(@RAWFirmwareInventoryInfo^, RAWFirmwareInventoryInfo^.Header.Length,
+    RAWFirmwareInventoryInfo^.ReleaseDate);
+end;
+
+function TFirmwareInventoryInformation.ManufacturerStr: AnsiString;
+begin
+  Result := GetSMBiosString(@RAWFirmwareInventoryInfo^, RAWFirmwareInventoryInfo^.Header.Length,
+    RAWFirmwareInventoryInfo^.Manufacturer);
+end;
+
+function TFirmwareInventoryInformation.LowestSupportedFirmwareVersionStr: AnsiString;
+begin
+  Result := GetSMBiosString(@RAWFirmwareInventoryInfo^, RAWFirmwareInventoryInfo^.Header.Length,
+    RAWFirmwareInventoryInfo^.LowestSupportedFirmwareVersion);
+end;
+
+function TFirmwareInventoryInformation.GetStateStr: AnsiString;
+begin
+  case RAWFirmwareInventoryInfo^.State of
+    $01: Result := 'Other';
+    $02: Result := 'Unknown';
+    $03: Result := 'Disabled';
+    $04: Result := 'Enabled';
+    $05: Result := 'Absent';
+    $06: Result := 'Standby Offline';
+    $07: Result := 'Standby Spare';
+    $08: Result := 'Unavailable Offline';
+    else Result := 'Unknown';
+  end;
+end;
+
+function TFirmwareInventoryInformation.GetAssociatedComponentHandle(Index: Byte): Word;
+var
+  Offset: Integer;
+  P: PByte;
+begin
+  Result := 0;
+  if Index >= RAWFirmwareInventoryInfo^.AssociatedComponentCount then
+    Exit;
+
+  Offset := $18 + Index * SizeOf(Word);
+  if not SMBiosFieldAvailable(RAWFirmwareInventoryInfo^.Header, Offset, SizeOf(Word)) then
+    Exit;
+
+  P := PByte(RAWFirmwareInventoryInfo);
+  Inc(P, Offset);
+  Result := PWord(P)^;
+end;
+
+{ TStringPropertyInformation }
+
+function TStringPropertyInformation.GetStringPropertyIDStr: AnsiString;
+begin
+  case RAWStringPropertyInfo^.StringPropertyID of
+    $0000: Result := 'Reserved';
+    $0001: Result := 'UEFI device path';
+    $0002 .. $7FFF: Result := 'Reserved for future DMTF use';
+    $8000 .. $BFFF: Result := 'Reserved for firmware vendor use';
+    else Result := 'Reserved for OEM use';
+  end;
+end;
+
+function TStringPropertyInformation.StringPropertyValueStr: AnsiString;
+begin
+  Result := GetSMBiosString(@RAWStringPropertyInfo^, RAWStringPropertyInfo^.Header.Length,
+    RAWStringPropertyInfo^.StringPropertyValue);
+end;
 
 { TEnclosureInformation }
 
@@ -8092,6 +9489,160 @@ begin
   Result := GetSMBiosString(@RAWSystemConfInformation^, RAWSystemConfInformation^.Header.Length, index);
 end;
 
+{ TSystemEventLogInformation }
+
+function SMBiosEventLogTypeToStr(const Value: Byte): AnsiString;
+begin
+  case Value of
+    $00: Result := 'Reserved';
+    $01: Result := 'Single-bit ECC memory error';
+    $02: Result := 'Multi-bit ECC memory error';
+    $03: Result := 'Parity memory error';
+    $04: Result := 'Bus time-out';
+    $05: Result := 'I/O Channel Check';
+    $06: Result := 'Software NMI';
+    $07: Result := 'POST Memory Resize';
+    $08: Result := 'POST Error';
+    $09: Result := 'PCI Parity Error';
+    $0A: Result := 'PCI System Error';
+    $0B: Result := 'CPU Failure';
+    $0C: Result := 'EISA Failsafe Timer time-out';
+    $0D: Result := 'Correctable memory log disabled';
+    $0E: Result := 'Logging disabled for a specific event type';
+    $10: Result := 'System limit exceeded';
+    $11: Result := 'Asynchronous hardware timer expired';
+    $12: Result := 'System configuration information';
+    $13: Result := 'Hard disk information';
+    $14: Result := 'System reconfigured';
+    $15: Result := 'Uncorrectable CPU-complex error';
+    $16: Result := 'Log area reset/cleared';
+    $17: Result := 'System boot';
+    $18 .. $7F: Result := 'Reserved';
+    else Result := 'OEM-assigned';
+  end;
+end;
+
+function SMBiosEventLogVariableDataFormatToStr(const Value: Byte): AnsiString;
+begin
+  case Value of
+    $00: Result := 'None';
+    $01: Result := 'Handle';
+    $02: Result := 'Multiple-event counter';
+    $03: Result := 'Multiple-event handle';
+    $04: Result := 'POST results bitmap';
+    $05: Result := 'System management type';
+    $06 .. $7F: Result := 'Reserved';
+    else Result := 'OEM-assigned';
+  end;
+end;
+
+function TSystemEventLogInformation.GetAccessMethodStr: AnsiString;
+begin
+  case RAWSystemEventLogInfo^.AccessMethod of
+    $00: Result := 'Indexed I/O: one 8-bit index port, one 8-bit data port';
+    $01: Result := 'Indexed I/O: two 8-bit index ports, one 8-bit data port';
+    $02: Result := 'Indexed I/O: one 16-bit index port, one 8-bit data port';
+    $03: Result := 'Memory-mapped physical 32-bit address';
+    $04: Result := 'General-Purpose NonVolatile Data functions';
+    $05 .. $7F: Result := 'Available for future assignment';
+    else Result := 'Firmware vendor or OEM-specific';
+  end;
+end;
+
+function TSystemEventLogInformation.LogAreaIsValid: Boolean;
+begin
+  Result := (RAWSystemEventLogInfo^.LogStatus and $01) <> 0;
+end;
+
+function TSystemEventLogInformation.LogAreaIsFull: Boolean;
+begin
+  Result := (RAWSystemEventLogInfo^.LogStatus and $02) <> 0;
+end;
+
+function TSystemEventLogInformation.HasLogHeaderDescriptorFields: Boolean;
+begin
+  Result := SMBiosFieldAvailable(RAWSystemEventLogInfo^.Header, $14, 3);
+end;
+
+function TSystemEventLogInformation.GetLogHeaderFormatStr: AnsiString;
+begin
+  if not HasLogHeaderDescriptorFields then
+  begin
+    Result := 'Unknown';
+    Exit;
+  end;
+
+  case RAWSystemEventLogInfo^.LogHeaderFormat of
+    $00: Result := 'No header';
+    $01: Result := 'Type 1 log header';
+    $02 .. $7F: Result := 'Available for future assignment';
+    else Result := 'Firmware vendor or OEM-specific';
+  end;
+end;
+
+function TSystemEventLogInformation.GetAccessMethodIndexAddress: Word;
+begin
+  Result := RAWSystemEventLogInfo^.AccessMethodAddress and $FFFF;
+end;
+
+function TSystemEventLogInformation.GetAccessMethodDataAddress: Word;
+begin
+  Result := (RAWSystemEventLogInfo^.AccessMethodAddress shr 16) and $FFFF;
+end;
+
+function TSystemEventLogInformation.GetAccessMethodGPNVHandle: Word;
+begin
+  Result := RAWSystemEventLogInfo^.AccessMethodAddress and $FFFF;
+end;
+
+function TSystemEventLogInformation.HasSupportedLogTypeDescriptor(Index: Integer): Boolean;
+var
+  Offset: Integer;
+begin
+  Result := false;
+  if (Index < 0) or not HasLogHeaderDescriptorFields or
+     (Index >= RAWSystemEventLogInfo^.NumberOfSupportedLogTypeDescriptors) or
+     (RAWSystemEventLogInfo^.LengthOfEachLogTypeDescriptor = 0) then
+    Exit;
+
+  Offset := $17 + (Index * RAWSystemEventLogInfo^.LengthOfEachLogTypeDescriptor);
+  Result := SMBiosFieldAvailable(RAWSystemEventLogInfo^.Header, Offset,
+    RAWSystemEventLogInfo^.LengthOfEachLogTypeDescriptor);
+end;
+
+function TSystemEventLogInformation.GetSupportedLogType(Index: Integer): Byte;
+var
+  Offset: Integer;
+begin
+  Result := 0;
+  if HasSupportedLogTypeDescriptor(Index) then
+  begin
+    Offset := $17 + (Index * RAWSystemEventLogInfo^.LengthOfEachLogTypeDescriptor);
+    Result := PByteArray(RAWSystemEventLogInfo)^[Offset];
+  end;
+end;
+
+function TSystemEventLogInformation.GetSupportedLogTypeStr(Index: Integer): AnsiString;
+begin
+  Result := SMBiosEventLogTypeToStr(GetSupportedLogType(Index));
+end;
+
+function TSystemEventLogInformation.GetSupportedVariableDataFormatType(Index: Integer): Byte;
+var
+  Offset: Integer;
+begin
+  Result := 0;
+  if HasSupportedLogTypeDescriptor(Index) and (RAWSystemEventLogInfo^.LengthOfEachLogTypeDescriptor >= 2) then
+  begin
+    Offset := $17 + (Index * RAWSystemEventLogInfo^.LengthOfEachLogTypeDescriptor);
+    Result := PByteArray(RAWSystemEventLogInfo)^[Offset + 1];
+  end;
+end;
+
+function TSystemEventLogInformation.GetSupportedVariableDataFormatTypeStr(Index: Integer): AnsiString;
+begin
+  Result := SMBiosEventLogVariableDataFormatToStr(GetSupportedVariableDataFormatType(Index));
+end;
 { TPhysicalMemoryArrayInformation }
 
 function TPhysicalMemoryArrayInformation.GetErrorCorrectionStr: AnsiString;
@@ -9100,6 +10651,41 @@ end;
 function TSystemBootInformation.GetBootStatusStr: AnsiString;
 begin
   Result := SMBiosSystemBootStatusToStr(RAWSystemBootInfo^.BootStatus and $0F);
+end;
+function SMBiosMemoryErrorGranularityToStr(const Value: Byte): AnsiString; forward;
+function SMBiosMemoryErrorOperationToStr(const Value: Byte): AnsiString; forward;
+function SMBiosMemoryErrorTypeToStr(const Value: Byte): AnsiString; forward;
+
+{ TMemoryErrorInformation }
+
+function TMemoryErrorInformation.GetErrorGranularityStr: AnsiString;
+begin
+  Result := SMBiosMemoryErrorGranularityToStr(RAWMemoryErrorInfo^.ErrorGranularity);
+end;
+
+function TMemoryErrorInformation.GetErrorOperationStr: AnsiString;
+begin
+  Result := SMBiosMemoryErrorOperationToStr(RAWMemoryErrorInfo^.ErrorOperation);
+end;
+
+function TMemoryErrorInformation.GetErrorTypeStr: AnsiString;
+begin
+  Result := SMBiosMemoryErrorTypeToStr(RAWMemoryErrorInfo^.ErrorType);
+end;
+
+function TMemoryErrorInformation.MemoryArrayErrorAddressIsUnknown: Boolean;
+begin
+  Result := RAWMemoryErrorInfo^.MemoryArrayErrorAddress = $80000000;
+end;
+
+function TMemoryErrorInformation.DeviceErrorAddressIsUnknown: Boolean;
+begin
+  Result := RAWMemoryErrorInfo^.DeviceErrorAddress = $80000000;
+end;
+
+function TMemoryErrorInformation.ErrorResolutionIsUnknown: Boolean;
+begin
+  Result := RAWMemoryErrorInfo^.ErrorResolution = $80000000;
 end;
 { Tx64BitMemoryErrorInformation }
 
