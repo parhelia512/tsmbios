@@ -50,12 +50,6 @@ interface
 
 uses
  SysUtils,
- {$IFDEF MSWINDOWS}
- {$IFNDEF FPC}
- AnsiStrings,
- {$ENDIF}
- Windows,
- {$ENDIF}
  {$IFNDEF NOGENERICS}
  Generics.Collections,
  {$ENDIF}
@@ -71,20 +65,22 @@ uses
  {$ENDIF MACOS}
   Classes;
 
+{$IFNDEF DISABLEWMI}
 {$DEFINE USEWMI}
+{$ENDIF}
 
 type
   // TODO :
   // Add OSX support
   // Add old Delphi versions support
 
-{$IFDEF VER130}
-  DWORD = Cardinal;
-{$ENDIF}
-
 {$IFDEF LINUX}
   DWORD = FixedUInt;
+  PDWORD = ^DWORD;
   AnsiString = String;
+{$ELSE}
+  DWORD = Cardinal;
+  PDWORD = ^DWORD;
 {$ENDIF}
   PRawSMBIOSData = ^TRawSMBIOSData;
 
@@ -5777,14 +5773,11 @@ function SMBiosAtLeast(const ASMBios: TSMBios; Major, Minor: Integer): Boolean;
 
 implementation
 
-{$IFDEF USEWMI}
 {$IFDEF MSWINDOWS}
-
-uses ComObj,
-{$IFNDEF VER130}
-  Variants,
-{$ENDIF}
-  ActiveX;
+{$IFDEF USEWMI}
+uses
+  Windows, ComObj
+  {$IFNDEF VER130}, Variants{$ENDIF}, ActiveX;
 {$ENDIF}
 {$ENDIF}
 
@@ -6647,6 +6640,15 @@ begin
   end;
 end;
 
+function SMBiosStrLen(const Value: PAnsiChar): Integer;
+begin
+  Result := 0;
+  if Value = nil then
+    Exit;
+  while Value[Result] <> #0 do
+    Inc(Result);
+end;
+
 function GetSMBiosString(FBuffer: PByteArray;  Entry, index: Integer): AnsiString;
  {$IFDEF LINUX}
  var
@@ -6687,7 +6689,7 @@ function GetSMBiosString(FBuffer: PByteArray;  Entry, index: Integer): AnsiStrin
         Break;
       end
       else
-        inc(Entry, {$IFNDEF FPC}AnsiStrings.{$ENDIF}StrLen(p) + 1);
+        inc(Entry, SMBiosStrLen(p) + 1);
     end;
   end;
  {$ENDIF}
@@ -7026,6 +7028,21 @@ end;
 {$IFDEF MSWINDOWS}
 {$IFNDEF USEWMI}
 
+type
+  THModule = NativeUInt;
+  UINT = Cardinal;
+
+const
+  kernel32 = 'kernel32.dll';
+
+function GetModuleHandle(lpModuleName: PAnsiChar): THModule; stdcall; external kernel32 name 'GetModuleHandleA';
+function GetProcAddress(hModule: THModule; lpProcName: PAnsiChar): Pointer; stdcall; external kernel32 name 'GetProcAddress';
+
+procedure ZeroMemory(Destination: Pointer; Length: NativeUInt);
+begin
+  FillChar(Destination^, Length, 0);
+end;
+
 procedure TSMBios.LoadSMBIOSWinAPI;
 type
   // http://msdn.microsoft.com/en-us/library/MSWINDOWS/desktop/ms724379%28v=vs.85%29.aspx
@@ -7038,16 +7055,17 @@ const
   FirmwareTableProviderSignature = $52534D42; // 'RSMB'
 var
   GetSystemFirmwareTable: TFNGetSystemFirmwareTable;
-  hModule: Windows.hModule;
+  hModule: THModule;
   BufferSize: UINT;
   Buffer: PByteArray;
 begin
+  BufferSize := 0;
   ZeroMemory(@FRawSMBIOSData, SizeOf(FRawSMBIOSData));
-  hModule := GetModuleHandle(kernel32);
+  hModule := GetModuleHandle(PAnsiChar(AnsiString(kernel32)));
 {$IFDEF FPC}
   GetSystemFirmwareTable := TFNGetSystemFirmwareTable(GetProcAddress(hModule, 'GetSystemFirmwareTable'));
 {$ELSE}
-  GetSystemFirmwareTable := GetProcAddress(hModule, 'GetSystemFirmwareTable');
+  GetSystemFirmwareTable := TFNGetSystemFirmwareTable(GetProcAddress(hModule, 'GetSystemFirmwareTable'));
 {$ENDIF}
   if Assigned(GetSystemFirmwareTable) then
   begin
