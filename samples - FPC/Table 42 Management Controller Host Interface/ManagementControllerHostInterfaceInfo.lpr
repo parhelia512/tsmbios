@@ -3,7 +3,12 @@ program ManagementControllerHostInterfaceInfo;
 {$mode objfpc}{$H+}
 
 uses
-  Classes, SysUtils, uSMBIOS;
+  {$IFDEF UNIX}{$IFDEF UseCThreads}
+  cthreads,
+  {$ENDIF}{$ENDIF}
+  Classes,
+  SysUtils,
+  uSMBIOS;
 
 procedure WriteBytes(const Caption: string; const LInfo: TManagementControllerHostInterfaceInformation);
 var

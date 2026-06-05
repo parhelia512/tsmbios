@@ -3,7 +3,12 @@ program TPMDeviceInfo;
 {$mode objfpc}{$H+}
 
 uses
-  Classes, SysUtils, uSMBIOS;
+  {$IFDEF UNIX}{$IFDEF UseCThreads}
+  cthreads,
+  {$ENDIF}{$ENDIF}
+  Classes,
+  SysUtils,
+  uSMBIOS;
 
 procedure GetTPMDeviceInfo;
 var

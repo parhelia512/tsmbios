@@ -3,6 +3,9 @@ program CacheInformation;
 {$mode objfpc}{$H+}
 
 uses
+  {$IFDEF UNIX}{$IFDEF UseCThreads}
+  cthreads,
+  {$ENDIF}{$ENDIF}
   Classes,
   SysUtils,
   uSMBIOS;

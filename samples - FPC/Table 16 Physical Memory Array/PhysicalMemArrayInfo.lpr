@@ -6,47 +6,57 @@ uses
   {$IFDEF UNIX}{$IFDEF UseCThreads}
   cthreads,
   {$ENDIF}{$ENDIF}
-  Classes, SysUtils, uSMBIOS
-  { you can add units after this };
+  Classes,
+  SysUtils,
+  uSMBIOS;
 
 procedure GetPhysicalMemArrayInfo;
 Var
   SMBios: TSMBios;
   LPhysicalMemArr: TPhysicalMemoryArrayInformation;
 begin
-  SMBios:=TSMBios.Create;
+  SMBios := TSMBios.Create;
   try
-      WriteLn('Physical Memory Array Information');
-      WriteLn('--------------------------------');
-      if SMBios.HasPhysicalMemoryArrayInfo then
+    WriteLn('Physical Memory Array Information');
+    WriteLn('--------------------------------');
+    if SMBios.HasPhysicalMemoryArrayInfo
+    then
       for LPhysicalMemArr in SMBios.PhysicalMemoryArrayInfo do
       begin
-        WriteLn('Location         '+LPhysicalMemArr.GetLocationStr);
-        WriteLn('Use              '+LPhysicalMemArr.GetUseStr);
-        WriteLn('Error Correction '+LPhysicalMemArr.GetErrorCorrectionStr);
-        if LPhysicalMemArr.RAWPhysicalMemoryArrayInformation^.MaximumCapacity<>$80000000 then
-          WriteLn(Format('Maximum Capacity %d Kb',[LPhysicalMemArr.RAWPhysicalMemoryArrayInformation^.MaximumCapacity]))
+        WriteLn('Location         ' + LPhysicalMemArr.GetLocationStr);
+        WriteLn('Use              ' + LPhysicalMemArr.GetUseStr);
+        WriteLn('Error Correction ' + LPhysicalMemArr.GetErrorCorrectionStr);
+        if LPhysicalMemArr.RAWPhysicalMemoryArrayInformation^.MaximumCapacity <> $80000000
+        then
+          WriteLn(Format('Maximum Capacity %d Kb',
+            [LPhysicalMemArr.RAWPhysicalMemoryArrayInformation^.MaximumCapacity]))
+        else if LPhysicalMemArr.HasExtendedMaximumCapacity
+        then
+          WriteLn(Format('Maximum Capacity %d bytes',
+            [LPhysicalMemArr.GetExtendedMaximumCapacity]))
         else
-          WriteLn(Format('Maximum Capacity %d bytes',[LPhysicalMemArr.RAWPhysicalMemoryArrayInformation^.ExtendedMaximumCapacity]));
+          WriteLn('Maximum Capacity Unknown');
 
-        WriteLn(Format('Memory devices   %d',[LPhysicalMemArr.RAWPhysicalMemoryArrayInformation^.NumberofMemoryDevices]));
+        WriteLn(Format('Memory devices   %d',
+          [LPhysicalMemArr.RAWPhysicalMemoryArrayInformation^.NumberofMemoryDevices]));
         WriteLn;
       end
-      else
-      Writeln('No Physical Memory Array Info was found');
+    else
+
+      WriteLn('No Physical Memory Array Info was found');
   finally
-   SMBios.Free;
+    SMBios.Free;
   end;
 end;
 
-
 begin
- try
+  try
     GetPhysicalMemArrayInfo;
- except
-    on E:Exception do
-        Writeln(E.Classname, ':', E.Message);
- end;
- Writeln('Press Enter to exit');
- Readln;
+  except
+    on E: Exception do
+      WriteLn(E.Classname, ':', E.Message);
+  end;
+  WriteLn('Press Enter to exit');
+  Readln;
+
 end.

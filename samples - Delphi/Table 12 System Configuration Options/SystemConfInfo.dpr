@@ -8,28 +8,28 @@ uses
   uSMBIOS in '..\..\source\uSMBIOS.pas';
 
 procedure GetBIOSInfo;
-  Var
-    SMBios: TSMBios;
-    i: Integer;
-    LSystemConf: TSystemConfInformation;
-  begin
-    SMBios := TSMBios.Create;
-    try
+var
+  SMBios: TSMBios;
+  i: Integer;
+  LSystemConf: TSystemConfInformation;
+begin
+  SMBios := TSMBios.Create;
+  try
 
-      if SMBios.HasSystemConfInfo
-      then
-      begin
-        Writeln('System Config Strings');
-        Writeln('---------------------');
-        for LSystemConf in SMBios.SystemConfInfo do
-          for i := 1 to LSystemConf.RAWSystemConfInformation.Count do
-            Writeln(LSystemConf.GetConfString(i));
-      end;
-
-    finally
-      SMBios.Free;
+    if SMBios.HasSystemConfInfo
+    then
+    begin
+      Writeln('System Config Strings');
+      Writeln('---------------------');
+      for LSystemConf in SMBios.SystemConfInfo do
+        for i := 1 to LSystemConf.RAWSystemConfInformation.Count do
+          Writeln(LSystemConf.GetConfString(i));
     end;
+
+  finally
+    SMBios.Free;
   end;
+end;
 
 begin
   try
