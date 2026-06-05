@@ -14,6 +14,10 @@
 
 ## SMBIOS Tables supported
 
+| SMBIOS Table  |               |               |               |
+| ------------- | ------------- | ------------- | ------------- |
+| BIOS Information (Type 0)  |  [Delphi](https://github.com/RRUZ/tsmbios/blob/master/samples%20-%20Delphi/Table%200%20Bios%20Info/BIOSInfo.dpr)  | [FPC](https://github.com/RRUZ/tsmbios/blob/master/samples%20-%20FPC/Table%200%20Bios%20Info/BIOSInfo.lpr)  | [C++ Builder](https://github.com/RRUZ/tsmbios/blob/master/samples%20-%20C%2B%2BBuilder/Table%200%20Bios%20Info/BIOSInfo.cpp) |
+
 * BIOS Information (Type 0) [Delphi](https://github.com/RRUZ/tsmbios/blob/master/samples%20-%20Delphi/Table%200%20Bios%20Info/BIOSInfo.dpr) [FPC](https://github.com/RRUZ/tsmbios/blob/master/samples%20-%20FPC/Table%200%20Bios%20Info/BIOSInfo.lpr) [C++ Builder](https://github.com/RRUZ/tsmbios/blob/master/samples%20-%20C%2B%2BBuilder/Table%200%20Bios%20Info/BIOSInfo.cpp)
 * System Information (Type 1) [Delphi](https://github.com/RRUZ/tsmbios/blob/master/samples%20-%20Delphi/Table%201%20System%20Info/SystemInfo.dpr) [FPC](https://github.com/RRUZ/tsmbios/blob/master/samples%20-%20FPC/Table%201%20System%20Info/SystemInfo.lpr) [C++ Builder](https://github.com/RRUZ/tsmbios/blob/master/samples%20-%20C%2B%2BBuilder/Table%201%20System%20Info/SystemInfo.cpp)
 * Baseboard (or Module) Information (Type 2) [Delphi](https://github.com/RRUZ/tsmbios/blob/master/samples%20-%20Delphi/Table%202%20Base%20Board%20Information/BaseBoardInformation.dpr) [FPC](https://github.com/RRUZ/tsmbios/blob/master/samples%20-%20FPC/Table%202%20Base%20Board%20Information/BaseBoardInformation.lpr) [C++ Builder](https://github.com/RRUZ/tsmbios/blob/master/samples%20-%20C%2B%2BBuilder/Table%202%20Base%20Board%20Information/BaseBoardInformation.cpp)
